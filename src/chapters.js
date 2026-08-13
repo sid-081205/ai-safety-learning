@@ -1,0 +1,51 @@
+export const chapters = [
+  {
+    id: '1',
+    slug: 'foundations',
+    title: 'Foundations',
+    subtitle: 'How Machines Learn to Predict',
+    file: 'mech-interp-ch1-foundations.html',
+  },
+  {
+    id: '2',
+    slug: 'transformer',
+    title: 'The Transformer',
+    subtitle: 'From Scratch',
+    file: 'mech-interp-ch2-transformer.html',
+  },
+  {
+    id: '3',
+    slug: 'what-is-mi',
+    title: 'What Mechanistic Interpretability Is',
+    subtitle: 'The field and its goals',
+    file: 'mech-interp-ch3-what-is-mi.html',
+  },
+  {
+    id: '4',
+    slug: 'techniques',
+    title: 'Foundational Techniques',
+    subtitle: 'Core methods of the craft',
+    file: 'mech-interp-ch4-techniques.html',
+  },
+  {
+    id: '5',
+    slug: 'step-up',
+    title: 'A Step Up',
+    subtitle: 'Going deeper',
+    file: 'mech-interp-ch5-step-up.html',
+  },
+  {
+    id: '6',
+    slug: 'cutting-edge',
+    title: 'Cutting Edge',
+    subtitle: 'Where the research is now',
+    file: 'mech-interp-ch6-cutting-edge.html',
+  },
+  {
+    id: '7',
+    slug: 'doing-research',
+    title: 'Doing the Research',
+    subtitle: 'How to contribute',
+    file: 'mech-interp-ch7-doing-research.html',
+  },
+]

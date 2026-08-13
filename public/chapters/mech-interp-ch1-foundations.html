@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 1 — Foundations: How Machines Learn to Predict</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --bg:#E7EAE5;
+  --surface:#FBFCFA;
+  --ink:#17232E;
+  --muted:#5D6B76;
+  --faint:#8996A0;
+  --line:#D6DCD5;
+  --teal:#0C6E6A;
+  --teal-ink:#08514E;
+  --teal-soft:#E2EFED;
+  --amber:#9A6410;
+  --amber-soft:#F6ECD6;
+  --red:#A83744;
+  --red-soft:#F5E2E4;
+  --shadow:0 18px 50px -24px rgba(20,40,50,.45);
+  --serif:"IBM Plex Serif",Georgia,serif;
+  --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+
+/* ---------- Stage & slides ---------- */
+#stage{
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:34px 30px 96px;
+}
+.slide{
+  display:none;
+  width:min(1120px,100%);
+  max-height:calc(100vh - 130px);
+  overflow-y:auto;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  padding:44px 52px 46px;
+  position:relative;
+  scrollbar-width:thin;
+  scrollbar-color:var(--line) transparent;
+}
+.slide::-webkit-scrollbar{width:9px}
+.slide::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+.slide.active{display:block;animation:rise .38s cubic-bezier(.2,.7,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* residual-stream spine motif */
+.slide::before{
+  content:"";
+  position:absolute;left:0;top:26px;bottom:26px;width:4px;
+  border-radius:4px;
+  background:linear-gradient(var(--teal),var(--teal) 40%,#b9d6d3 40%,#b9d6d3 46%,var(--teal) 46%,var(--teal) 84%,#b9d6d3 84%,#b9d6d3 90%,var(--teal) 90%);
+  opacity:.5;
+}
+
+/* ---------- Typography ---------- */
+.eyebrow{
+  font-family:var(--mono);
+  font-size:12px;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--teal-ink);
+  display:flex;gap:12px;align-items:center;
+  margin-bottom:16px;
+}
+.eyebrow .snum{color:var(--faint)}
+.eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--teal);opacity:.6}
+.slide-title{
+  font-family:var(--serif);
+  font-weight:600;
+  font-size:clamp(26px,3.4vw,40px);
+  line-height:1.12;
+  letter-spacing:-.01em;
+  margin-bottom:8px;
+}
+.slide-title.small{font-size:clamp(23px,2.8vw,32px)}
+.subtitle{color:var(--muted);font-size:18px;margin-bottom:22px;max-width:70ch}
+.slide p{font-size:18px;margin-bottom:14px;max-width:74ch}
+.slide p.lead{font-size:20px}
+.slide h3{font-family:var(--serif);font-weight:600;font-size:21px;margin:20px 0 8px}
+.slide ul,.slide ol{margin:6px 0 16px 4px;padding-left:22px;max-width:74ch}
+.slide li{font-size:18px;margin-bottom:9px}
+.slide li::marker{color:var(--teal)}
+strong{font-weight:600}
+em{color:var(--teal-ink);font-style:italic}
+.mono{font-family:var(--mono);font-size:.92em}
+a{color:var(--teal-ink)}
+
+/* term chip */
+.term{
+  font-family:var(--mono);font-size:.86em;font-weight:600;
+  background:var(--teal-soft);color:var(--teal-ink);
+  padding:2px 7px;border-radius:6px;white-space:nowrap;
+}
+
+/* ---------- Callout boxes ---------- */
+.box{border-radius:12px;padding:16px 20px;margin:18px 0;font-size:17px}
+.box p{font-size:17px;margin-bottom:8px}.box p:last-child{margin-bottom:0}
+.box .tag{
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:6px;
+}
+.note{background:var(--teal-soft);border-left:4px solid var(--teal)}
+.note .tag{color:var(--teal-ink)}
+.math{background:var(--amber-soft);border-left:4px solid var(--amber)}
+.math .tag{color:var(--amber)}
+.warn{background:var(--red-soft);border-left:4px solid var(--red)}
+.warn .tag{color:var(--red)}
+.neel{background:#eef2ee;border:1px dashed var(--teal);border-left:4px solid var(--teal)}
+.neel .tag{color:var(--teal-ink)}
+
+/* ---------- Layout helpers ---------- */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;margin:14px 0}
+.cols.wide-left{grid-template-columns:1.3fr 1fr}
+.cols.wide-right{grid-template-columns:1fr 1.3fr}
+@media(max-width:760px){.cols,.cols.wide-left,.cols.wide-right{grid-template-columns:1fr}}
+.figwrap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+.figwrap svg{max-width:100%;height:auto}
+.caption{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:8px;text-align:center}
+
+.katex-display{margin:14px 0!important;overflow-x:auto;overflow-y:hidden;padding:4px 0}
+
+/* code-ish block */
+.code{
+  font-family:var(--mono);font-size:14.5px;line-height:1.7;
+  background:#12222b;color:#d7e4e2;border-radius:10px;padding:16px 18px;margin:14px 0;
+  white-space:pre-wrap;overflow-x:auto;
+}
+.code .c{color:#6f8b88}
+.code .k{color:#7fd1cc}
+.code .n{color:#e2b872}
+
+/* pill row */
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px}
+.pill{font-family:var(--mono);font-size:13px;background:#eef2ee;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink)}
+
+/* definition list / glossary */
+.gloss{display:grid;grid-template-columns:auto 1fr;gap:10px 20px;margin:10px 0;font-size:17px}
+.gloss dt{font-family:var(--mono);font-weight:600;color:var(--teal-ink)}
+.gloss dd{margin:0;color:var(--ink)}
+@media(max-width:640px){.gloss{grid-template-columns:1fr;gap:2px 0}.gloss dd{margin-bottom:10px}}
+
+/* title slide */
+.title-slide{display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 200px)}
+.title-slide .kicker{font-family:var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--teal-ink);font-size:13px;margin-bottom:22px}
+.title-slide h1{font-family:var(--serif);font-weight:700;font-size:clamp(34px,6vw,66px);line-height:1.02;letter-spacing:-.02em;margin-bottom:20px}
+.title-slide h1 .accent{color:var(--teal)}
+.title-slide .tagline{font-size:21px;color:var(--muted);max-width:60ch;margin-bottom:30px}
+.meta-row{display:flex;flex-wrap:wrap;gap:10px}
+
+/* map / TOC list on map slide */
+.maplist{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.maprow{display:grid;grid-template-columns:44px 1fr;gap:16px;align-items:baseline;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.maprow.here{border-color:var(--teal);background:var(--teal-soft)}
+.maprow .cnum{font-family:var(--mono);font-weight:600;color:var(--teal);font-size:20px}
+.maprow h4{font-family:var(--serif);font-size:18px;font-weight:600;margin-bottom:2px}
+.maprow p{font-size:14.5px;color:var(--muted);margin:0;max-width:none}
+.maprow.here .tagnow{font-family:var(--mono);font-size:11px;color:var(--teal-ink);letter-spacing:.1em}
+
+/* ---------- Nav bar ---------- */
+#navbar{
+  position:fixed;left:0;right:0;bottom:0;height:64px;
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  background:rgba(231,234,229,.86);backdrop-filter:blur(8px);
+  border-top:1px solid var(--line);z-index:40;padding:0 18px;
+}
+.navbtn{
+  font-family:var(--mono);font-size:13px;font-weight:600;
+  border:1px solid var(--line);background:#fff;color:var(--ink);
+  padding:9px 16px;border-radius:9px;cursor:pointer;transition:all .15s;
+}
+.navbtn:hover{border-color:var(--teal);color:var(--teal-ink)}
+.navbtn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.navbtn:disabled{opacity:.35;cursor:not-allowed}
+#counter{font-family:var(--mono);font-size:14px;color:var(--muted);min-width:96px;text-align:center}
+#counter b{color:var(--ink)}
+
+/* progress bar */
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0;z-index:50;transition:width .3s}
+
+/* ---------- Contents overlay ---------- */
+#toc{
+  position:fixed;inset:0;background:rgba(18,34,43,.55);backdrop-filter:blur(4px);
+  z-index:60;display:none;padding:40px 20px;overflow-y:auto;
+}
+#toc.open{display:block}
+.toc-panel{max-width:820px;margin:0 auto;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:28px 30px}
+.toc-panel h3{font-family:var(--serif);font-size:24px;margin-bottom:4px}
+.toc-panel .hint{font-family:var(--mono);font-size:12px;color:var(--faint);margin-bottom:18px}
+.toc-group{margin-bottom:16px}
+.toc-group h5{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-ink);margin-bottom:6px}
+.toc-item{display:flex;gap:12px;padding:6px 8px;border-radius:7px;cursor:pointer;font-size:15px}
+.toc-item:hover{background:var(--teal-soft)}
+.toc-item .ti-n{font-family:var(--mono);color:var(--faint);min-width:26px}
+.toc-item.current{background:var(--teal-soft);font-weight:600}
+
+.kbd{font-family:var(--mono);font-size:12px;background:#eef2ee;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px}
+
+@media (prefers-reduced-motion:reduce){
+  .slide.active{animation:none}
+  #progress{transition:none}
+}
+@media(max-width:600px){
+  #stage{padding:16px 10px 88px}
+  .slide{padding:30px 22px 32px}
+  .slide::before{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+
+<!-- ============ SLIDE 1 — TITLE ============ -->
+<section class="slide active title-slide" data-part="Orientation">
+  <div class="kicker">MATS · Mechanistic Interpretability · Study Deck</div>
+  <h1>Chapter 1<br><span class="accent">Foundations:</span> how machines learn to predict</h1>
+  <p class="tagline">Starting from absolute zero — no neural networks assumed. By the last slide you'll understand what a model <em>is</em>, how it <em>learns</em>, and why concepts end up living as <em>directions in space</em>. That last idea is the doorway to everything in interpretability.</p>
+  <div class="meta-row">
+    <span class="pill">50 slides</span>
+    <span class="pill">math explained as it appears</span>
+    <span class="pill">prereq: basic algebra only</span>
+    <span class="pill">Chapter 1 of 7</span>
+  </div>
+  <div class="box note" style="margin-top:30px">
+    <span class="tag">How to move</span>
+    <p>Use <span class="kbd">→</span> / <span class="kbd">←</span> arrow keys (or the buttons below) to navigate. Press <span class="kbd">M</span> or click <b>Contents</b> to jump anywhere. Slides scroll if content runs long.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2 — COURSE MAP ============ -->
+<section class="slide" data-part="Orientation">
+  <div class="eyebrow"><span>Orientation</span><span class="dot"></span><span class="snum">Slide 02</span></div>
+  <h2 class="slide-title small">Where this chapter sits: the seven-chapter arc</h2>
+  <p class="subtitle">Everything is built bottom-up. Each chapter assumes only the ones before it.</p>
+  <div class="maplist">
+    <div class="maprow here"><span class="cnum">1</span><div><h4>Foundations: how machines learn <span class="tagnow">← you are here</span></h4><p>Vectors & matrices you need · neurons · networks · training · representations · why "directions = concepts".</p></div></div>
+    <div class="maprow"><span class="cnum">2</span><div><h4>The Transformer, from scratch</h4><p>Tokens → embeddings → the residual stream → attention → MLPs → logits → text generation.</p></div></div>
+    <div class="maprow"><span class="cnum">3</span><div><h4>What mechanistic interpretability is</h4><p>Linear representation hypothesis, features as directions, superposition, circuits, and the safety case.</p></div></div>
+    <div class="maprow"><span class="cnum">4</span><div><h4>Foundational techniques</h4><p>Logit lens, direct logit attribution, linear probes, activation patching, steering vectors, CoT faithfulness.</p></div></div>
+    <div class="maprow"><span class="cnum">5</span><div><h4>A step up</h4><p>Sparse autoencoders, model diffing, resampling, token forcing, model organisms, reward hacking, emergent misalignment, eval awareness.</p></div></div>
+    <div class="maprow"><span class="cnum">6</span><div><h4>Cutting edge</h4><p>J-Lens, natural-language autoencoders, synthetic document finetuning, the assistant axis, model biology & forensics.</p></div></div>
+    <div class="maprow"><span class="cnum">7</span><div><h4>Doing the research</h4><p>Explore–Understand–Distill, baselines, skepticism, sanity-checking agents, writing, and Neel's grading rubric.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3 — HOW TO READ + GOALS ============ -->
+<section class="slide" data-part="Orientation">
+  <div class="eyebrow"><span>Orientation</span><span class="dot"></span><span class="snum">Slide 03</span></div>
+  <h2 class="slide-title">What you'll be able to do after Chapter 1</h2>
+  <p class="lead">Concrete learning goals — treat these as a checklist to test yourself against at the end.</p>
+  <ul>
+    <li>Read the notation <span class="mono">y = f(Wx + b)</span> and say out loud what every symbol does.</li>
+    <li>Explain a <span class="term">dot product</span> as a measure of similarity — and why that single idea underpins the whole field.</li>
+    <li>Describe what a neuron, a layer, and a deep network compute, and where a model's "knowledge" is stored.</li>
+    <li>Explain how a model <em>learns</em>: loss, gradients, gradient descent, and backpropagation — at the level of ideas, not heavy calculus.</li>
+    <li>Explain why text must become vectors, what an <span class="term">embedding</span> is, and what <span class="mono">king − man + woman ≈ queen</span> reveals.</li>
+    <li>State, in your own words, why interpretability researchers believe <em>concepts are directions</em>.</li>
+  </ul>
+  <div class="box neel">
+    <span class="tag">Why the ground-up approach</span>
+    <p>Neel says the main math prerequisite is <b>strong linear-algebra intuition</b>, and that "ML is pretty conceptually simple." This chapter front-loads exactly that intuition so the later jargon (residual stream, probes, SAEs) lands as <em>obvious</em> rather than mysterious.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4 — ONE-SENTENCE LM ============ -->
+<section class="slide" data-part="Orientation">
+  <div class="eyebrow"><span>Orientation</span><span class="dot"></span><span class="snum">Slide 04</span></div>
+  <h2 class="slide-title">The whole thing in one sentence</h2>
+  <div class="box note">
+    <span class="tag">The core idea</span>
+    <p style="font-size:20px"><b>A language model is a machine that, given some text, predicts what token comes next — and it does this by turning text into vectors and pushing them through a giant pile of multiplications and additions.</b></p>
+  </div>
+  <p>That's genuinely it. Everything else — chatbots, coding assistants, agents — is this one capability, dressed up. "Write me an essay" becomes: predict the next token, add it to the text, predict the next token, repeat.</p>
+  <p>The surprising part is what the model must <em>learn about the world</em> to predict well. To finish the sentence <span class="mono">"The capital of France is ___"</span> it has to have stored the fact. To finish <span class="mono">"The murderer was revealed to be the ___"</span> in a story, it needs something like a plot model. Prediction, pushed hard enough, forces the machine to build internal structure.</p>
+  <p><strong>Interpretability is the project of figuring out what that internal structure is</strong> — and Chapter 1 is about understanding the "giant pile of multiplications and additions" well enough that the structure becomes visible.</p>
+</section>
+
+<!-- ============ SLIDE 5 — WHY LOOK INSIDE ============ -->
+<section class="slide" data-part="Orientation">
+  <div class="eyebrow"><span>Orientation</span><span class="dot"></span><span class="snum">Slide 05</span></div>
+  <h2 class="slide-title">Why look inside? The black-box problem</h2>
+  <div class="cols wide-left">
+    <div>
+      <p>We <em>build</em> these models, but we don't <em>design</em> their internals. We specify an architecture and a goal ("predict the next token well"), then an automatic process fills in billions of numbers. Nobody wrote those numbers by hand, and nobody can read them off directly.</p>
+      <p>So we get systems that are extraordinarily capable and almost entirely opaque. That opacity is a safety problem:</p>
+      <ul>
+        <li>Did the model refuse because it's <em>aligned</em>, or because it pattern-matched a jailbreak?</li>
+        <li>When it did something sketchy, was that <em>misaligned intent</em>, or confusion?</li>
+        <li>Is it telling us its real reasoning, or a plausible cover story?</li>
+      </ul>
+      <p>You can't answer these from the outside with certainty. <strong>Mechanistic interpretability</strong> is the attempt to answer them by understanding the mechanism.</p>
+    </div>
+    <div>
+      <div class="box neel" style="margin-top:0">
+        <span class="tag">Tie to the application</span>
+        <p>Neel's stream is now organised around <b>pragmatic, safety-relevant</b> interpretability — "being able to read an AGI's mind should be extremely useful." Whole research areas he loves (model forensics, model biology, CoT faithfulness) are just this question sharpened: <em>what is actually going on in there?</em></p>
+      </div>
+      <div class="box note">
+        <span class="tag">Keep in mind</span>
+        <p>We won't touch a real technique until Chapter 4. But every technique is a way of prying open the machinery you're about to learn. Hold onto the "why" — it makes the "how" much easier to remember.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6 — MATH REASSURANCE ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 06</span></div>
+  <h2 class="slide-title">You need less math than you fear</h2>
+  <p class="lead">Almost everything in this field is built from three humble operations. If you own these, the rest is vocabulary.</p>
+  <div class="pills">
+    <span class="pill">1 · add two lists of numbers</span>
+    <span class="pill">2 · dot product (multiply &amp; sum)</span>
+    <span class="pill">3 · matrix × vector (many dot products)</span>
+    <span class="pill">+ one "bend" (nonlinearity)</span>
+  </div>
+  <p>We'll build each one from scratch with tiny, concrete numbers you can check by hand. No proofs, no heavy calculus — just enough that when you later see <span class="mono">"we projected the activation onto the refusal direction,"</span> you know <em>exactly</em> what arithmetic that names.</p>
+  <div class="box note">
+    <span class="tag">The mantra for this part</span>
+    <p>A <b>vector</b> is a point in space. A <b>dot product</b> measures how much two vectors point the same way. A <b>matrix</b> is a machine that moves points around. That's the whole toolkit.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 7 — SCALARS & VECTORS ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 07</span></div>
+  <h2 class="slide-title">Numbers, scalars, and vectors</h2>
+  <div class="cols">
+    <div>
+      <p>A <strong>scalar</strong> is just a single number: <span class="mono">3</span>, <span class="mono">−0.5</span>, <span class="mono">42</span>.</p>
+      <p>A <strong>vector</strong> is an <em>ordered list</em> of numbers. We write it stacked or in brackets:</p>
+      <div class="math box">
+        <span class="tag">Notation</span>
+        \[ \mathbf{v} = [\,2,\ -1,\ 4\,] \]
+        <p>This is a <b>3-dimensional</b> vector — it has 3 entries (called <em>components</em> or <em>coordinates</em>). Bold lowercase (<span class="mono">v</span>) is the usual symbol for a vector.</p>
+      </div>
+      <p>The order matters: <span class="mono">[2, −1, 4]</span> is not the same vector as <span class="mono">[4, −1, 2]</span>. Each slot means something specific.</p>
+    </div>
+    <div>
+      <div class="box note" style="margin-top:0">
+        <span class="tag">Why this matters later</span>
+        <p>Inside a model, <b>everything</b> is a vector: a word is a vector, the model's "thought" at each step is a vector, even the list of scores over the whole vocabulary is a vector. Real models use vectors with <b>thousands</b> of components (e.g. 4096-dimensional). We use 2 or 3 so we can draw and check them.</p>
+      </div>
+      <div class="box math">
+        <span class="tag">Dimension</span>
+        <p>The number of components is the <b>dimension</b>. A 2-D vector lives in a plane; a 3-D vector in space; a 4096-D vector lives somewhere we can't picture — but the <em>arithmetic</em> is identical.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 8 — VECTORS AS POINTS/DIRECTIONS ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 08</span></div>
+  <h2 class="slide-title">A vector is a point — and a direction</h2>
+  <div class="cols wide-right">
+    <div>
+      <p>Take the 2-D vector <span class="mono">[3, 2]</span>. Read it as an instruction: go <b>3 right</b>, then <b>2 up</b>. That lands you at a <em>point</em>.</p>
+      <p>Draw an arrow from the origin to that point and you also get a <em>direction</em> and a <em>length</em>. Both readings are useful:</p>
+      <ul>
+        <li><b>Point</b> view: "the state of the model right now is <em>here</em>."</li>
+        <li><b>Direction</b> view: "the concept of <em>past tense</em> points <em>this way</em>."</li>
+      </ul>
+      <div class="box math">
+        <span class="tag">Length (magnitude)</span>
+        <p>By Pythagoras, the length of <span class="mono">[3,2]</span> is</p>
+        \[ \|\mathbf{v}\| = \sqrt{3^2 + 2^2} = \sqrt{13} \approx 3.6 \]
+        <p>The double bars <span class="mono">‖v‖</span> mean "length of v".</p>
+      </div>
+    </div>
+    <div class="figwrap">
+      <svg viewBox="0 0 260 240" role="img" aria-label="A vector drawn as an arrow from the origin to point (3,2)">
+        <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#0C6E6A"/></marker></defs>
+        <line x1="30" y1="210" x2="245" y2="210" stroke="#B7C2Bb" stroke-width="1.5"/>
+        <line x1="30" y1="210" x2="30" y2="20" stroke="#B7C2Bb" stroke-width="1.5"/>
+        <g font-family="IBM Plex Mono" font-size="10" fill="#8996A0">
+          <text x="240" y="226">x</text><text x="12" y="26">y</text>
+          <text x="90" y="226">1</text><text x="150" y="226">2</text><text x="210" y="226">3</text>
+          <text x="14" y="154">1</text><text x="14" y="94">2</text>
+        </g>
+        <line x1="90" y1="207" x2="90" y2="213" stroke="#B7C2Bb"/><line x1="150" y1="207" x2="150" y2="213" stroke="#B7C2Bb"/><line x1="210" y1="207" x2="210" y2="213" stroke="#B7C2Bb"/>
+        <line x1="27" y1="150" x2="33" y2="150" stroke="#B7C2Bb"/><line x1="27" y1="90" x2="33" y2="90" stroke="#B7C2Bb"/>
+        <line x1="210" y1="210" x2="210" y2="90" stroke="#C9A24B" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <line x1="30" y1="90" x2="210" y2="90" stroke="#C9A24B" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <line x1="30" y1="210" x2="205" y2="94" stroke="#0C6E6A" stroke-width="3" marker-end="url(#ah)"/>
+        <circle cx="210" cy="90" r="4" fill="#0C6E6A"/>
+        <text x="196" y="80" font-family="IBM Plex Mono" font-size="12" fill="#08514E">[3, 2]</text>
+      </svg>
+      <div class="caption">go 3 right, 2 up → a point, and an arrow</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 9 — ADD & SCALE ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 09</span></div>
+  <h2 class="slide-title">Two moves: add vectors, and scale them</h2>
+  <div class="cols">
+    <div>
+      <h3>Adding = component by component</h3>
+      <div class="box math" style="margin-top:6px">
+        \[ [2,\,1] + [1,\,3] = [\,2{+}1,\ 1{+}3\,] = [3,\,4] \]
+        <p>Geometrically: lay the second arrow at the tip of the first. Adding vectors <b>combines</b> what they represent.</p>
+      </div>
+      <h3>Scaling = multiply every entry</h3>
+      <div class="box math" style="margin-top:6px">
+        \[ 2 \cdot [3,\,4] = [6,\,8] \qquad -1\cdot[3,4]=[-3,-4] \]
+        <p>A positive scalar stretches/shrinks the arrow; a negative one flips it to point the opposite way.</p>
+      </div>
+    </div>
+    <div>
+      <div class="box note" style="margin-top:0">
+        <span class="tag">Why you'll care</span>
+        <p>This is <em>literally</em> how <b>steering vectors</b> (Chapter 4) work. If the direction for "speak formally" is a vector <span class="mono">d</span>, then adding <span class="mono">3·d</span> into the model's internal state nudges it to be <em>more</em> formal, and adding <span class="mono">−3·d</span> makes it <em>less</em> formal. Add and scale — that's the entire mechanism.</p>
+      </div>
+      <div class="box math">
+        <span class="tag">One more term: linear combination</span>
+        <p>Mixing several vectors with scalars, like <span class="mono">2a + 3b − c</span>, is a <b>linear combination</b>. Much of what a model does is take linear combinations of things it has stored.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10 — DOT PRODUCT DEF ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 10</span></div>
+  <h2 class="slide-title">The dot product — the most important operation</h2>
+  <p>Take two vectors of the <em>same</em> dimension. Multiply matching components, then add up the results. The answer is a single number (a scalar).</p>
+  <div class="box math">
+    <span class="tag">Definition + worked example</span>
+    \[ \mathbf{a}\cdot\mathbf{b} \;=\; a_1 b_1 + a_2 b_2 + \dots + a_n b_n \;=\; \sum_{i=1}^{n} a_i b_i \]
+    <p>With <span class="mono">a = [1, 2, 3]</span> and <span class="mono">b = [4, 5, 6]</span>:</p>
+    \[ \mathbf{a}\cdot\mathbf{b} = (1)(4)+(2)(5)+(3)(6) = 4+10+18 = 32 \]
+    <p>That big sigma <span class="mono">Σ</span> just means "add up over all i from 1 to n." Nothing more.</p>
+  </div>
+  <p>It looks unremarkable — multiply and add. The magic is in what the number <em>means</em>, which is the next slide.</p>
+</section>
+
+<!-- ============ SLIDE 11 — DOT PRODUCT MEANING ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 11</span></div>
+  <h2 class="slide-title">The dot product measures alignment</h2>
+  <div class="cols wide-right">
+    <div>
+      <p>The dot product answers: <em>"how much do these two vectors point the same way?"</em></p>
+      <ul>
+        <li><b>Large positive</b> → they point in <em>similar</em> directions.</li>
+        <li><b>Zero</b> → they're <em>perpendicular</em> (unrelated).</li>
+        <li><b>Negative</b> → they point in <em>opposing</em> directions.</li>
+      </ul>
+      <div class="box math">
+        <span class="tag">The geometric identity</span>
+        \[ \mathbf{a}\cdot\mathbf{b} = \|\mathbf{a}\|\,\|\mathbf{b}\|\cos\theta \]
+        <p>where <span class="mono">θ</span> is the angle between them. If we ignore lengths, the dot product tracks <span class="mono">cos θ</span> — this is <b>cosine similarity</b>, a number from −1 to 1.</p>
+      </div>
+    </div>
+    <div class="figwrap">
+      <svg viewBox="0 0 250 220" role="img" aria-label="Two arrows at a small angle have a large positive dot product; perpendicular arrows have zero">
+        <defs><marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#0C6E6A"/></marker>
+        <marker id="ah3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#A83744"/></marker></defs>
+        <text x="20" y="20" font-family="IBM Plex Mono" font-size="11" fill="#08514E">similar → big +</text>
+        <line x1="30" y1="95" x2="150" y2="55" stroke="#0C6E6A" stroke-width="3" marker-end="url(#ah2)"/>
+        <line x1="30" y1="95" x2="150" y2="80" stroke="#0C6E6A" stroke-width="3" marker-end="url(#ah2)" opacity=".55"/>
+        <path d="M70 87 A 40 40 0 0 0 72 74" fill="none" stroke="#8996A0" stroke-width="1.2"/>
+        <text x="150" y="150" font-family="IBM Plex Mono" font-size="11" fill="#A83744">perpendicular → 0</text>
+        <line x1="60" y1="200" x2="180" y2="200" stroke="#A83744" stroke-width="3" marker-end="url(#ah3)"/>
+        <line x1="60" y1="200" x2="60" y2="120" stroke="#A83744" stroke-width="3" marker-end="url(#ah3)"/>
+        <rect x="60" y="188" width="12" height="12" fill="none" stroke="#8996A0" stroke-width="1"/>
+      </svg>
+      <div class="caption">angle small ⇒ dot large; angle 90° ⇒ dot 0</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 12 — WHY DOT PRODUCT IS THE GAME ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 12</span></div>
+  <h2 class="slide-title">Why "similarity via dot product" is the whole game</h2>
+  <p class="lead">Hold this slide in your head for the rest of the course. It's the bridge between the arithmetic and the ideas.</p>
+  <p>Suppose the model stores a direction that means <em>"this text is about danger."</em> Call it <span class="mono">d</span>. To ask "how much is the current thought about danger?", you take the model's current state vector <span class="mono">h</span> and compute the dot product <span class="mono">h · d</span>.</p>
+  <ul>
+    <li>Big positive number → the current thought is strongly aligned with "danger."</li>
+    <li>Near zero → not about danger.</li>
+  </ul>
+  <div class="box note">
+    <span class="tag">This is a whole technique in one line</span>
+    <p>That operation — <em>dot the model's state against a meaningful direction to read off "how much of that concept is present"</em> — <b>is</b> what a <span class="term">linear probe</span> does (Chapter 4). The moment you're comfortable with the dot product, probing is not a new idea; it's this idea with a name.</p>
+  </div>
+  <p>Steering, probing, the logit lens, direct logit attribution — a startling amount of interpretability is "take a dot product with the right direction." We're not exaggerating when we call it the most important operation.</p>
+</section>
+
+<!-- ============ SLIDE 13 — MATRICES ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 13</span></div>
+  <h2 class="slide-title">Matrices: grids that transform space</h2>
+  <div class="cols">
+    <div>
+      <p>A <strong>matrix</strong> is a rectangular grid of numbers. We describe its size as <span class="mono">rows × columns</span>.</p>
+      <div class="box math" style="margin-top:6px">
+        \[ W = \begin{bmatrix} 2 & 0 \\ 1 & 3 \end{bmatrix} \quad\text{(a 2×2 matrix)} \]
+        <p>Capital bold letters (<span class="mono">W</span>, <span class="mono">A</span>) usually denote matrices. <span class="mono">W</span> often stands for <em>weights</em> — the learnable numbers inside a model.</p>
+      </div>
+      <p>You can read a matrix two equally valid ways: as a stack of <b>row vectors</b>, or as a set of <b>column vectors</b> side by side. Both views help.</p>
+    </div>
+    <div>
+      <div class="box note" style="margin-top:0">
+        <span class="tag">The one-line intuition</span>
+        <p>A matrix is a <b>function that eats a vector and returns a vector</b>. It takes a point in space and moves it to a new point — rotating, stretching, squashing, or projecting the whole space. When we say a model "processes" a vector, we largely mean it hits the vector with matrices.</p>
+      </div>
+      <div class="box math">
+        <span class="tag">Where they come from</span>
+        <p>A model is mostly a long sequence of matrices. <b>Training</b> is the process of choosing the numbers <em>in</em> those matrices. Understanding a model, at bottom, means understanding what its matrices do.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 14 — MATRIX×VECTOR MECHANICS ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 14</span></div>
+  <h2 class="slide-title">Matrix × vector: the mechanics</h2>
+  <p>To multiply a matrix by a vector, take the dot product of <em>each row</em> of the matrix with the vector. Each row produces one number of the output.</p>
+  <div class="box math">
+    <span class="tag">Worked example — check it by hand</span>
+    \[ \begin{bmatrix} 2 & 0 \\ 1 & 3 \end{bmatrix} \begin{bmatrix} 4 \\ 5 \end{bmatrix} = \begin{bmatrix} (2)(4)+(0)(5) \\ (1)(4)+(3)(5) \end{bmatrix} = \begin{bmatrix} 8 \\ 19 \end{bmatrix} \]
+    <p><b>Row 1</b> <span class="mono">[2,0]</span> dotted with <span class="mono">[4,5]</span> gives 8. <b>Row 2</b> <span class="mono">[1,3]</span> dotted with <span class="mono">[4,5]</span> gives 19. The input point <span class="mono">[4,5]</span> was moved to <span class="mono">[8,19]</span>.</p>
+  </div>
+  <div class="box math">
+    <span class="tag">The shape rule (important)</span>
+    <p>An <span class="mono">m × n</span> matrix eats an <span class="mono">n</span>-dimensional vector and outputs an <span class="mono">m</span>-dimensional one. The inner numbers must match (<span class="mono">n = n</span>); the outer numbers give the result's size. This is how models <b>change the dimension</b> of a representation — e.g. expanding a 4096-vector up to 16384 and back.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 15 — MATRIX AS MAP ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 15</span></div>
+  <h2 class="slide-title">Matrix × vector: two ways to see it</h2>
+  <div class="cols">
+    <div>
+      <h3>View A — a bundle of dot products</h3>
+      <p>Each output entry is "how much does the input align with this row?" So a matrix is really <b>a collection of directions</b>, and multiplying measures the input against all of them at once.</p>
+      <div class="box note" style="margin-top:6px">
+        <span class="tag">Payoff</span>
+        <p>When a model computes scores over 50,000 possible next tokens, it's doing one big matrix multiply: dot the current thought against 50,000 stored directions, one per token. Each score is "how much does my thought point toward <em>this</em> word?"</p>
+      </div>
+    </div>
+    <div>
+      <h3>View B — a transformation of space</h3>
+      <p>The matrix takes the entire grid of points and warps it — rotating, scaling, shearing. Every input point gets consistently relocated.</p>
+      <div class="figwrap" style="margin-top:6px">
+        <svg viewBox="0 0 240 150" role="img" aria-label="A matrix maps a small square grid into a sheared parallelogram">
+          <g stroke="#C9D3CC" stroke-width="1" fill="none">
+            <rect x="18" y="30" width="70" height="70"/>
+            <line x1="53" y1="30" x2="53" y2="100"/><line x1="18" y1="65" x2="88" y2="65"/>
+          </g>
+          <text x="30" y="122" font-family="IBM Plex Mono" font-size="10" fill="#8996A0">before</text>
+          <text x="112" y="70" font-family="IBM Plex Mono" font-size="16" fill="#0C6E6A">→</text>
+          <g stroke="#0C6E6A" stroke-width="1.4" fill="none">
+            <polygon points="150,100 205,100 225,45 170,45"/>
+            <line x1="177,65" x2="177" y1="100" y2="100"/>
+          </g>
+          <polygon points="150,100 205,100 225,45 170,45" fill="none" stroke="#0C6E6A" stroke-width="1.4"/>
+          <line x1="177" y1="100" x2="197" y2="45" stroke="#0C6E6A" stroke-width="1"/>
+          <line x1="160" y1="72" x2="215" y2="72" stroke="#0C6E6A" stroke-width="1"/>
+          <text x="165" y="122" font-family="IBM Plex Mono" font-size="10" fill="#08514E">after</text>
+        </svg>
+        <div class="caption">the same transformation applied to every point</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 16 — COMPOSITION ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 16</span></div>
+  <h2 class="slide-title">Stacking transformations</h2>
+  <p>Apply one matrix, then another. The result is just "transform, then transform again." Doing <span class="mono">B</span> after <span class="mono">A</span> can itself be written as a single combined matrix <span class="mono">BA</span> (this is <b>matrix multiplication</b>, and it's why order matters — <span class="mono">BA ≠ AB</span> in general).</p>
+  <div class="box math">
+    <span class="tag">The catch that motivates the next slide</span>
+    <p>Here's a crucial fact: <b>stacking linear transformations only ever gives you another linear transformation.</b> Ten matrices in a row could be collapsed into one. So a deep pile of pure matrix multiplies is secretly <em>shallow</em> — it can't express anything a single matrix couldn't.</p>
+  </div>
+  <p>That's a problem. The world isn't linear: "profitable if price &gt; cost, else not" is a <em>bend</em>, not a straight line. To build something genuinely expressive, we must break linearity. Enter the nonlinearity.</p>
+</section>
+
+<!-- ============ SLIDE 17 — NONLINEARITY ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 17</span></div>
+  <h2 class="slide-title">The bend: why we need nonlinearity</h2>
+  <div class="cols wide-left">
+    <div>
+      <p>A <strong>nonlinear function</strong> applied to each number breaks the "everything collapses to one matrix" trap. The simplest and most common one is <span class="term">ReLU</span>:</p>
+      <div class="box math" style="margin-top:6px">
+        \[ \text{ReLU}(x) = \max(0,\,x) \]
+        <p>In words: "keep positive numbers as-is; replace negatives with 0." A trivial rule — but sprinkling it between matrix multiplies is what lets networks approximate essentially <em>any</em> function.</p>
+      </div>
+      <p>The recipe for the whole field is now visible: <b>alternate</b> linear steps (matrices, which mix information) with nonlinear steps (which add expressive "bends"). Stack enough of these and you can represent staggeringly complex behavior.</p>
+    </div>
+    <div class="figwrap">
+      <svg viewBox="0 0 200 170" role="img" aria-label="Graph of ReLU: flat at zero for negative x, then a straight line up for positive x">
+        <line x1="20" y1="140" x2="185" y2="140" stroke="#B7C2Bb" stroke-width="1.5"/>
+        <line x1="100" y1="20" x2="100" y2="150" stroke="#B7C2Bb" stroke-width="1.5"/>
+        <line x1="20" y1="140" x2="100" y2="140" stroke="#0C6E6A" stroke-width="3"/>
+        <line x1="100" y1="140" x2="175" y2="55" stroke="#0C6E6A" stroke-width="3"/>
+        <text x="150" y="130" font-family="IBM Plex Mono" font-size="10" fill="#8996A0">x</text>
+        <text x="106" y="30" font-family="IBM Plex Mono" font-size="10" fill="#8996A0">out</text>
+        <text x="40" y="132" font-family="IBM Plex Mono" font-size="10" fill="#08514E">= 0</text>
+        <text x="130" y="90" font-family="IBM Plex Mono" font-size="10" fill="#08514E">= x</text>
+      </svg>
+      <div class="caption">ReLU(x) = max(0, x)</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 18 — TOOLKIT RECAP ============ -->
+<section class="slide" data-part="Part 1 · The math toolkit">
+  <div class="eyebrow"><span>Part 1 · The math toolkit</span><span class="dot"></span><span class="snum">Slide 18</span></div>
+  <h2 class="slide-title">Toolkit recap — you now own the primitives</h2>
+  <div class="gloss">
+    <dt>vector</dt><dd>an ordered list of numbers; a point / direction in space.</dd>
+    <dt>add / scale</dt><dd>combine vectors, and stretch or flip them. Basis of steering.</dd>
+    <dt>dot product</dt><dd>multiply matching components and sum → a similarity score. Basis of probing.</dd>
+    <dt>length ‖v‖</dt><dd>how long the arrow is (Pythagoras).</dd>
+    <dt>matrix</dt><dd>a grid of numbers; a machine that maps vectors to vectors.</dd>
+    <dt>matrix × vector</dt><dd>a bundle of dot products, one per row → a transformed vector.</dd>
+    <dt>nonlinearity</dt><dd>a per-number "bend" (e.g. ReLU) that makes stacking worthwhile.</dd>
+  </div>
+  <div class="box note">
+    <span class="tag">Sanity check before moving on</span>
+    <p>Can you compute <span class="mono">[1,0,2]·[3,4,1]</span> in your head? (It's <span class="mono">3+0+2 = 5</span>.) If yes, you're ready to build a neuron — because a neuron is <em>literally</em> one dot product plus a bend.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 19 — THE NEURON ============ -->
+<section class="slide" data-part="Part 2 · From a neuron to a network">
+  <div class="eyebrow"><span>Part 2 · From a neuron to a network</span><span class="dot"></span><span class="snum">Slide 19</span></div>
+  <h2 class="slide-title">The artificial neuron</h2>
+  <div class="cols wide-left">
+    <div>
+      <p>The name is borrowed from biology, but the object is simple. A neuron:</p>
+      <ol>
+        <li>takes an input vector <span class="mono">x</span>,</li>
+        <li>has its own weight vector <span class="mono">w</span> and a single number called a <b>bias</b> <span class="mono">b</span>,</li>
+        <li>computes the dot product <span class="mono">w · x</span>, adds the bias, and passes the result through a nonlinearity <span class="mono">f</span>.</li>
+      </ol>
+      <div class="box math" style="margin-top:6px">
+        <span class="tag">The neuron, in full</span>
+        \[ y = f(\mathbf{w}\cdot\mathbf{x} + b) \]
+        <p>That's the entire neuron. A weighted vote (dot product), a nudge (bias), and a bend (nonlinearity), producing one output number.</p>
+      </div>
+    </div>
+    <div class="figwrap">
+      <svg viewBox="0 0 230 200" role="img" aria-label="Three inputs multiplied by weights, summed with a bias, passed through an activation function, producing one output">
+        <g font-family="IBM Plex Mono" font-size="11">
+          <circle cx="30" cy="40" r="13" fill="#E2EFED" stroke="#0C6E6A"/><text x="24" y="44" fill="#08514E">x₁</text>
+          <circle cx="30" cy="95" r="13" fill="#E2EFED" stroke="#0C6E6A"/><text x="24" y="99" fill="#08514E">x₂</text>
+          <circle cx="30" cy="150" r="13" fill="#E2EFED" stroke="#0C6E6A"/><text x="24" y="154" fill="#08514E">x₃</text>
+          <line x1="43" y1="40" x2="120" y2="90" stroke="#8996A0"/><text x="70" y="52" fill="#9A6410">w₁</text>
+          <line x1="43" y1="95" x2="120" y2="95" stroke="#8996A0"/><text x="72" y="88" fill="#9A6410">w₂</text>
+          <line x1="43" y1="150" x2="120" y2="100" stroke="#8996A0"/><text x="70" y="140" fill="#9A6410">w₃</text>
+          <circle cx="140" cy="95" r="20" fill="#F6ECD6" stroke="#9A6410"/><text x="128" y="92" fill="#9A6410" font-size="10">Σ+b</text><text x="130" y="105" fill="#9A6410" font-size="9">f( )</text>
+          <line x1="160" y1="95" x2="200" y2="95" stroke="#0C6E6A" stroke-width="2"/>
+          <text x="202" y="99" fill="#08514E">y</text>
+        </g>
+      </svg>
+      <div class="caption">weighted sum → +bias → bend → output</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 20 — WEIGHTS & BIAS MEANING ============ -->
+<section class="slide" data-part="Part 2 · From a neuron to a network">
+  <div class="eyebrow"><span>Part 2 · From a neuron to a network</span><span class="dot"></span><span class="snum">Slide 20</span></div>
+  <h2 class="slide-title">What the weights and bias actually mean</h2>
+  <div class="cols">
+    <div>
+      <h3>Weights = what the neuron looks for</h3>
+      <p>Because <span class="mono">w · x</span> is a similarity score, the weight vector <span class="mono">w</span> is literally the <b>pattern the neuron is tuned to detect</b>. Inputs pointing the same way as <span class="mono">w</span> excite it; opposing inputs suppress it.</p>
+      <div class="box note" style="margin-top:6px">
+        <span class="tag">Reframe</span>
+        <p>"A neuron detects a feature" just means: its weight vector points along that feature's direction, so the dot product lights up when the feature is present.</p>
+      </div>
+    </div>
+    <div>
+      <h3>Bias = how eager it is to fire</h3>
+      <p>The bias <span class="mono">b</span> shifts the threshold. A large positive bias means the neuron fires easily; a negative bias means the evidence must be strong before it activates (after the ReLU cuts off negatives).</p>
+      <div class="box math" style="margin-top:6px">
+        <span class="tag">Together</span>
+        <p><span class="mono">w</span> chooses the <em>direction</em> of interest; <span class="mono">b</span> sets the <em>cutoff</em>. Learning a neuron = choosing these numbers so it detects something useful.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 21 — ACTIVATION FUNCTIONS ============ -->
+<section class="slide" data-part="Part 2 · From a neuron to a network">
+  <div class="eyebrow"><span>Part 2 · From a neuron to a network</span><span class="dot"></span><span class="snum">Slide 21</span></div>
+  <h2 class="slide-title">Activation functions: the common bends</h2>
+  <div class="cols wide-right">
+    <div>
+      <p>You'll meet three by name. All do the same job — introduce a nonlinearity — but with different shapes.</p>
+      <div class="box math" style="margin-top:6px">
+        <span class="tag">The three you'll see</span>
+        \[ \text{ReLU}(x)=\max(0,x) \]
+        \[ \sigma(x)=\frac{1}{1+e^{-x}}\ \ \text{(sigmoid, squashes to 0–1)} \]
+        \[ \text{GELU}(x)\approx x\cdot\sigma(1.702x) \]
+        <p><span class="mono">e</span> is Euler's number (≈2.718); <span class="mono">e^{−x}</span> shrinks fast as x grows, which is what bends sigmoid into its S-shape.</p>
+      </div>
+    </div>
+    <div class="figwrap">
+      <svg viewBox="0 0 210 200" role="img" aria-label="Curves for ReLU, sigmoid, and GELU">
+        <line x1="15" y1="150" x2="195" y2="150" stroke="#B7C2Bb"/><line x1="105" y1="20" x2="105" y2="165" stroke="#B7C2Bb"/>
+        <line x1="20" y1="150" x2="105" y2="150" stroke="#0C6E6A" stroke-width="2.5"/><line x1="105" y1="150" x2="180" y2="60" stroke="#0C6E6A" stroke-width="2.5"/>
+        <path d="M20 148 C70 148 90 40 185 38" fill="none" stroke="#A83744" stroke-width="2.5"/>
+        <path d="M20 150 C80 150 95 152 105 150 C130 145 150 60 180 45" fill="none" stroke="#9A6410" stroke-width="2.5" stroke-dasharray="5 3"/>
+        <g font-family="IBM Plex Mono" font-size="10">
+          <text x="150" y="80" fill="#08514E">ReLU</text>
+          <text x="120" y="42" fill="#A83744">sigmoid</text>
+          <text x="30" y="40" fill="#9A6410">GELU</text>
+        </g>
+      </svg>
+      <div class="caption">different shapes, same purpose</div>
+    </div>
+  </div>
+  <div class="box note">
+    <span class="tag">Interp relevance</span>
+    <p>ReLU's hard "off below zero" behaviour makes individual neurons look tidy — but it also lets models cram many features into few neurons (<b>superposition</b>, Chapter 3), which is exactly what makes interpretation hard. The bend isn't a side detail; it shapes how understandable the model is.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 22 — A LAYER ============ -->
+<section class="slide" data-part="Part 2 · From a neuron to a network">
+  <div class="eyebrow"><span>Part 2 · From a neuron to a network</span><span class="dot"></span><span class="snum">Slide 22</span></div>
+  <h2 class="slide-title">A layer = many neurons at once</h2>
+  <p>Put lots of neurons side by side, all reading the same input <span class="mono">x</span>. Stack their weight vectors as the <em>rows</em> of a matrix <span class="mono">W</span>, collect the biases into a vector <span class="mono">b</span>, and every neuron computes in one shot:</p>
+  <div class="box math">
+    <span class="tag">A full layer, in one line</span>
+    \[ \mathbf{y} = f(W\mathbf{x} + \mathbf{b}) \]
+    <p>Compare this to the single neuron <span class="mono">y = f(w·x + b)</span>. The <em>only</em> change is lowercase <span class="mono">w</span> (one direction) became uppercase <span class="mono">W</span> (a stack of directions). The matrix multiply <span class="mono">Wx</span> is just "do all the dot products at once," which is exactly what we learned on slide 14.</p>
+  </div>
+  <p>So a layer takes a vector in and hands a vector out — each output component reporting how strongly one neuron's pattern was present, after the bend.</p>
+  <div class="box neel">
+    <span class="tag">You just decoded the field's core notation</span>
+    <p><span class="mono">f(Wx + b)</span> is the single most common expression in all of deep learning. You can now read it fluently. Every model in this course is variations on stacking this.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 23 — DEEP NETWORK ============ -->
+<section class="slide" data-part="Part 2 · From a neuron to a network">
+  <div class="eyebrow"><span>Part 2 · From a neuron to a network</span><span class="dot"></span><span class="snum">Slide 23</span></div>
+  <h2 class="slide-title">Stacking layers → a deep network</h2>
+  <div class="cols wide-right">
+    <div>
+      <p>Feed one layer's output into the next. That's a <strong>deep neural network</strong> (also called a multilayer perceptron, or <b>MLP</b>):</p>
+      <div class="box math" style="margin-top:6px">
+        \[ \mathbf{h}_1 = f(W_1\mathbf{x}+\mathbf{b}_1) \]
+        \[ \mathbf{h}_2 = f(W_2\mathbf{h}_1+\mathbf{b}_2) \]
+        \[ \mathbf{y} = W_3\mathbf{h}_2+\mathbf{b}_3 \]
+      </div>
+      <p>The in-between vectors <span class="mono">h₁, h₂</span> are <b>hidden layers</b> / <span class="term">activations</span> — the network's internal working notes. "Deep" just means "many layers."</p>
+      <p><b>These activations are the main thing interpretability studies.</b> They're the model's thoughts mid-computation.</p>
+    </div>
+    <div class="figwrap">
+      <svg viewBox="0 0 220 210" role="img" aria-label="A feedforward network: input layer, two hidden layers, output">
+        <g fill="#E2EFED" stroke="#0C6E6A">
+          <circle cx="30" cy="60" r="8"/><circle cx="30" cy="105" r="8"/><circle cx="30" cy="150" r="8"/>
+        </g>
+        <g fill="#F6ECD6" stroke="#9A6410">
+          <circle cx="95" cy="45" r="8"/><circle cx="95" cy="85" r="8"/><circle cx="95" cy="125" r="8"/><circle cx="95" cy="165" r="8"/>
+        </g>
+        <g fill="#F6ECD6" stroke="#9A6410">
+          <circle cx="160" cy="60" r="8"/><circle cx="160" cy="105" r="8"/><circle cx="160" cy="150" r="8"/>
+        </g>
+        <circle cx="205" cy="105" r="8" fill="#0C6E6A"/>
+        <g stroke="#C9D3CC" stroke-width=".8">
+          <line x1="38" y1="60" x2="87" y2="45"/><line x1="38" y1="60" x2="87" y2="85"/><line x1="38" y1="60" x2="87" y2="125"/><line x1="38" y1="60" x2="87" y2="165"/>
+          <line x1="38" y1="105" x2="87" y2="45"/><line x1="38" y1="105" x2="87" y2="85"/><line x1="38" y1="105" x2="87" y2="125"/><line x1="38" y1="105" x2="87" y2="165"/>
+          <line x1="38" y1="150" x2="87" y2="45"/><line x1="38" y1="150" x2="87" y2="85"/><line x1="38" y1="150" x2="87" y2="125"/><line x1="38" y1="150" x2="87" y2="165"/>
+          <line x1="103" y1="45" x2="152" y2="60"/><line x1="103" y1="85" x2="152" y2="105"/><line x1="103" y1="125" x2="152" y2="150"/><line x1="103" y1="165" x2="152" y2="60"/>
+          <line x1="103" y1="45" x2="152" y2="105"/><line x1="103" y1="125" x2="152" y2="60"/>
+          <line x1="168" y1="60" x2="197" y2="105"/><line x1="168" y1="105" x2="197" y2="105"/><line x1="168" y1="150" x2="197" y2="105"/>
+        </g>
+        <g font-family="IBM Plex Mono" font-size="9" fill="#8996A0"><text x="16" y="185">input x</text><text x="80" y="188">h₁</text><text x="146" y="185">h₂</text><text x="192" y="185">y</text></g>
+      </svg>
+      <div class="caption">information flows left → right</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 24 — FORWARD PASS BY HAND ============ -->
+<section class="slide" data-part="Part 2 · From a neuron to a network">
+  <div class="eyebrow"><span>Part 2 · From a neuron to a network</span><span class="dot"></span><span class="snum">Slide 24</span></div>
+  <h2 class="slide-title">A tiny forward pass, by hand</h2>
+  <p>Let's run one layer with real numbers so nothing is mysterious. Input <span class="mono">x = [1, 2]</span>, weights and bias:</p>
+  <div class="box math">
+    \[ W=\begin{bmatrix}1 & -1\\ 0 & 2\end{bmatrix},\quad \mathbf{b}=[1,\,-3],\quad f=\text{ReLU} \]
+    <p><b>Step 1 — the matrix multiply</b> (row · input):</p>
+    \[ W\mathbf{x}=\big[(1)(1)+(-1)(2),\ (0)(1)+(2)(2)\big]=[-1,\ 4] \]
+    <p><b>Step 2 — add the bias:</b> \([-1,4]+[1,-3]=[0,\ 1]\)</p>
+    <p><b>Step 3 — apply ReLU</b> (negatives → 0): \(\text{ReLU}([0,1])=[0,\ 1]\)</p>
+  </div>
+  <p>Output: <span class="mono">[0, 1]</span>. This exact three-step dance — <em>multiply, add, bend</em> — repeats through every layer of a model with billions of parameters. A frontier model is this, scaled up and specialised, nothing more exotic.</p>
+  <div class="note box"><span class="tag">Name it</span><p>Running input through the network to get an output is called the <span class="term">forward pass</span>. You'll hear it constantly.</p></div>
+</section>
+
+<!-- ============ SLIDE 25 — NETWORK AS FUNCTION ============ -->
+<section class="slide" data-part="Part 2 · From a neuron to a network">
+  <div class="eyebrow"><span>Part 2 · From a neuron to a network</span><span class="dot"></span><span class="snum">Slide 25</span></div>
+  <h2 class="slide-title">A network is just a big adjustable function</h2>
+  <p>Zoom out. Whatever the size, a network is a function <span class="mono">F</span> that maps an input vector to an output vector, controlled by a huge collection of tunable numbers <span class="mono">θ</span> (theta) — all the weights and biases together, called the <b>parameters</b>.</p>
+  <div class="box math">
+    \[ \mathbf{y} = F(\mathbf{x};\ \theta) \]
+    <p>The semicolon separates the <em>input</em> (<span class="mono">x</span>, changes every time) from the <em>parameters</em> (<span class="mono">θ</span>, fixed after training). Same input + same θ → same output, always. Models are deterministic machines; the apparent randomness comes later, from how we <em>sample</em> their outputs (slide 46).</p>
+  </div>
+  <div class="box note">
+    <span class="tag">The key mental move</span>
+    <p>Two knobs to turn: change <b>x</b> and you ask the model a different question; change <b>θ</b> and you get a different model. <b>Training</b> is the search for good θ. <b>Interpretability</b> is figuring out what a trained θ actually computes. Everything hangs off this distinction.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 26 — PARAMETERS ============ -->
+<section class="slide" data-part="Part 2 · From a neuron to a network">
+  <div class="eyebrow"><span>Part 2 · From a neuron to a network</span><span class="dot"></span><span class="snum">Slide 26</span></div>
+  <h2 class="slide-title">Where "knowledge" lives: parameters</h2>
+  <div class="cols">
+    <div>
+      <p>Every fact, style, and skill a model has is encoded in the numerical values of its parameters. There is no separate database — "the capital of France is Paris" is somehow distributed across many weights.</p>
+      <p>When you hear a model called "8B" or "70B", the <span class="mono">B</span> is <b>billions of parameters</b> — billions of individual numbers in the matrices.</p>
+      <div class="box math" style="margin-top:6px">
+        <span class="tag">Counting them</span>
+        <p>A single layer mapping 4096 → 4096 has a weight matrix with <span class="mono">4096 × 4096 ≈ 16.8 million</span> numbers — one layer. Stack a hundred such blocks and the billions add up fast.</p>
+      </div>
+    </div>
+    <div>
+      <div class="box warn" style="margin-top:0">
+        <span class="tag">Why this makes interp hard</span>
+        <p>You can't just "read" billions of numbers and understand them, any more than you could understand a brain by listing neuron voltages. We need <b>techniques</b> that find structure — directions, features, circuits — inside the parameter soup. Building those techniques is the whole discipline.</p>
+      </div>
+      <div class="box neel">
+        <span class="tag">Model choice matters</span>
+        <p>Neel warns against studying tiny/old models (GPT-2, Pythia) — they're too weak to show interesting behaviour. Real projects use capable open models (Qwen 3.5/3.6, Gemma 3, DeepSeek). The scale is part of what's worth understanding.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 27 — LEARNING = SEARCH ============ -->
+<section class="slide" data-part="Part 3 · How networks learn">
+  <div class="eyebrow"><span>Part 3 · How networks learn</span><span class="dot"></span><span class="snum">Slide 27</span></div>
+  <h2 class="slide-title">Learning = searching for good weights</h2>
+  <p class="lead">A freshly-made network has random parameters and is useless — its outputs are noise. <b>Training</b> is the automatic process that adjusts θ until the outputs are good. Here's the loop at a glance; the next slides unpack each piece.</p>
+  <div class="code"><span class="c"># the training loop, in spirit</span>
+<span class="k">for</span> each batch of examples:
+    prediction = model(input, θ)        <span class="c"># forward pass</span>
+    error      = loss(prediction, truth) <span class="c"># how wrong?</span>
+    gradient   = how error changes with each θ  <span class="c"># backprop</span>
+    θ = θ - learning_rate * gradient    <span class="c"># step downhill</span>
+</div>
+  <p>Repeat this millions of times over huge amounts of text and the random numbers gradually organise themselves into something that predicts well. No human places any individual weight — which is precisely why the result needs interpreting.</p>
+</section>
+
+<!-- ============ SLIDE 28 — LOSS ============ -->
+<section class="slide" data-part="Part 3 · How networks learn">
+  <div class="eyebrow"><span>Part 3 · How networks learn</span><span class="dot"></span><span class="snum">Slide 28</span></div>
+  <h2 class="slide-title">The loss function: measuring wrongness</h2>
+  <div class="cols">
+    <div>
+      <p>To improve, the model needs a single number saying how bad its current output is. That's the <strong>loss</strong> (also "cost" or "error"). Lower is better; training tries to <em>minimise</em> it.</p>
+      <p>For predicting a continuous value, a natural loss is <b>mean squared error</b> — average of the squared gaps between prediction and truth:</p>
+      <div class="box math" style="margin-top:6px">
+        \[ \text{MSE}=\frac{1}{n}\sum_{i=1}^{n}(\hat{y}_i - y_i)^2 \]
+        <p><span class="mono">ŷ</span> ("y-hat") is the prediction, <span class="mono">y</span> the truth. Squaring makes all gaps positive and punishes big misses harder.</p>
+      </div>
+    </div>
+    <div>
+      <div class="box note" style="margin-top:0">
+        <span class="tag">But language isn't a number…</span>
+        <p>A language model doesn't output a quantity — it outputs a <em>guess about which word comes next</em>. So MSE isn't the right ruler. We need a loss designed for "did you put high probability on the correct token?" That's <b>cross-entropy</b>, and to get there we first need <b>softmax</b>. Next slide.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 29 — SOFTMAX + CROSS-ENTROPY ============ -->
+<section class="slide" data-part="Part 3 · How networks learn">
+  <div class="eyebrow"><span>Part 3 · How networks learn</span><span class="dot"></span><span class="snum">Slide 29</span></div>
+  <h2 class="slide-title">Softmax and cross-entropy</h2>
+  <p>The model's raw output is a vector of scores — one per possible next token — called <span class="term">logits</span>. Logits can be any number, positive or negative. <b>Softmax</b> turns them into probabilities that are all positive and sum to 1.</p>
+  <div class="box math">
+    <span class="tag">Softmax</span>
+    \[ \text{softmax}(\mathbf{z})_i=\frac{e^{z_i}}{\sum_j e^{z_j}} \]
+    <p>Exponentiating (<span class="mono">e^{z}</span>) makes every value positive and exaggerates the biggest scores; dividing by the total rescales everything to sum to 1. Example: logits <span class="mono">[2, 1, 0]</span> → roughly <span class="mono">[0.67, 0.24, 0.09]</span>.</p>
+  </div>
+  <div class="box math">
+    <span class="tag">Cross-entropy loss</span>
+    \[ L = -\log \big(p_{\text{correct}}\big) \]
+    <p>Look only at the probability the model gave the <em>actually-correct</em> token. If it said 0.9, loss is small (<span class="mono">−log 0.9 ≈ 0.1</span>). If it said 0.01, loss is large (<span class="mono">−log 0.01 ≈ 4.6</span>). So the model is trained to <b>pour probability onto the right next token</b>. That objective, repeated over the internet, is where all its abilities come from.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 30 — LOSS LANDSCAPE ============ -->
+<section class="slide" data-part="Part 3 · How networks learn">
+  <div class="eyebrow"><span>Part 3 · How networks learn</span><span class="dot"></span><span class="snum">Slide 30</span></div>
+  <h2 class="slide-title">The loss landscape</h2>
+  <div class="cols wide-right">
+    <div>
+      <p>Picture every possible setting of the parameters spread out on a giant map, with <b>height = loss</b>. Good settings sit in <em>valleys</em> (low loss); bad ones on <em>peaks</em>.</p>
+      <p>Training is a hiker in fog trying to reach a valley, able to feel only the slope directly underfoot. It never sees the whole map — it just keeps stepping downhill.</p>
+      <div class="box note" style="margin-top:6px">
+        <span class="tag">A caveat that matters for safety</span>
+        <p>There are <b>many</b> valleys. Two models can both reach low loss by very different internal solutions. This is why "why did the model generalise <em>this</em> way and not that way?" is a live research question — and why <b>emergent misalignment</b> (Chapter 5) is possible at all.</p>
+      </div>
+    </div>
+    <div class="figwrap">
+      <svg viewBox="0 0 220 180" role="img" aria-label="A wavy loss curve with a ball rolling toward the lowest valley">
+        <path d="M15 40 C55 130, 75 60, 110 120 C140 168, 165 90, 205 60" fill="none" stroke="#0C6E6A" stroke-width="2.5"/>
+        <circle cx="72" cy="82" r="7" fill="#9A6410"/>
+        <path d="M72 82 q 12 20 30 34" fill="none" stroke="#9A6410" stroke-width="1.4" stroke-dasharray="3 3"/>
+        <circle cx="112" cy="123" r="4" fill="#A83744"/>
+        <g font-family="IBM Plex Mono" font-size="10" fill="#8996A0">
+          <text x="10" y="170">parameters θ →</text>
+          <text x="150" y="150" fill="#A83744">a minimum</text>
+        </g>
+        <text x="8" y="30" font-family="IBM Plex Mono" font-size="10" fill="#8996A0">loss</text>
+      </svg>
+      <div class="caption">step downhill toward low loss</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 31 — GRADIENTS ============ -->
+<section class="slide" data-part="Part 3 · How networks learn">
+  <div class="eyebrow"><span>Part 3 · How networks learn</span><span class="dot"></span><span class="snum">Slide 31</span></div>
+  <h2 class="slide-title">Gradients: which way is downhill</h2>
+  <div class="cols">
+    <div>
+      <p>A <strong>derivative</strong> answers a simple question: "if I nudge this input up a little, does the output go up or down, and how steeply?" It's the slope of the curve at a point.</p>
+      <ul>
+        <li>Positive slope → increasing the input increases the output.</li>
+        <li>Negative slope → increasing the input <em>decreases</em> the output.</li>
+        <li>Steepness → how fast.</li>
+      </ul>
+      <p>A <strong>gradient</strong> is just "all the derivatives at once" — one per parameter. It's the vector that points in the direction of <em>steepest increase</em> of the loss.</p>
+    </div>
+    <div>
+      <div class="box math" style="margin-top:0">
+        <span class="tag">Notation you'll see</span>
+        \[ \nabla_\theta L \]
+        <p>The upside-down triangle <span class="mono">∇</span> ("nabla") means gradient. Read it: "the gradient of the loss <span class="mono">L</span> with respect to the parameters <span class="mono">θ</span>" — i.e. the list of slopes telling us how each parameter affects the loss.</p>
+      </div>
+      <div class="box note">
+        <span class="tag">The crucial flip</span>
+        <p>The gradient points <em>uphill</em>. To reduce loss, we walk in the <b>opposite</b> direction. That single idea is the entire optimisation strategy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 32 — GRADIENT DESCENT ============ -->
+<section class="slide" data-part="Part 3 · How networks learn">
+  <div class="eyebrow"><span>Part 3 · How networks learn</span><span class="dot"></span><span class="snum">Slide 32</span></div>
+  <h2 class="slide-title">Gradient descent and the learning rate</h2>
+  <p>The update rule that trains essentially every modern model:</p>
+  <div class="box math">
+    <span class="tag">Gradient descent</span>
+    \[ \theta \;\leftarrow\; \theta \;-\; \eta\,\nabla_\theta L \]
+    <p>Read it right-to-left: compute the uphill gradient, multiply by a small number <span class="mono">η</span> (eta, the <b>learning rate</b>), and <em>subtract</em> it from the current parameters. The minus sign is the "walk downhill" flip from the last slide.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <p>The learning rate <span class="mono">η</span> sets step size:</p>
+      <ul>
+        <li>Too <b>large</b> → you leap over valleys, bouncing around, loss explodes.</li>
+        <li>Too <b>small</b> → you creep, training takes forever.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box note" style="margin-top:0">
+        <span class="tag">In practice</span>
+        <p>Real training uses souped-up versions (Adam, etc.) with per-parameter, adaptive step sizes — but they're all "estimate downhill, take a step." The idea is unchanged.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 33 — BACKPROP ============ -->
+<section class="slide" data-part="Part 3 · How networks learn">
+  <div class="eyebrow"><span>Part 3 · How networks learn</span><span class="dot"></span><span class="snum">Slide 33</span></div>
+  <h2 class="slide-title">Backpropagation: assigning blame</h2>
+  <p>A network has billions of parameters. How do we get the gradient for <em>every</em> one efficiently? <strong>Backpropagation</strong> is the algorithm — and the intuition is "assigning blame backwards."</p>
+  <div class="cols wide-left">
+    <div>
+      <p>After the forward pass produces a loss, backprop works <em>backwards</em> from the output to the input, layer by layer, asking at each step: "how much did <em>this</em> parameter contribute to the final error?"</p>
+      <p>It relies on the <b>chain rule</b> from calculus — the rule for slopes of nested functions. You don't need to compute it by hand; libraries (PyTorch) do it automatically. What matters conceptually:</p>
+      <ul>
+        <li>Blame flows from output back toward input.</li>
+        <li>Each parameter gets a gradient = its share of responsibility for the error.</li>
+        <li>Then gradient descent nudges each one to reduce that error.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box note" style="margin-top:0">
+        <span class="tag">Why interp people care</span>
+        <p>Backprop computes how the loss depends on parameters. Several interpretability tools reuse the very same gradient machinery to ask a different question: "how does this <em>output</em> depend on this <em>internal activation</em>?" — the basis of attribution methods you'll meet later. Same math, aimed at understanding rather than training.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 34 — TRAINING LOOP ============ -->
+<section class="slide" data-part="Part 3 · How networks learn">
+  <div class="eyebrow"><span>Part 3 · How networks learn</span><span class="dot"></span><span class="snum">Slide 34</span></div>
+  <h2 class="slide-title">The training loop, end to end</h2>
+  <p>Assemble the pieces from Part 3 into the full cycle:</p>
+  <ol>
+    <li><b>Sample</b> a batch of examples (e.g. chunks of text).</li>
+    <li><b>Forward pass:</b> run them through the model to get predictions (slide 24).</li>
+    <li><b>Compute loss:</b> cross-entropy — how much probability did it put on the right next tokens? (slide 29)</li>
+    <li><b>Backward pass:</b> backprop the gradient of the loss w.r.t. every parameter (slide 33).</li>
+    <li><b>Update:</b> take a small downhill step, <span class="mono">θ ← θ − η∇L</span> (slide 32).</li>
+    <li><b>Repeat</b> — millions to billions of times.</li>
+  </ol>
+  <div class="box note">
+    <span class="tag">Two big phases (preview of later chapters)</span>
+    <p><b>Pretraining:</b> this loop run on enormous piles of internet text to learn "predict the next token" in general. <b>Post-training:</b> further rounds (SFT, RLHF, and more) that shape the pretrained model into a helpful, harmless assistant. Neel's "science of post-training" and "alignment training" areas ask what each phase actually <em>does</em> to the internals.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 35 — GENERALIZATION ============ -->
+<section class="slide" data-part="Part 3 · How networks learn">
+  <div class="eyebrow"><span>Part 3 · How networks learn</span><span class="dot"></span><span class="snum">Slide 35</span></div>
+  <h2 class="slide-title">Overfitting, generalisation, and baselines</h2>
+  <div class="cols">
+    <div>
+      <p>We don't want a model that memorises its training data — we want one that <b>generalises</b> to new inputs. The failure mode where a model aces training data but flops on unseen data is <strong>overfitting</strong>.</p>
+      <p>So we always evaluate on a <b>held-out test set</b> the model never trained on. Train performance is cheap and misleading; test performance is what counts.</p>
+      <div class="box note" style="margin-top:6px">
+        <span class="tag">Deep idea for later</span>
+        <p>Sometimes models generalise <em>further</em> than we intend, in unsafe ways — Neel's "science of generalisation" area. Emergent misalignment (train on insecure code → broadly nasty behaviour) is the poster child. Why one generalisation over another is a real open question.</p>
+      </div>
+    </div>
+    <div>
+      <div class="box neel" style="margin-top:0">
+        <span class="tag">The baseline mindset — Neel repeats this constantly</span>
+        <p>Before believing a fancy result, compare against a dumb alternative: a <b>random</b> vector instead of your special one, a <b>coin flip</b>, "just ask the model," a simple <b>linear probe</b>. If your method barely beats the dumb baseline, you haven't shown what you think.</p>
+        <p>He lists "failing to compare to baselines" as a top reason applications get rejected. Bake it in from day one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 36 — EVERYTHING IS A VECTOR ============ -->
+<section class="slide" data-part="Part 4 · Representations">
+  <div class="eyebrow"><span>Part 4 · Representations — the bridge to interp</span><span class="dot"></span><span class="snum">Slide 36</span></div>
+  <h2 class="slide-title">Everything must become a vector</h2>
+  <p>A network only does arithmetic on numbers. So <em>anything</em> we feed it — a word, a pixel, a sound — must first be turned into a vector. And whatever the network computes about it, mid-flight, is also a vector (an activation). This is why Part 1's geometry <b>is</b> the subject of interpretability.</p>
+  <div class="box note">
+    <span class="tag">The reframing that unlocks the field</span>
+    <p>If words are points in a space, and the model's "thoughts" are points in a space, then <b>meaning has become geometry</b>. Questions like "does the model know this text is a lie?" turn into "is there a direction in this space that lights up for lies?" — a question we can actually test with dot products.</p>
+  </div>
+  <p>The next few slides show <em>why</em> this geometry ends up meaningful, not arbitrary — which is the single most important conceptual payoff of Chapter 1.</p>
+</section>
+
+<!-- ============ SLIDE 37 — ONE-HOT ============ -->
+<section class="slide" data-part="Part 4 · Representations">
+  <div class="eyebrow"><span>Part 4 · Representations — the bridge to interp</span><span class="dot"></span><span class="snum">Slide 37</span></div>
+  <h2 class="slide-title">The naive way: one-hot vectors</h2>
+  <div class="cols">
+    <div>
+      <p>Simplest scheme: give every word its own slot. With a 5-word vocabulary, "cat" might be:</p>
+      <div class="box math" style="margin-top:6px">
+        \[ \text{cat}=[0,0,1,0,0] \]
+        <p>One entry is 1 ("hot"), the rest 0. This is a <span class="term">one-hot vector</span>. It faithfully names the word — but that's <em>all</em> it does.</p>
+      </div>
+      <p>Real vocabularies have ~50,000+ tokens, so these vectors are enormous and almost all zeros.</p>
+    </div>
+    <div>
+      <div class="box warn" style="margin-top:0">
+        <span class="tag">The fatal flaw</span>
+        <p>Every pair of one-hot vectors is perpendicular, so <em>every</em> dot product between different words is 0. To this scheme, "cat" is exactly as similar to "kitten" as it is to "helicopter." All meaning is thrown away — the geometry carries no information. We need something better.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 38 — EMBEDDINGS ============ -->
+<section class="slide" data-part="Part 4 · Representations">
+  <div class="eyebrow"><span>Part 4 · Representations — the bridge to interp</span><span class="dot"></span><span class="snum">Slide 38</span></div>
+  <h2 class="slide-title">Embeddings: meaning as geometry</h2>
+  <p>Instead of a sparse one-hot, give each token a <b>dense</b> vector of a few hundred/thousand real numbers — and <em>let the model learn</em> those numbers during training. This learned vector is the token's <strong>embedding</strong>.</p>
+  <div class="box note">
+    <span class="tag">The remarkable outcome</span>
+    <p>Because these vectors are trained to help predict text, the model discovers that <b>placing related words near each other</b> lowers loss. So after training, "cat" and "kitten" end up close together (large dot product), while "cat" and "helicopter" end up far apart. Similarity in meaning becomes <em>proximity in space</em> — for free, as a byproduct of prediction.</p>
+  </div>
+  <p>Nobody programmed "cat is like kitten." The geometry organised itself because that organisation is <em>useful</em>. This is the first concrete case of the theme: <b>learned representations are meaningful, and their meaning is spatial.</b></p>
+</section>
+
+<!-- ============ SLIDE 39 — KING QUEEN ============ -->
+<section class="slide" data-part="Part 4 · Representations">
+  <div class="eyebrow"><span>Part 4 · Representations — the bridge to interp</span><span class="dot"></span><span class="snum">Slide 39</span></div>
+  <h2 class="slide-title">king − man + woman ≈ queen</h2>
+  <div class="cols wide-right">
+    <div>
+      <p>The famous discovery: not only are similar words close, but <b>relationships</b> show up as consistent <em>directions</em>. Do vector arithmetic on embeddings:</p>
+      <div class="box math" style="margin-top:6px">
+        \[ \text{king} - \text{man} + \text{woman} \approx \text{queen} \]
+      </div>
+      <p>Subtracting "man" and adding "woman" moves you along a <em>gender direction</em>. There's also a consistent "royalty" direction, a "plural" direction, a "past tense" direction, and so on.</p>
+      <p>Meaning isn't just <em>where</em> a point sits — specific concepts correspond to specific <b>directions</b> you can add and subtract.</p>
+    </div>
+    <div class="figwrap">
+      <svg viewBox="0 0 230 200" role="img" aria-label="Four points forming a parallelogram: man to king parallel to woman to queen">
+        <g font-family="IBM Plex Mono" font-size="11">
+          <circle cx="45" cy="150" r="4" fill="#0C6E6A"/><text x="18" y="168" fill="#08514E">man</text>
+          <circle cx="150" cy="130" r="4" fill="#0C6E6A"/><text x="150" y="148" fill="#08514E">king</text>
+          <circle cx="60" cy="70" r="4" fill="#A83744"/><text x="20" y="60" fill="#A83744">woman</text>
+          <circle cx="165" cy="50" r="4" fill="#A83744"/><text x="168" y="44" fill="#A83744">queen</text>
+        </g>
+        <defs><marker id="ag" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#9A6410"/></marker></defs>
+        <line x1="49" y1="147" x2="146" y2="131" stroke="#9A6410" stroke-width="1.8" marker-end="url(#ag)"/>
+        <line x1="63" y1="67" x2="161" y2="52" stroke="#9A6410" stroke-width="1.8" marker-end="url(#ag)"/>
+        <line x1="45" y1="146" x2="59" y2="76" stroke="#8996A0" stroke-width="1" stroke-dasharray="3 3"/>
+        <line x1="150" y1="126" x2="164" y2="56" stroke="#8996A0" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="80" y="112" font-family="IBM Plex Mono" font-size="9" fill="#9A6410">"+ royalty"</text>
+      </svg>
+      <div class="caption">the same "royalty" arrow, twice</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 40 — DISTRIBUTED REPS ============ -->
+<section class="slide" data-part="Part 4 · Representations">
+  <div class="eyebrow"><span>Part 4 · Representations — the bridge to interp</span><span class="dot"></span><span class="snum">Slide 40</span></div>
+  <h2 class="slide-title">Distributed representations → "directions are concepts"</h2>
+  <p>Concepts aren't stored one-per-slot. A single number rarely means "royalty"; instead, concepts are spread across many components as <em>directions</em> — combinations of dimensions. This is a <strong>distributed representation</strong>.</p>
+  <div class="cols">
+    <div>
+      <div class="box note" style="margin-top:0">
+        <span class="tag">Why this is good news for interp</span>
+        <p>If "deception" or "refusal" or "the user is angry" each corresponds to some direction in activation space, then we can <b>read them off with a dot product</b> and <b>push on them by adding a vector</b>. The whole toolkit from Part 1 applies directly to the model's mind.</p>
+      </div>
+    </div>
+    <div>
+      <div class="box warn" style="margin-top:0">
+        <span class="tag">Why it's also hard</span>
+        <p>Models pack far more concepts than they have dimensions, so directions <b>overlap and interfere</b> — the <span class="term">superposition</span> problem (Chapter 3). Untangling overlapping features is what sparse autoencoders (Chapter 5) try to do. The clean picture on slide 39 is real but idealised.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 41 — LINEAR REP HYPOTHESIS ============ -->
+<section class="slide" data-part="Part 4 · Representations">
+  <div class="eyebrow"><span>Part 4 · Representations — the bridge to interp</span><span class="dot"></span><span class="snum">Slide 41</span></div>
+  <h2 class="slide-title">The seed of the Linear Representation Hypothesis</h2>
+  <div class="box note" style="font-size:18px">
+    <span class="tag">The hypothesis (stated properly in Chapter 3)</span>
+    <p style="font-size:19px"><b>Many human-interpretable concepts are represented as linear directions in a model's activation space</b> — so a concept's presence is read by a dot product, and adding its direction pushes the model toward that concept.</p>
+  </div>
+  <p>You've now seen every ingredient of this claim built from scratch: vectors as meaning, dot products as "how much of this concept," addition as "inject this concept." The hypothesis isn't obviously true and isn't <em>always</em> true — but it holds often enough that a huge fraction of working interpretability is built on it.</p>
+  <div class="box neel">
+    <span class="tag">Where the course goes next</span>
+    <p>Nearly every technique in Chapters 4–6 is a way of <em>finding</em> the right direction (probes, SAEs, J-Lens) or <em>using</em> it (steering, patching, monitoring). Chapter 1 exists so that when you meet them, you already understand the machine they operate on and the geometry they exploit.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 42 — WHAT IS AN LM ============ -->
+<section class="slide" data-part="Part 5 · Language models specifically">
+  <div class="eyebrow"><span>Part 5 · Language models, specifically</span><span class="dot"></span><span class="snum">Slide 42</span></div>
+  <h2 class="slide-title">What a language model is, precisely</h2>
+  <p>We can now state it exactly. A language model takes a sequence of tokens and outputs a <b>probability distribution over the next token</b> — a softmax over the whole vocabulary.</p>
+  <div class="box math">
+    \[ P(\text{next token} \mid \text{tokens so far}) \]
+    <p>Read the bar <span class="mono">|</span> as "given." The model reads what's come so far and assigns every possible next token a probability. Training (cross-entropy) pushed those probabilities toward whatever actually came next in real text.</p>
+  </div>
+  <p>To <em>generate</em>, pick a token from that distribution, append it, and ask again. A chatbot answer is nothing more than this repeated hundreds of times — which we make concrete over the next slides.</p>
+</section>
+
+<!-- ============ SLIDE 43 — TOKENIZATION ============ -->
+<section class="slide" data-part="Part 5 · Language models specifically">
+  <div class="eyebrow"><span>Part 5 · Language models, specifically</span><span class="dot"></span><span class="snum">Slide 43</span></div>
+  <h2 class="slide-title">Tokens and tokenization</h2>
+  <div class="cols">
+    <div>
+      <p>Models don't read whole words or single letters — they read <strong>tokens</strong>: common chunks of text, usually sub-word pieces. Splitting text into these chunks is <b>tokenization</b>.</p>
+      <p>Example (chunks shown with <span class="mono">·</span>):</p>
+      <div class="box math" style="margin-top:6px">
+        <p class="mono" style="font-size:15px">"interpretability" → inter · pret · ability</p>
+        <p class="mono" style="font-size:15px">"The cat sat" → The · &nbsp;cat · &nbsp;sat</p>
+      </div>
+      <p>(Leading spaces are often part of a token — <span class="mono">" cat"</span> differs from <span class="mono">"cat"</span>.)</p>
+    </div>
+    <div>
+      <div class="box note" style="margin-top:0">
+        <span class="tag">Why sub-word?</span>
+        <p>It's a compromise: whole-word vocabularies can't handle new/rare words; single characters make sequences painfully long. Sub-word chunks cover any text with a manageable vocabulary (~50k–200k tokens).</p>
+      </div>
+      <div class="box warn">
+        <span class="tag">A real gotcha</span>
+        <p>Weird model behaviour sometimes traces back to tokenization — the classic "why does it think 9.11 &gt; 9.8?" puzzle is partly a token-boundary artifact. <b>Always look at the actual tokens</b> when a model does something strange.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 44 — VOCAB & IDs ============ -->
+<section class="slide" data-part="Part 5 · Language models specifically">
+  <div class="eyebrow"><span>Part 5 · Language models, specifically</span><span class="dot"></span><span class="snum">Slide 44</span></div>
+  <h2 class="slide-title">Vocabulary and token IDs</h2>
+  <p>The full set of tokens a model knows is its <strong>vocabulary</strong>. Each token has a fixed integer <b>ID</b>. Text becomes a list of IDs; each ID looks up that token's embedding vector (slide 38). That's the on-ramp from language into the geometry.</p>
+  <div class="code"><span class="c"># the pipeline into the model</span>
+"The cat"  →  tokens [<span class="n">"The"</span>, <span class="n">" cat"</span>]  →  IDs [464, 3797]
+           →  embeddings [ <span class="k">vec₄₆₄</span>, <span class="k">vec₃₇₉₇</span> ]   <span class="c"># each a long vector</span>
+</div>
+  <p>And the output runs the reverse: the model produces logits over all vocab IDs → softmax → probabilities → pick an ID → look up its text.</p>
+  <div class="box note">
+    <span class="tag">Connect it back</span>
+    <p>The final "logits over the vocabulary" is one big matrix multiply: the model's last activation dotted against one stored direction per token (the <b>unembedding</b> matrix). Reading meaning off a state by dotting it against token directions early, rather than only at the end, is the <b>logit lens</b> — your first real technique, in Chapter 4.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 45 — AUTOREGRESSION ============ -->
+<section class="slide" data-part="Part 5 · Language models specifically">
+  <div class="eyebrow"><span>Part 5 · Language models, specifically</span><span class="dot"></span><span class="snum">Slide 45</span></div>
+  <h2 class="slide-title">Autoregressive generation</h2>
+  <div class="cols wide-right">
+    <div>
+      <p>"Autoregressive" means the model feeds its own output back in as input. One token at a time:</p>
+      <ol>
+        <li>Read the text so far.</li>
+        <li>Predict a distribution over the next token.</li>
+        <li>Pick one; append it.</li>
+        <li>Go back to step 1 with the longer text.</li>
+      </ol>
+      <p>Stop at a special end-of-text token or a length limit. There is no grand plan being unrolled — just the same next-token step, over and over, each one conditioned on everything before it.</p>
+    </div>
+    <div class="figwrap">
+      <svg viewBox="0 0 230 200" role="img" aria-label="Loop: text goes into model, model outputs next token, token is appended, repeat">
+        <rect x="30" y="20" width="150" height="30" rx="6" fill="#E2EFED" stroke="#0C6E6A"/>
+        <text x="45" y="40" font-family="IBM Plex Mono" font-size="11" fill="#08514E">"The cat sat on"</text>
+        <line x1="105" y1="50" x2="105" y2="78" stroke="#8996A0" marker-end="url(#ad)"/>
+        <defs><marker id="ad" markerWidth="8" markerHeight="8" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,8 z" fill="#8996A0"/></marker></defs>
+        <rect x="60" y="82" width="90" height="30" rx="6" fill="#F6ECD6" stroke="#9A6410"/>
+        <text x="88" y="102" font-family="IBM Plex Mono" font-size="11" fill="#9A6410">model</text>
+        <line x1="105" y1="112" x2="105" y2="140" stroke="#8996A0" marker-end="url(#ad)"/>
+        <rect x="70" y="144" width="70" height="28" rx="6" fill="#fff" stroke="#0C6E6A"/>
+        <text x="82" y="163" font-family="IBM Plex Mono" font-size="11" fill="#08514E">" the"</text>
+        <path d="M140 158 C200 158 200 35 180 35" fill="none" stroke="#0C6E6A" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ad2)"/>
+        <defs><marker id="ad2" markerWidth="8" markerHeight="8" refX="4" refY="2" orient="auto"><path d="M0,8 L8,8 L4,0 z" fill="#0C6E6A"/></marker></defs>
+        <text x="150" y="200" font-family="IBM Plex Mono" font-size="9" fill="#8996A0">append &amp; repeat</text>
+      </svg>
+      <div class="caption">predict → append → predict …</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 46 — SAMPLING ============ -->
+<section class="slide" data-part="Part 5 · Language models specifically">
+  <div class="eyebrow"><span>Part 5 · Language models, specifically</span><span class="dot"></span><span class="snum">Slide 46</span></div>
+  <h2 class="slide-title">Sampling: how we pick from the distribution</h2>
+  <p>The model gives probabilities; <em>we</em> choose how to turn them into an actual token. This choice explains why the same prompt can give different answers.</p>
+  <div class="gloss">
+    <dt>greedy</dt><dd>always take the single highest-probability token. Deterministic, but can be repetitive/bland.</dd>
+    <dt>temperature</dt><dd>a knob that flattens or sharpens the distribution before sampling. Low temp ≈ safe &amp; predictable; high temp ≈ diverse &amp; risky. Temp 0 = greedy.</dd>
+    <dt>top-k</dt><dd>only sample from the k most likely tokens, ignore the long tail.</dd>
+    <dt>top-p (nucleus)</dt><dd>sample from the smallest set of tokens whose probabilities sum to p (e.g. 0.9).</dd>
+  </div>
+  <div class="box note">
+    <span class="tag">Why this matters for research</span>
+    <p>The model itself is deterministic (slide 25); the randomness is entirely in sampling. This is what makes <span class="term">resampling</span> (Chapter 5) possible: run the same prompt many times and study the <em>distribution</em> of behaviours — a core tool for interpreting reasoning models, and one Neel's scholars helped establish.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 47 — PRETRAIN VS POSTTRAIN ============ -->
+<section class="slide" data-part="Part 5 · Language models specifically">
+  <div class="eyebrow"><span>Part 5 · Language models, specifically</span><span class="dot"></span><span class="snum">Slide 47</span></div>
+  <h2 class="slide-title">Pretraining vs post-training</h2>
+  <div class="cols">
+    <div>
+      <h3>Pretraining</h3>
+      <p>The long, expensive phase: next-token prediction over vast internet text. Produces a <b>base model</b> — knowledgeable and fluent, but just a text-continuer, not a helpful assistant. It'll happily continue "here are three reasons the earth is flat…"</p>
+      <h3>Post-training</h3>
+      <p>Shorter phases that turn a base model into an assistant:</p>
+      <ul>
+        <li><b>SFT</b> (supervised fine-tuning): imitate curated examples of good responses.</li>
+        <li><b>RLHF</b> / RL: reward responses humans (or a reward model) prefer, and optimise for reward.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box neel" style="margin-top:0">
+        <span class="tag">This is a whole research frontier</span>
+        <p>Post-training creates the <b>assistant persona</b>, most safety behaviour, and — sometimes — the weird stuff. Neel's areas here: <em>science of post-training</em> ("what does each stage actually do?"), <em>alignment training</em> ("can we make models deeply, generalisably aligned?"), and <em>science of model character</em> ("where do a model's values and self-model come from?").</p>
+      </div>
+      <div class="box warn">
+        <span class="tag">Also where trouble hides</span>
+        <p><b>Reward hacking</b> (gaming the reward signal), <b>eval awareness</b> (acting differently when it senses it's being tested), and <b>emergent misalignment</b> all live in or around post-training. Chapters 5–6 dig in.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 48 — ASSEMBLED PICTURE ============ -->
+<section class="slide" data-part="Part 6 · Wrap-up">
+  <div class="eyebrow"><span>Part 6 · Wrap-up</span><span class="dot"></span><span class="snum">Slide 48</span></div>
+  <h2 class="slide-title">The shape of what's inside a model</h2>
+  <p>Assemble everything. A language model, end to end:</p>
+  <div class="code"><span class="n">text</span>
+  → tokenize            <span class="c"># chunks + integer IDs (s.43–44)</span>
+  → embed               <span class="c"># each token → a vector (s.38)</span>
+  → <span class="k">MANY layers</span>          <span class="c"># matrix multiply + bias + bend, stacked (s.22–24)</span>
+      each layer updates the running "thought" vectors (activations)
+  → unembed             <span class="c"># dot final state vs every token direction (s.44)</span>
+  → logits → softmax    <span class="c"># scores → probabilities (s.29)</span>
+  → sample next token   <span class="c"># greedy / temperature / top-p (s.46)</span>
+  → append, repeat      <span class="c"># autoregressive generation (s.45)</span>
+</div>
+  <div class="box note">
+    <span class="tag">The one sentence, earned</span>
+    <p>It's vectors going in, a long stack of "multiply–add–bend" transforming them, and a probability over the next token coming out. Everything impressive is emergent structure inside those activations — and <b>that structure, laid out as directions in space, is what the rest of this course learns to read.</b></p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 49 — GLOSSARY ============ -->
+<section class="slide" data-part="Part 6 · Wrap-up">
+  <div class="eyebrow"><span>Part 6 · Wrap-up</span><span class="dot"></span><span class="snum">Slide 49</span></div>
+  <h2 class="slide-title">Chapter 1 glossary</h2>
+  <div class="gloss" style="font-size:16px">
+    <dt>scalar / vector</dt><dd>a single number / an ordered list of numbers (a point &amp; direction in space).</dd>
+    <dt>dot product</dt><dd>multiply matching components and sum → a similarity score. The field's workhorse.</dd>
+    <dt>matrix</dt><dd>grid of numbers; a function mapping vectors to vectors (a bundle of directions).</dd>
+    <dt>nonlinearity</dt><dd>per-number "bend" (ReLU, sigmoid, GELU) that makes deep stacks expressive.</dd>
+    <dt>neuron</dt><dd>one dot product + bias + bend: <span class="mono">f(w·x+b)</span>.</dd>
+    <dt>layer</dt><dd>many neurons at once: <span class="mono">f(Wx+b)</span>.</dd>
+    <dt>activation</dt><dd>a vector of intermediate values inside the network — the model's "thoughts."</dd>
+    <dt>parameters (θ)</dt><dd>all weights &amp; biases; where learned knowledge lives.</dd>
+    <dt>forward pass</dt><dd>running input through the network to get output.</dd>
+    <dt>loss</dt><dd>a number measuring wrongness (cross-entropy for LMs).</dd>
+    <dt>softmax</dt><dd>turns raw scores (logits) into probabilities that sum to 1.</dd>
+    <dt>gradient (∇L)</dt><dd>the vector of slopes; points uphill in loss.</dd>
+    <dt>gradient descent</dt><dd><span class="mono">θ ← θ − η∇L</span>; step downhill to reduce loss.</dd>
+    <dt>backpropagation</dt><dd>efficient algorithm to get every parameter's gradient (blame flows backward).</dd>
+    <dt>token / embedding</dt><dd>a sub-word chunk / its learned vector.</dd>
+    <dt>logits</dt><dd>raw pre-softmax scores over the vocabulary.</dd>
+    <dt>autoregressive</dt><dd>generate one token at a time, feeding output back as input.</dd>
+    <dt>pre/post-training</dt><dd>learn next-token prediction generally / shape into an aligned assistant.</dd>
+    <dt>linear rep. hypothesis</dt><dd>concepts often = directions in activation space.</dd>
+  </div>
+</section>
+
+<!-- ============ SLIDE 50 — WRAP + PREVIEW ============ -->
+<section class="slide" data-part="Part 6 · Wrap-up">
+  <div class="eyebrow"><span>Part 6 · Wrap-up</span><span class="dot"></span><span class="snum">Slide 50</span></div>
+  <h2 class="slide-title">What you can now do — and what's next</h2>
+  <div class="cols">
+    <div>
+      <h3>You can now…</h3>
+      <ul>
+        <li>read <span class="mono">y = f(Wx + b)</span> and explain every symbol;</li>
+        <li>explain dot product = similarity, and why probing is "just" that;</li>
+        <li>describe how training works (loss → gradient → step);</li>
+        <li>explain why concepts become directions, and state the linear representation hypothesis;</li>
+        <li>trace text → tokens → embeddings → layers → logits → generation.</li>
+      </ul>
+      <p>That's the entire conceptual substrate of mechanistic interpretability. Everything from here is <em>techniques</em> for reading this machine.</p>
+    </div>
+    <div>
+      <div class="box note" style="margin-top:0">
+        <span class="tag">Chapter 2 — The Transformer, from scratch</span>
+        <p>We've treated "many layers" as a black box. Next we open it: the <b>residual stream</b> (the model's shared memory highway), <b>attention</b> (how tokens read from each other — Q/K/V), the MLP blocks, layer norm, and how it all composes. This is the exact architecture behind every model you'll study.</p>
+      </div>
+      <div class="box neel">
+        <span class="tag">Before you move on</span>
+        <p>Test yourself against slide 3's goals. If any feel shaky, revisit that Part — the transformer will lean on all of them, especially the dot product and matrix-multiply intuitions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /stage -->
+
+<!-- ============ NAV ============ -->
+<div id="navbar">
+  <button class="navbtn" id="tocBtn" aria-label="Open contents">☰ Contents</button>
+  <button class="navbtn" id="prevBtn">‹ Prev</button>
+  <span id="counter"><b>1</b> / 50</span>
+  <button class="navbtn" id="nextBtn">Next ›</button>
+</div>
+
+<!-- ============ TOC OVERLAY ============ -->
+<div id="toc" role="dialog" aria-label="Contents">
+  <div class="toc-panel">
+    <h3>Contents</h3>
+    <div class="hint">click any slide to jump · press M or Esc to close</div>
+    <div id="tocList"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  let cur = 0;
+
+  const counter = document.getElementById('counter');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progress = document.getElementById('progress');
+  const toc = document.getElementById('toc');
+  const tocBtn = document.getElementById('tocBtn');
+  const tocList = document.getElementById('tocList');
+
+  function show(i){
+    i = Math.max(0, Math.min(total-1, i));
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    slides[cur].scrollTop = 0;
+    counter.innerHTML = '<b>'+(cur+1)+'</b> / '+total;
+    progress.style.width = ((cur+1)/total*100)+'%';
+    prevBtn.disabled = (cur===0);
+    nextBtn.disabled = (cur===total-1);
+    updateTocCurrent();
+  }
+  function next(){ if(cur<total-1) show(cur+1); }
+  function prev(){ if(cur>0) show(cur-1); }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  document.addEventListener('keydown', function(e){
+    if(toc.classList.contains('open')){
+      if(e.key==='Escape' || e.key==='m' || e.key==='M'){ toggleToc(); }
+      return;
+    }
+    if(e.key==='ArrowRight' || e.key===' ' || e.key==='PageDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft' || e.key==='PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='Home'){ show(0); }
+    else if(e.key==='End'){ show(total-1); }
+    else if(e.key==='m' || e.key==='M'){ toggleToc(); }
+  });
+
+  // build TOC grouped by data-part
+  let html = '';
+  let lastPart = null;
+  slides.forEach(function(s, idx){
+    const part = s.getAttribute('data-part') || '';
+    const titleEl = s.querySelector('.slide-title, h1');
+    let title = titleEl ? titleEl.textContent.trim() : ('Slide '+(idx+1));
+    if(idx===0) title = 'Title';
+    if(part !== lastPart){
+      if(lastPart!==null) html += '</div>';
+      html += '<div class="toc-group"><h5>'+part+'</h5>';
+      lastPart = part;
+    }
+    html += '<div class="toc-item" data-idx="'+idx+'"><span class="ti-n">'+String(idx+1).padStart(2,'0')+'</span><span>'+title+'</span></div>';
+  });
+  html += '</div>';
+  tocList.innerHTML = html;
+
+  tocList.querySelectorAll('.toc-item').forEach(function(el){
+    el.addEventListener('click', function(){
+      show(parseInt(el.getAttribute('data-idx'),10));
+      toggleToc();
+    });
+  });
+  function updateTocCurrent(){
+    tocList.querySelectorAll('.toc-item').forEach(function(el){
+      el.classList.toggle('current', parseInt(el.getAttribute('data-idx'),10)===cur);
+    });
+  }
+  function toggleToc(){ toc.classList.toggle('open'); }
+  tocBtn.addEventListener('click', toggleToc);
+  toc.addEventListener('click', function(e){ if(e.target===toc) toggleToc(); });
+
+  // basic swipe on touch
+  let sx=null;
+  document.addEventListener('touchstart', e=>{ sx=e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', e=>{
+    if(sx===null) return;
+    const dx = e.changedTouches[0].clientX - sx;
+    if(Math.abs(dx)>60){ dx<0 ? next() : prev(); }
+    sx=null;
+  }, {passive:true});
+
+  // render math
+  function renderMath(){
+    if(window.renderMathInElement){
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'\\[', right:'\\]', display:true},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError:false
+      });
+    } else {
+      setTimeout(renderMath, 120);
+    }
+  }
+  window.addEventListener('load', renderMath);
+
+  show(0);
+})();
+</script>
+</body>
+</html>

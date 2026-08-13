@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 7 — Doing the Research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{--bg:#E7EAE5;--surface:#FBFCFA;--ink:#17232E;--muted:#5D6B76;--faint:#8996A0;--line:#D6DCD5;--teal:#0C6E6A;--teal-ink:#08514E;--teal-soft:#E2EFED;--amber:#9A6410;--amber-soft:#F6ECD6;--red:#A83744;--red-soft:#F5E2E4;--shadow:0 18px 50px -24px rgba(20,40,50,.45);--serif:"IBM Plex Serif",Georgia,serif;--sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden}
+#stage{height:100vh;display:flex;align-items:center;justify-content:center;padding:34px 30px 96px}
+.slide{display:none;width:min(1120px,100%);max-height:calc(100vh - 130px);overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:44px 52px 46px;position:relative;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.slide::-webkit-scrollbar{width:9px}.slide::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+.slide.active{display:block;animation:rise .38s cubic-bezier(.2,.7,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.slide::before{content:"";position:absolute;left:0;top:26px;bottom:26px;width:4px;border-radius:4px;background:linear-gradient(var(--teal),var(--teal) 40%,#b9d6d3 40%,#b9d6d3 46%,var(--teal) 46%,var(--teal) 84%,#b9d6d3 84%,#b9d6d3 90%,var(--teal) 90%);opacity:.5}
+.eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-ink);display:flex;gap:12px;align-items:center;margin-bottom:16px}
+.eyebrow .snum{color:var(--faint)}.eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--teal);opacity:.6}
+.slide-title{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3.4vw,40px);line-height:1.12;letter-spacing:-.01em;margin-bottom:8px}
+.slide-title.small{font-size:clamp(23px,2.8vw,32px)}
+.subtitle{color:var(--muted);font-size:18px;margin-bottom:22px;max-width:70ch}
+.slide p{font-size:18px;margin-bottom:14px;max-width:74ch}.slide p.lead{font-size:20px}
+.slide h3{font-family:var(--serif);font-weight:600;font-size:21px;margin:20px 0 8px}
+.slide ul,.slide ol{margin:6px 0 16px 4px;padding-left:22px;max-width:74ch}
+.slide li{font-size:18px;margin-bottom:9px}.slide li::marker{color:var(--teal)}
+strong{font-weight:600}em{color:var(--teal-ink);font-style:italic}.mono{font-family:var(--mono);font-size:.92em}a{color:var(--teal-ink)}
+.term{font-family:var(--mono);font-size:.86em;font-weight:600;background:var(--teal-soft);color:var(--teal-ink);padding:2px 7px;border-radius:6px;white-space:nowrap}
+.box{border-radius:12px;padding:16px 20px;margin:18px 0;font-size:17px}.box p{font-size:17px;margin-bottom:8px}.box p:last-child{margin-bottom:0}
+.box .tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:6px}
+.note{background:var(--teal-soft);border-left:4px solid var(--teal)}.note .tag{color:var(--teal-ink)}
+.math{background:var(--amber-soft);border-left:4px solid var(--amber)}.math .tag{color:var(--amber)}
+.warn{background:var(--red-soft);border-left:4px solid var(--red)}.warn .tag{color:var(--red)}
+.neel{background:#eef2ee;border:1px dashed var(--teal);border-left:4px solid var(--teal)}.neel .tag{color:var(--teal-ink)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;margin:14px 0}
+.cols.wide-left{grid-template-columns:1.3fr 1fr}.cols.wide-right{grid-template-columns:1fr 1.3fr}
+@media(max-width:760px){.cols,.cols.wide-left,.cols.wide-right{grid-template-columns:1fr}}
+.figwrap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}.figwrap svg{max-width:100%;height:auto}
+.caption{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:8px;text-align:center}
+.katex-display{margin:14px 0!important;overflow-x:auto;overflow-y:hidden;padding:4px 0}
+.code{font-family:var(--mono);font-size:14.5px;line-height:1.7;background:#12222b;color:#d7e4e2;border-radius:10px;padding:16px 18px;margin:14px 0;white-space:pre-wrap;overflow-x:auto}
+.code .c{color:#6f8b88}.code .k{color:#7fd1cc}.code .n{color:#e2b872}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px}.pill{font-family:var(--mono);font-size:13px;background:#eef2ee;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink)}
+.gloss{display:grid;grid-template-columns:auto 1fr;gap:10px 20px;margin:10px 0;font-size:17px}.gloss dt{font-family:var(--mono);font-weight:600;color:var(--teal-ink)}.gloss dd{margin:0;color:var(--ink)}
+@media(max-width:640px){.gloss{grid-template-columns:1fr;gap:2px 0}.gloss dd{margin-bottom:10px}}
+.title-slide{display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 200px)}
+.title-slide .kicker{font-family:var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--teal-ink);font-size:13px;margin-bottom:22px}
+.title-slide h1{font-family:var(--serif);font-weight:700;font-size:clamp(34px,6vw,66px);line-height:1.02;letter-spacing:-.02em;margin-bottom:20px}.title-slide h1 .accent{color:var(--teal)}
+.title-slide .tagline{font-size:21px;color:var(--muted);max-width:62ch;margin-bottom:30px}.meta-row{display:flex;flex-wrap:wrap;gap:10px}
+#navbar{position:fixed;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;justify-content:center;gap:14px;background:rgba(231,234,229,.86);backdrop-filter:blur(8px);border-top:1px solid var(--line);z-index:40;padding:0 18px}
+.navbtn{font-family:var(--mono);font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 16px;border-radius:9px;cursor:pointer;transition:all .15s}
+.navbtn:hover{border-color:var(--teal);color:var(--teal-ink)}.navbtn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}.navbtn:disabled{opacity:.35;cursor:not-allowed}
+#counter{font-family:var(--mono);font-size:14px;color:var(--muted);min-width:96px;text-align:center}#counter b{color:var(--ink)}
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0;z-index:50;transition:width .3s}
+#toc{position:fixed;inset:0;background:rgba(18,34,43,.55);backdrop-filter:blur(4px);z-index:60;display:none;padding:40px 20px;overflow-y:auto}#toc.open{display:block}
+.toc-panel{max-width:820px;margin:0 auto;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:28px 30px}
+.toc-panel h3{font-family:var(--serif);font-size:24px;margin-bottom:4px}.toc-panel .hint{font-family:var(--mono);font-size:12px;color:var(--faint);margin-bottom:18px}
+.toc-group{margin-bottom:16px}.toc-group h5{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-ink);margin-bottom:6px}
+.toc-item{display:flex;gap:12px;padding:6px 8px;border-radius:7px;cursor:pointer;font-size:15px}.toc-item:hover{background:var(--teal-soft)}.toc-item .ti-n{font-family:var(--mono);color:var(--faint);min-width:26px}.toc-item.current{background:var(--teal-soft);font-weight:600}
+.kbd{font-family:var(--mono);font-size:12px;background:#eef2ee;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px}
+@media (prefers-reduced-motion:reduce){.slide.active{animation:none}#progress{transition:none}}
+@media(max-width:600px){#stage{padding:16px 10px 88px}.slide{padding:30px 22px 32px}.slide::before{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="stage">
+
+<!-- 1 -->
+<section class="slide active title-slide" data-part="Orientation">
+  <div class="kicker">MATS · Mechanistic Interpretability · Study Deck</div>
+  <h1>Chapter 7<br><span class="accent">Doing</span> the research</h1>
+  <p class="tagline">The capstone. You have the knowledge; now the craft. How research actually works (Explore–Understand–Distill), the discipline that separates real findings from noise, how to use AI as a collaborator without being fooled by it — and the concrete anatomy of the MATS application: the task, the write-up, the executive summary, and the rubric you're being graded on.</p>
+  <div class="meta-row"><span class="pill">~32 slides</span><span class="pill">the craft &amp; the application</span><span class="pill">capstone</span><span class="pill">Chapter 7 of 7</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-part="Orientation">
+  <div class="eyebrow"><span>Orientation</span><span class="dot"></span><span class="snum">Slide 02</span></div>
+  <h2 class="slide-title small">From knowing to doing</h2>
+  <p>Chapters 1–6 built the <em>what</em>: the machine, the concepts, the toolkit, the phenomena, the frontier. This chapter is the <em>how</em> — the part that actually gets you selected.</p>
+  <div class="box neel"><span class="tag">The uncomfortable truth about the application</span><p>A capable AI model can write the code and run the techniques for you. So the application is <b>not</b> a coding test. It's a test of <b>research judgment</b>: can you pick a good question, design honest experiments, distrust your own results, catch your agent's mistakes, and communicate clearly? Everything here targets that.</p></div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-part="Orientation">
+  <div class="eyebrow"><span>Orientation</span><span class="dot"></span><span class="snum">Slide 03</span></div>
+  <h2 class="slide-title">Chapter 7 goals</h2>
+  <ul>
+    <li>Internalise the <b>Explore–Understand–Distill</b> research loop.</li>
+    <li>Practise the disciplines: <b>start simple, baseline everything, distrust exciting results</b>.</li>
+    <li>Learn Neel's <b>#1 piece of advice</b> — sanity-check your AI agent — concretely.</li>
+    <li>Use LLMs as research collaborators <b>without being misled</b> by them.</li>
+    <li>Understand the <b>MATS application</b>: format, timeline, rubric, and common mistakes.</li>
+    <li>Leave with a <b>self-assessment checklist</b> and next steps.</li>
+  </ul>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-part="Part 1 · The research process">
+  <div class="eyebrow"><span>Part 1 · The research process</span><span class="dot"></span><span class="snum">Slide 04</span></div>
+  <h2 class="slide-title">Explore — Understand — Distill</h2>
+  <p>Neel's framework for a research project has three phases. Most people neglect the first and last.</p>
+  <div class="figwrap">
+    <svg viewBox="0 0 520 96" role="img" aria-label="Three phases: explore, understand, distill">
+      <rect x="12" y="30" width="150" height="40" rx="8" fill="#E2EFED" stroke="#0C6E6A"/><text x="45" y="55" font-family="IBM Plex Mono" font-size="12" fill="#08514E">EXPLORE</text>
+      <rect x="185" y="30" width="150" height="40" rx="8" fill="#F6ECD6" stroke="#9A6410"/><text x="212" y="55" font-family="IBM Plex Mono" font-size="12" fill="#9A6410">UNDERSTAND</text>
+      <rect x="358" y="30" width="150" height="40" rx="8" fill="#E2EFED" stroke="#0C6E6A"/><text x="392" y="55" font-family="IBM Plex Mono" font-size="12" fill="#08514E">DISTILL</text>
+      <g stroke="#8996A0"><line x1="162" y1="50" x2="184" y2="50"/><line x1="335" y1="50" x2="357" y2="50"/></g>
+      <text x="30" y="88" font-family="IBM Plex Mono" font-size="8" fill="#8996A0">gain surface area</text><text x="205" y="88" font-family="IBM Plex Mono" font-size="8" fill="#8996A0">form &amp; test hypotheses</text><text x="375" y="88" font-family="IBM Plex Mono" font-size="8" fill="#8996A0">make it legible &amp; true</text>
+    </svg>
+  </div>
+  <p>They're not strictly sequential — you loop back — but knowing which phase you're in keeps you honest about what "progress" means right now.</p>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-part="Part 1 · The research process">
+  <div class="eyebrow"><span>Part 1 · The research process</span><span class="dot"></span><span class="snum">Slide 05</span></div>
+  <h2 class="slide-title">Explore: maximise information per hour</h2>
+  <p>The goal of exploration is <b>surface area</b> — get your hands dirty fast and cheaply to discover what's interesting and what's tractable. Run the model, read outputs and chains-of-thought, poke it, plot things, follow surprises.</p>
+  <div class="box note"><span class="tag">The mindset</span><p>Optimise for <b>information gained per unit time</b>. Prefer many quick, scrappy experiments over one elaborate pipeline. Chase anomalies — a weird output is a lead. Don't over-plan; the map is drawn by walking. This phase is where good taste in <em>what to study</em> develops.</p></div>
+  <div class="box neel"><span class="tag">Common failure</span><p>Skipping exploration and committing to the first idea. The best projects often pivot to something more interesting found while exploring. Budget real time here.</p></div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-part="Part 1 · The research process">
+  <div class="eyebrow"><span>Part 1 · The research process</span><span class="dot"></span><span class="snum">Slide 06</span></div>
+  <h2 class="slide-title">Understand: hypotheses and honest tests</h2>
+  <p>Once you have a lead, shift to <b>understanding</b>: form crisp hypotheses and design experiments that could <em>disprove</em> them. This is where the Chapter 4–5 toolkit and the forensics loop (with ACH) do their work.</p>
+  <ul>
+    <li>State the hypothesis so specifically that an experiment could kill it.</li>
+    <li>Design the experiment that best <em>distinguishes</em> your top hypotheses (not just confirms your favourite).</li>
+    <li>Prefer causal tests (patch/steer) over correlational ones.</li>
+    <li>Keep a running list of alternative explanations and knock them down one by one.</li>
+  </ul>
+  <div class="box neel"><span class="tag">The disposition being tested</span><p>Truth-seeking. "Most results are false, especially exciting ones." The researcher who tries hardest to <em>break</em> their own finding is the one Neel wants.</p></div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-part="Part 1 · The research process">
+  <div class="eyebrow"><span>Part 1 · The research process</span><span class="dot"></span><span class="snum">Slide 07</span></div>
+  <h2 class="slide-title">Distill: the write-up is first-class</h2>
+  <p>Distillation is turning tangled work into a clear, honest, communicable result — and it is <b>not</b> an afterthought. For this application, the write-up largely <em>is</em> the deliverable.</p>
+  <div class="box warn"><span class="tag">The most common own-goal</span><p>Brilliant work, rushed write-up. If the reader can't follow what you did and why it matters, the work might as well not exist. Distillation forces you to confront gaps — often you discover during writing that a claim isn't as solid as you thought. That discovery is the point.</p></div>
+  <div class="box note"><span class="tag">Budget it</span><p>The application explicitly carves out separate write-up time on top of the research hours. Treat writing as real research work, not packaging.</p></div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-part="Part 1 · The research process">
+  <div class="eyebrow"><span>Part 1 · The research process</span><span class="dot"></span><span class="snum">Slide 08</span></div>
+  <h2 class="slide-title">Research taste (and where a mentor adds value)</h2>
+  <p><strong>Research taste</strong> is the judgment for which questions are worth asking, which results are trustworthy, and when to pivot. It's the scarce skill — and the thing the application is really probing.</p>
+  <div class="box note"><span class="tag">How to show taste under time pressure</span><p>Pick a question that is <em>small enough to finish</em> but <em>interesting enough to matter</em>. Show you considered alternatives and chose deliberately. Demonstrate you know what would make the result false. Taste isn't grand vision here — it's a hundred small good calls, made visible in your write-up.</p></div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-part="Part 2 · Doing it well">
+  <div class="eyebrow"><span>Part 2 · Doing it well</span><span class="dot"></span><span class="snum">Slide 09</span></div>
+  <h2 class="slide-title">Discipline 1: start simple</h2>
+  <p>The escalation ladder from Chapter 4, restated as a research value: <b>always try the dumbest thing that could work first.</b></p>
+  <div class="box note"><span class="tag">Why it wins</span><p>Simple methods are faster, easier to trust, and set the <b>baseline</b> everything else must beat. Often the dumb thing just works and you're done. Reaching for SAEs when a prompt or a diff-in-means direction would do is a classic way to waste your limited hours <em>and</em> signal poor judgment.</p></div>
+  <div class="box neel"><span class="tag">Signal value</span><p>Neel explicitly rewards simplicity and "trying dumb things first." An application that shows a simple method working, clearly, beats one drowning in unnecessary machinery.</p></div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-part="Part 2 · Doing it well">
+  <div class="eyebrow"><span>Part 2 · Doing it well</span><span class="dot"></span><span class="snum">Slide 10</span></div>
+  <h2 class="slide-title">Discipline 2: baselines (the drum)</h2>
+  <div class="box warn" style="font-size:18px"><span class="tag">Top rejection reason</span><p style="font-size:19px">Failing to baseline is one of the most common reasons strong-looking applications get rejected. A result without a baseline is <b>uninterpretable</b> — you can't tell if it's impressive or trivial.</p></div>
+  <p>Every claim needs a "compared to what?": a random direction, a prompting baseline, a simpler method, chance performance, an ablation. Before you run the fancy thing, know the number the fancy thing has to beat.</p>
+  <div class="box neel"><span class="tag">The signature question</span><p>"Could I have gotten this by just prompting the model?" — the <em>value-add over prompting Claude myself</em> test. If the honest answer is "yes," report it. Honesty about a null result is worth more than a dressed-up non-result.</p></div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-part="Part 2 · Doing it well">
+  <div class="eyebrow"><span>Part 2 · Doing it well</span><span class="dot"></span><span class="snum">Slide 11</span></div>
+  <h2 class="slide-title">Discipline 3: truth-seeking &amp; skepticism</h2>
+  <p>The core scientific virtue for this field, stated bluntly by Neel: <b>most research results are false, especially the exciting ones.</b> Your job is to be the harshest skeptic of your own work.</p>
+  <ul>
+    <li>When a result excites you, that's the cue to try hardest to break it.</li>
+    <li>Ask "what's the dumbest explanation for this?" and rule it out explicitly.</li>
+    <li>Watch for the ways you're fooling yourself: cherry-picking, p-hacking by trying many things, confirmation bias.</li>
+    <li>Prefer robust, boring-but-true over flashy-but-fragile.</li>
+  </ul>
+  <div class="box note"><span class="tag">How to show it</span><p>In the write-up, explicitly list what would falsify your claim, what you checked, and what you're still unsure about. Visible skepticism is a feature, not a weakness.</p></div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-part="Part 2 · Doing it well">
+  <div class="eyebrow"><span>Part 2 · Doing it well</span><span class="dot"></span><span class="snum">Slide 12</span></div>
+  <h2 class="slide-title">Discipline 4: sanity-check your agent</h2>
+  <div class="box neel" style="font-size:18px"><span class="tag">Neel's #1 piece of advice</span><p style="font-size:19px">You'll use AI agents to write code and run experiments. <b>The single highest-value thing you can do is rigorously sanity-check what your agent produces.</b> Agents confidently produce plausible, subtly-wrong results — and unchecked, those flow straight into false conclusions.</p></div>
+  <p>This is where the human adds value in an age of capable coding models. The agent is fast; <em>you</em> are the one who notices the metric was computed on the wrong split, the "effect" is a plotting bug, or the baseline was accidentally leaking.</p>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-part="Part 2 · Doing it well">
+  <div class="eyebrow"><span>Part 2 · Doing it well</span><span class="dot"></span><span class="snum">Slide 13</span></div>
+  <h2 class="slide-title">How to sanity-check, concretely</h2>
+  <ul>
+    <li><b>Read the raw data.</b> Actually look at individual examples, model outputs, and chains-of-thought — not just the aggregate metric. Most bugs are visible in the raw data.</li>
+    <li><b>Verify load-bearing numbers by hand.</b> Recompute a key statistic two ways. If your headline is one number, be sure of that number.</li>
+    <li><b>Be suspicious of clean/too-good results.</b> 100% accuracy usually means a leak or a bug, not a discovery.</li>
+    <li><b>Check the agent's code does what it says.</b> Read it. Ask "what's the dumbest way this is wrong?" Test on a case with a known answer.</li>
+    <li><b>Re-run with a trivial control</b> (shuffle labels, random direction) and confirm the effect vanishes.</li>
+  </ul>
+  <div class="box note"><span class="tag">The meta-point</span><p>Treat your own pipeline as a model organism you're doing forensics on. Same skepticism, turned inward.</p></div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-part="Part 2 · Doing it well">
+  <div class="eyebrow"><span>Part 2 · Doing it well</span><span class="dot"></span><span class="snum">Slide 14</span></div>
+  <h2 class="slide-title">Discipline 5: prioritise, don't rabbit-hole</h2>
+  <div class="cols">
+    <div>
+      <p>With ~16–20 hours, time discipline is everything. The failure mode is polishing one sub-problem while the main question goes untested.</p>
+      <ul>
+        <li>Regularly ask: "is this the highest-value thing I could be doing right now?"</li>
+        <li>Timebox exploration and infrastructure.</li>
+        <li>Prefer breadth-first: get a rough end-to-end result, then deepen.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box warn" style="margin-top:0"><span class="tag">Infrastructure trap</span><p>Don't spend 8 hours making a perfect experiment harness. Get something scrappy working, produce a result, and only invest in tooling that clearly pays for itself. Yak-shaving is the enemy of a finished project.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-part="Part 2 · Doing it well">
+  <div class="eyebrow"><span>Part 2 · Doing it well</span><span class="dot"></span><span class="snum">Slide 15</span></div>
+  <h2 class="slide-title">Discipline 6: know when to pivot</h2>
+  <p>Not every lead pans out — that's normal and fine. The skill is distinguishing "this needs more digging" from "this is a dead end, move on," and not getting sunk-cost-anchored to a dying idea.</p>
+  <div class="box note"><span class="tag">Heuristics</span><p>Pivot when: the effect keeps shrinking under scrutiny; every explanation you rule out reveals two more confounds; or you've spent your timebox with no traction. A clean pivot to a tractable question — clearly explained — reads as <em>maturity</em>, not failure. A forced, overclaimed result on a doomed question reads as the opposite.</p></div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-part="Part 3 · Using LLMs">
+  <div class="eyebrow"><span>Part 3 · Using LLMs well</span><span class="dot"></span><span class="snum">Slide 16</span></div>
+  <h2 class="slide-title">LLMs as research collaborators</h2>
+  <p>You're expected to use AI tools heavily — for coding, brainstorming, learning, and running experiments. Used well, they're a massive multiplier. The skill is being the <b>senior researcher</b> directing a fast, capable, occasionally-wrong junior.</p>
+  <div class="box note"><span class="tag">What they're great at</span><p>Writing and debugging analysis code, implementing standard techniques, scaffolding experiments, explaining concepts, summarising papers, generating variations of a prompt or dataset. Delegate the mechanical; keep the judgment.</p></div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-part="Part 3 · Using LLMs">
+  <div class="eyebrow"><span>Part 3 · Using LLMs well</span><span class="dot"></span><span class="snum">Slide 17</span></div>
+  <h2 class="slide-title">Fight sycophancy</h2>
+  <p>Models tend to agree with you and validate your ideas — dangerous when you're trying to find the truth. An agent that says "great insight!" about a flawed hypothesis is actively harmful to your research.</p>
+  <div class="box note"><span class="tag">Anti-sycophancy prompting</span><p>Ask for disagreement explicitly: "What's wrong with this idea?" "Argue the opposite." "What would a skeptical reviewer say?" "List the three most likely ways my experiment is buggy." Have the model generate <em>competing</em> hypotheses (ACH again). Treat its agreement as worthless and its critiques as gold.</p></div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-part="Part 3 · Using LLMs">
+  <div class="eyebrow"><span>Part 3 · Using LLMs well</span><span class="dot"></span><span class="snum">Slide 18</span></div>
+  <h2 class="slide-title">Learn actively, not passively</h2>
+  <p>Using an LLM to learn interp fast is great — but passively reading its explanations builds shallow understanding. Engage actively.</p>
+  <ul>
+    <li>Ask it to quiz you; try to answer before revealing.</li>
+    <li>Explain a concept back to it and have it find the gaps.</li>
+    <li>Ask "why" until you hit the real reason, not a plausible-sounding one.</li>
+    <li>Verify its claims against primary sources — LLMs get interp details wrong.</li>
+  </ul>
+  <div class="box note"><span class="tag">Meta-note</span><p>This very course is an LLM-generated study aid. Use it as scaffolding, but pressure-test key claims against original papers and Neel's own writing — especially the frontier material in Chapter 6.</p></div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-part="Part 3 · Using LLMs">
+  <div class="eyebrow"><span>Part 3 · Using LLMs well</span><span class="dot"></span><span class="snum">Slide 19</span></div>
+  <h2 class="slide-title">What LLMs are still bad at</h2>
+  <ul>
+    <li><b>Experiment design</b> — they'll happily run a confounded experiment without flagging it.</li>
+    <li><b>Noticing the interesting anomaly</b> — they optimise for your stated goal, missing the surprising side-observation that's the real find.</li>
+    <li><b>Knowing when a result is too good to be true</b> — they rarely volunteer "this is probably a bug."</li>
+    <li><b>Genuine research taste</b> — choosing what's worth doing.</li>
+  </ul>
+  <div class="box neel"><span class="tag">This gap is your job — and your value-add</span><p>Precisely the things LLMs are bad at are the things the application scores. Your edge is judgment, skepticism, and noticing. Lean into them.</p></div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-part="Part 3 · Using LLMs">
+  <div class="eyebrow"><span>Part 3 · Using LLMs well</span><span class="dot"></span><span class="snum">Slide 20</span></div>
+  <h2 class="slide-title">A fast iteration workflow</h2>
+  <p>Practical setup that keeps you in a tight loop with the model and your agent:</p>
+  <ul>
+    <li>Use a <b>persistent notebook/kernel</b> (Jupyter, or a tmux-persisted session) so activations and models stay loaded — reloading a big model every run kills momentum.</li>
+    <li>Let your coding agent operate against that live kernel so it can run cells, see outputs, and iterate — but <b>you read the outputs too</b>.</li>
+    <li>Keep a scratch log of what you tried and found; it becomes the skeleton of your write-up.</li>
+    <li>Use <b>capable modern open models</b> (Qwen, Gemma, DeepSeek families) — not GPT-2-era models, which are too weak to exhibit the interesting behaviour.</li>
+  </ul>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-part="Part 4 · The application">
+  <div class="eyebrow"><span>Part 4 · The application</span><span class="dot"></span><span class="snum">Slide 21</span></div>
+  <h2 class="slide-title">The task, concretely</h2>
+  <div class="cols">
+    <div>
+      <ul>
+        <li>Roughly <b>16 hours</b> of research (hard cap ~20), plus about <b>2 hours</b> for the write-up.</li>
+        <li>Spend <b>≤5 hours reading</b> — this is a <em>doing</em> task, not a literature review.</li>
+        <li>Deliverable: a <b>write-up</b> plus an <b>executive summary of ≤600 words</b>, with graphs.</li>
+        <li>Use capable open models; heavy AI-tool use is expected.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box warn" style="margin-top:0"><span class="tag">Check the current specifics yourself</span><p>Exact hours, deadlines (there was a base due date with an extension option), and the funnel (a first-round cut → a paid exploration phase → a smaller in-person research phase) come from the official admissions doc. Treat the numbers here as orientation and <b>confirm against the live instructions</b> before you rely on them.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 22 -->
+<section class="slide" data-part="Part 4 · The application">
+  <div class="eyebrow"><span>Part 4 · The application</span><span class="dot"></span><span class="snum">Slide 22</span></div>
+  <h2 class="slide-title">Choosing a Neel-aligned problem</h2>
+  <p>Pull directly from Chapter 6's menu, filtered by his current taste (Chapter 3, slide 20):</p>
+  <div class="cols">
+    <div>
+      <h3>Aim here</h3>
+      <ul>
+        <li>Model forensics of a concrete behaviour</li>
+        <li>Applied monitoring/detection with baselines</li>
+        <li>CoT faithfulness measurement</li>
+        <li>Emergent misalignment / eval awareness / model character</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Avoid as your core</h3>
+      <ul>
+        <li>Building a better SAE</li>
+        <li>Circuit-finding for its own sake</li>
+        <li>Toy models / grokking</li>
+        <li>GPT-2-era models</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box neel"><span class="tag">The filter</span><p>Useful · safety-relevant · baselined · on a capable model · small enough to finish · honest. Hit those and the topic almost picks itself.</p></div>
+</section>
+
+<!-- 23 -->
+<section class="slide" data-part="Part 4 · The application">
+  <div class="eyebrow"><span>Part 4 · The application</span><span class="dot"></span><span class="snum">Slide 23</span></div>
+  <h2 class="slide-title">What good applications share (the rubric)</h2>
+  <div class="gloss" style="font-size:16px">
+    <dt>clarity</dt><dd>a reader with zero context understands what you did, found, and why it matters.</dd>
+    <dt>value-add</dt><dd>you did something beyond what prompting a model would give — human judgment is visible.</dd>
+    <dt>truth-seeking</dt><dd>you stress-tested your own claims and reported honestly, including negatives.</dd>
+    <dt>baselines</dt><dd>every result is measured against a sensible comparison.</dd>
+    <dt>simplicity</dt><dd>the approach is as simple as the question allows; no gratuitous machinery.</dd>
+    <dt>taste</dt><dd>the question is well-chosen — interesting, tractable, aligned to real interests.</dd>
+    <dt>technical soundness</dt><dd>the methods are correct and the code does what you claim.</dd>
+  </div>
+  <p>Notice these are the same virtues drummed throughout the course — this slide is just their consolidation into a grading sheet.</p>
+</section>
+
+<!-- 24 -->
+<section class="slide" data-part="Part 4 · The application">
+  <div class="eyebrow"><span>Part 4 · The application</span><span class="dot"></span><span class="snum">Slide 24</span></div>
+  <h2 class="slide-title">Common mistakes that sink applications</h2>
+  <ul>
+    <li><b>No baselines</b> — the number-one avoidable rejection.</li>
+    <li><b>Overclaiming</b> — stating more than the evidence supports; ignoring alternative explanations.</li>
+    <li><b>Cherry-picking</b> a few qualitative examples and presenting them as a general result (fine only if you're explicitly making an existence-proof claim — Ch3, slide 30).</li>
+    <li><b>Unnecessary complexity</b> — reaching for SAEs/circuits when a probe or prompt would do.</li>
+    <li><b>Not sanity-checking the agent</b> — shipping a plausible but buggy result.</li>
+    <li><b>Rushed, unclear write-up</b> — great work the reader can't follow.</li>
+    <li><b>Wrong-taste topic</b> — a beautiful project on something Neel has cooled on.</li>
+  </ul>
+</section>
+
+<!-- 25 -->
+<section class="slide" data-part="Part 4 · The application">
+  <div class="eyebrow"><span>Part 4 · The application</span><span class="dot"></span><span class="snum">Slide 25</span></div>
+  <h2 class="slide-title">The executive summary (≤600 words)</h2>
+  <p>The exec summary is what gets read first and hardest. Make it stand alone. A reliable structure:</p>
+  <ol>
+    <li><b>The question &amp; why it matters</b> (2–3 sentences). Safety relevance up front.</li>
+    <li><b>What you did</b> — the approach, in plain language.</li>
+    <li><b>What you found</b> — the headline result, with the key number and its baseline.</li>
+    <li><b>A graph or two</b> that carry the finding at a glance.</li>
+    <li><b>Limitations &amp; what you're unsure about</b> — honest, specific.</li>
+    <li><b>What you'd do next</b> — shows research direction.</li>
+  </ol>
+  <div class="box note"><span class="tag">Graphs earn their space</span><p>Every figure should make one point clearly, with axes labelled and the baseline shown. A single clean, honest graph beats five confusing ones.</p></div>
+</section>
+
+<!-- 26 -->
+<section class="slide" data-part="Part 4 · The application">
+  <div class="eyebrow"><span>Part 4 · The application</span><span class="dot"></span><span class="snum">Slide 26</span></div>
+  <h2 class="slide-title">Writing for a reader with zero context</h2>
+  <p>Assume the reader is smart, busy, and knows <em>nothing</em> about your specific project. Clarity is the single most-weighted virtue.</p>
+  <ul>
+    <li><b>Lead with the finding</b>, not the chronology. Don't make them read your whole journey to learn the result.</li>
+    <li><b>Define your terms</b> and state the setup before the analysis.</li>
+    <li><b>One idea per paragraph;</b> topic sentence first.</li>
+    <li><b>Show the load-bearing evidence</b> (a table, a figure, a raw example), not just assertions.</li>
+    <li><b>Write the narrative:</b> here's the question, here's what I did, here's what I found, here's why I believe it, here's what I don't know.</li>
+  </ul>
+  <div class="box neel"><span class="tag">The test</span><p>Could a sharp person outside interp read your summary and correctly restate your finding and its caveats? If not, revise until they can.</p></div>
+</section>
+
+<!-- 27 -->
+<section class="slide" data-part="Part 4 · The application">
+  <div class="eyebrow"><span>Part 4 · The application</span><span class="dot"></span><span class="snum">Slide 27</span></div>
+  <h2 class="slide-title">Show your work — and negative results are fine</h2>
+  <div class="box note"><span class="tag">Two liberating truths</span><p><b>(1)</b> A well-executed <b>negative result</b> ("I expected X, tested it properly, found no effect above baseline") is a genuine, respectable outcome — often more valuable than a shaky positive. <b>(2)</b> Showing your <b>reasoning and dead ends</b> demonstrates the judgment being graded. You're not selling a product; you're demonstrating how you think.</p></div>
+  <p>This takes the pressure off "getting a big result" and puts it where it belongs: on doing honest, clear, well-judged work. That reframing is both truer and calmer.</p>
+</section>
+
+<!-- 28 -->
+<section class="slide" data-part="Part 5 · Putting it together">
+  <div class="eyebrow"><span>Part 5 · Putting it together</span><span class="dot"></span><span class="snum">Slide 28</span></div>
+  <h2 class="slide-title">A worked project shape</h2>
+  <p>Concrete template you could adapt (an applied-interp / forensics flavour):</p>
+  <ol>
+    <li><b>Question:</b> "Can a simple probe detect when [capable open model] is being sycophantic, better than just asking it?"</li>
+    <li><b>Explore:</b> generate sycophantic vs honest cases; read outputs; confirm the behaviour is real and elicitable.</li>
+    <li><b>Understand:</b> train a diff-in-means / probe direction; test it fires on held-out cases; <b>steer</b> it to test causality.</li>
+    <li><b>Baselines:</b> random direction; prompted-classifier ("is this sycophantic?"); input-length control.</li>
+    <li><b>Skeptic pass:</b> dumbest alternative? necessity + sufficiency? leakage? sanity-check the agent's metrics.</li>
+    <li><b>Distill:</b> ≤600-word summary, one clean graph (probe vs baselines), honest limits, next steps.</li>
+  </ol>
+  <p>Small, finishable, safety-relevant, baselined, honest — the whole course in one project.</p>
+</section>
+
+<!-- 29 -->
+<section class="slide" data-part="Part 5 · Putting it together">
+  <div class="eyebrow"><span>Part 5 · Putting it together</span><span class="dot"></span><span class="snum">Slide 29</span></div>
+  <h2 class="slide-title">A suggested 20-hour shape</h2>
+  <div class="gloss" style="font-size:16px">
+    <dt>~2–3 h</dt><dd>focused reading + picking a question (cap reading at 5h total across the project).</dd>
+    <dt>~4–5 h</dt><dd>explore: get the behaviour reproduced, scrappy first experiments, follow surprises.</dd>
+    <dt>~6–7 h</dt><dd>understand: main experiments, causal tests, and — critically — baselines.</dd>
+    <dt>~2–3 h</dt><dd>skeptic pass: sanity-check everything, rule out alternatives, re-run controls.</dd>
+    <dt>~2 h</dt><dd>distill: write the summary, make clean graphs, state limits.</dd>
+  </div>
+  <div class="box warn"><span class="tag">Protect the last third</span><p>The temptation is to research until hour 20 and slap together a write-up. Don't. Reserve the skeptic pass and the distillation — they're where results become trustworthy and legible, and where most of the grade actually lives.</p></div>
+</section>
+
+<!-- 30 -->
+<section class="slide" data-part="Part 5 · Putting it together">
+  <div class="eyebrow"><span>Part 5 · Putting it together</span><span class="dot"></span><span class="snum">Slide 30</span></div>
+  <h2 class="slide-title">Self-assessment checklist</h2>
+  <p>Before you submit, can you answer <em>yes</em> to all of these?</p>
+  <ul>
+    <li>Is my question <b>safety-relevant</b> and aligned with Neel's current interests?</li>
+    <li>Does every claim have a <b>baseline</b> it beats (or an honest "it doesn't")?</li>
+    <li>Did I test <b>causally</b> where I claim causation?</li>
+    <li>Did I <b>sanity-check the agent's</b> code and numbers, and read raw data?</li>
+    <li>Did I try to <b>break my own result</b> and report what I found?</li>
+    <li>Could a <b>zero-context reader</b> follow my summary and restate my finding + caveats?</li>
+    <li>Is my approach as <b>simple</b> as the question allows?</li>
+    <li>Did I state <b>limitations</b> and next steps honestly?</li>
+  </ul>
+</section>
+
+<!-- 31 -->
+<section class="slide" data-part="Part 6 · Course wrap">
+  <div class="eyebrow"><span>Part 6 · Course wrap</span><span class="dot"></span><span class="snum">Slide 31</span></div>
+  <h2 class="slide-title">Where to go next</h2>
+  <div class="cols">
+    <div>
+      <h3>Build fluency</h3>
+      <ul>
+        <li>Work through hands-on interp exercises (e.g. the ARENA curriculum) to turn concepts into code.</li>
+        <li>Read Neel's own writing and get-started guides for his current, specific takes.</li>
+        <li>Reproduce one classic result (a probe, a steering vector, an activation-patching sweep) end-to-end.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Then apply the loop</h3>
+      <ul>
+        <li>Pick one small, taste-aligned question from Chapter 6.</li>
+        <li>Run Explore–Understand–Distill on it.</li>
+        <li>Obsess over baselines, skepticism, and clarity.</li>
+        <li>Confirm the current application logistics against the official doc.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box warn"><span class="tag">One honest reminder</span><p>Parts of this course — especially the frontier methods and any specific numbers, model names, and deadlines — should be verified against primary, current sources. Use the course for structure and intuition; trust papers and the official instructions for specifics.</p></div>
+</section>
+
+<!-- 32 -->
+<section class="slide" data-part="Part 6 · Course wrap">
+  <div class="eyebrow"><span>Part 6 · Course wrap</span><span class="dot"></span><span class="snum">Slide 32</span></div>
+  <h2 class="slide-title">The whole course, in one breath</h2>
+  <div class="box note"><span class="tag">What you built, Ch1 → Ch7</span><p>You went from <b>vectors and dot products</b> → the <b>transformer</b> and its residual stream → <b>what interpretability is</b> (features, superposition, circuits, the safety case) → the <b>working toolkit</b> (lens, DLA, probes, patching, steering, CoT) → <b>sharper methods &amp; real phenomena</b> (SAEs, diffing, reward hacking, emergent misalignment, eval awareness, forensics) → the <b>frontier</b> (J-Lens, NLAs, model character, the research menu) → and finally <b>how to do the research and win the application</b>.</p></div>
+  <div class="box neel"><span class="tag">The one idea beneath all of it</span><p>Reading a model's mind should be <em>useful</em> — so pick a real question, try the simple thing, baseline it, distrust your own excitement, check your agent, and write it up so anyone can follow. That disposition is the whole field, and the whole application. Now go build something small, true, and clear. Good luck.</p></div>
+</section>
+
+</div>
+<div id="navbar"><button class="navbtn" id="tocBtn">☰ Contents</button><button class="navbtn" id="prevBtn">‹ Prev</button><span id="counter"><b>1</b> / 32</span><button class="navbtn" id="nextBtn">Next ›</button></div>
+<div id="toc" role="dialog" aria-label="Contents"><div class="toc-panel"><h3>Contents</h3><div class="hint">click any slide to jump · press M or Esc to close</div><div id="tocList"></div></div></div>
+<script>
+(function(){const slides=Array.from(document.querySelectorAll('.slide'));const total=slides.length;let cur=0;
+const counter=document.getElementById('counter'),prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn'),progress=document.getElementById('progress'),toc=document.getElementById('toc'),tocBtn=document.getElementById('tocBtn'),tocList=document.getElementById('tocList');
+function show(i){i=Math.max(0,Math.min(total-1,i));slides[cur].classList.remove('active');cur=i;slides[cur].classList.add('active');slides[cur].scrollTop=0;counter.innerHTML='<b>'+(cur+1)+'</b> / '+total;progress.style.width=((cur+1)/total*100)+'%';prevBtn.disabled=(cur===0);nextBtn.disabled=(cur===total-1);updateTocCurrent();}
+function next(){if(cur<total-1)show(cur+1);}function prev(){if(cur>0)show(cur-1);}
+prevBtn.addEventListener('click',prev);nextBtn.addEventListener('click',next);
+document.addEventListener('keydown',function(e){if(toc.classList.contains('open')){if(e.key==='Escape'||e.key==='m'||e.key==='M'){toggleToc();}return;}if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next();}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}else if(e.key==='Home'){show(0);}else if(e.key==='End'){show(total-1);}else if(e.key==='m'||e.key==='M'){toggleToc();}});
+let html='',lastPart=null;slides.forEach(function(s,idx){const part=s.getAttribute('data-part')||'';const t=s.querySelector('.slide-title, h1');let title=t?t.textContent.trim():('Slide '+(idx+1));if(idx===0)title='Title';if(part!==lastPart){if(lastPart!==null)html+='</div>';html+='<div class="toc-group"><h5>'+part+'</h5>';lastPart=part;}html+='<div class="toc-item" data-idx="'+idx+'"><span class="ti-n">'+String(idx+1).padStart(2,'0')+'</span><span>'+title+'</span></div>';});
+html+='</div>';tocList.innerHTML=html;
+tocList.querySelectorAll('.toc-item').forEach(function(el){el.addEventListener('click',function(){show(parseInt(el.getAttribute('data-idx'),10));toggleToc();});});
+function updateTocCurrent(){tocList.querySelectorAll('.toc-item').forEach(function(el){el.classList.toggle('current',parseInt(el.getAttribute('data-idx'),10)===cur);});}
+function toggleToc(){toc.classList.toggle('open');}tocBtn.addEventListener('click',toggleToc);toc.addEventListener('click',function(e){if(e.target===toc)toggleToc();});
+let sx=null;document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});document.addEventListener('touchend',e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>60){dx<0?next():prev();}sx=null;},{passive:true});
+function renderMath(){if(window.renderMathInElement){renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});}else{setTimeout(renderMath,120);}}
+window.addEventListener('load',renderMath);show(0);})();
+</script>
+</body>
+</html>

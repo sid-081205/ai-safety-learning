@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 4 — Foundational Techniques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{--bg:#E7EAE5;--surface:#FBFCFA;--ink:#17232E;--muted:#5D6B76;--faint:#8996A0;--line:#D6DCD5;--teal:#0C6E6A;--teal-ink:#08514E;--teal-soft:#E2EFED;--amber:#9A6410;--amber-soft:#F6ECD6;--red:#A83744;--red-soft:#F5E2E4;--shadow:0 18px 50px -24px rgba(20,40,50,.45);--serif:"IBM Plex Serif",Georgia,serif;--sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden}
+#stage{height:100vh;display:flex;align-items:center;justify-content:center;padding:34px 30px 96px}
+.slide{display:none;width:min(1120px,100%);max-height:calc(100vh - 130px);overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:44px 52px 46px;position:relative;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.slide::-webkit-scrollbar{width:9px}.slide::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+.slide.active{display:block;animation:rise .38s cubic-bezier(.2,.7,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.slide::before{content:"";position:absolute;left:0;top:26px;bottom:26px;width:4px;border-radius:4px;background:linear-gradient(var(--teal),var(--teal) 40%,#b9d6d3 40%,#b9d6d3 46%,var(--teal) 46%,var(--teal) 84%,#b9d6d3 84%,#b9d6d3 90%,var(--teal) 90%);opacity:.5}
+.eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-ink);display:flex;gap:12px;align-items:center;margin-bottom:16px}
+.eyebrow .snum{color:var(--faint)}.eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--teal);opacity:.6}
+.slide-title{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3.4vw,40px);line-height:1.12;letter-spacing:-.01em;margin-bottom:8px}
+.slide-title.small{font-size:clamp(23px,2.8vw,32px)}
+.subtitle{color:var(--muted);font-size:18px;margin-bottom:22px;max-width:70ch}
+.slide p{font-size:18px;margin-bottom:14px;max-width:74ch}.slide p.lead{font-size:20px}
+.slide h3{font-family:var(--serif);font-weight:600;font-size:21px;margin:20px 0 8px}
+.slide ul,.slide ol{margin:6px 0 16px 4px;padding-left:22px;max-width:74ch}
+.slide li{font-size:18px;margin-bottom:9px}.slide li::marker{color:var(--teal)}
+strong{font-weight:600}em{color:var(--teal-ink);font-style:italic}.mono{font-family:var(--mono);font-size:.92em}a{color:var(--teal-ink)}
+.term{font-family:var(--mono);font-size:.86em;font-weight:600;background:var(--teal-soft);color:var(--teal-ink);padding:2px 7px;border-radius:6px;white-space:nowrap}
+.box{border-radius:12px;padding:16px 20px;margin:18px 0;font-size:17px}.box p{font-size:17px;margin-bottom:8px}.box p:last-child{margin-bottom:0}
+.box .tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:6px}
+.note{background:var(--teal-soft);border-left:4px solid var(--teal)}.note .tag{color:var(--teal-ink)}
+.math{background:var(--amber-soft);border-left:4px solid var(--amber)}.math .tag{color:var(--amber)}
+.warn{background:var(--red-soft);border-left:4px solid var(--red)}.warn .tag{color:var(--red)}
+.neel{background:#eef2ee;border:1px dashed var(--teal);border-left:4px solid var(--teal)}.neel .tag{color:var(--teal-ink)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;margin:14px 0}
+.cols.wide-left{grid-template-columns:1.3fr 1fr}.cols.wide-right{grid-template-columns:1fr 1.3fr}
+@media(max-width:760px){.cols,.cols.wide-left,.cols.wide-right{grid-template-columns:1fr}}
+.figwrap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}.figwrap svg{max-width:100%;height:auto}
+.caption{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:8px;text-align:center}
+.katex-display{margin:14px 0!important;overflow-x:auto;overflow-y:hidden;padding:4px 0}
+.code{font-family:var(--mono);font-size:14.5px;line-height:1.7;background:#12222b;color:#d7e4e2;border-radius:10px;padding:16px 18px;margin:14px 0;white-space:pre-wrap;overflow-x:auto}
+.code .c{color:#6f8b88}.code .k{color:#7fd1cc}.code .n{color:#e2b872}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px}.pill{font-family:var(--mono);font-size:13px;background:#eef2ee;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink)}
+.gloss{display:grid;grid-template-columns:auto 1fr;gap:10px 20px;margin:10px 0;font-size:17px}.gloss dt{font-family:var(--mono);font-weight:600;color:var(--teal-ink)}.gloss dd{margin:0;color:var(--ink)}
+@media(max-width:640px){.gloss{grid-template-columns:1fr;gap:2px 0}.gloss dd{margin-bottom:10px}}
+.title-slide{display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 200px)}
+.title-slide .kicker{font-family:var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--teal-ink);font-size:13px;margin-bottom:22px}
+.title-slide h1{font-family:var(--serif);font-weight:700;font-size:clamp(34px,6vw,66px);line-height:1.02;letter-spacing:-.02em;margin-bottom:20px}.title-slide h1 .accent{color:var(--teal)}
+.title-slide .tagline{font-size:21px;color:var(--muted);max-width:62ch;margin-bottom:30px}.meta-row{display:flex;flex-wrap:wrap;gap:10px}
+#navbar{position:fixed;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;justify-content:center;gap:14px;background:rgba(231,234,229,.86);backdrop-filter:blur(8px);border-top:1px solid var(--line);z-index:40;padding:0 18px}
+.navbtn{font-family:var(--mono);font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 16px;border-radius:9px;cursor:pointer;transition:all .15s}
+.navbtn:hover{border-color:var(--teal);color:var(--teal-ink)}.navbtn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}.navbtn:disabled{opacity:.35;cursor:not-allowed}
+#counter{font-family:var(--mono);font-size:14px;color:var(--muted);min-width:96px;text-align:center}#counter b{color:var(--ink)}
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0;z-index:50;transition:width .3s}
+#toc{position:fixed;inset:0;background:rgba(18,34,43,.55);backdrop-filter:blur(4px);z-index:60;display:none;padding:40px 20px;overflow-y:auto}#toc.open{display:block}
+.toc-panel{max-width:820px;margin:0 auto;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:28px 30px}
+.toc-panel h3{font-family:var(--serif);font-size:24px;margin-bottom:4px}.toc-panel .hint{font-family:var(--mono);font-size:12px;color:var(--faint);margin-bottom:18px}
+.toc-group{margin-bottom:16px}.toc-group h5{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-ink);margin-bottom:6px}
+.toc-item{display:flex;gap:12px;padding:6px 8px;border-radius:7px;cursor:pointer;font-size:15px}.toc-item:hover{background:var(--teal-soft)}.toc-item .ti-n{font-family:var(--mono);color:var(--faint);min-width:26px}.toc-item.current{background:var(--teal-soft);font-weight:600}
+.kbd{font-family:var(--mono);font-size:12px;background:#eef2ee;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px}
+@media (prefers-reduced-motion:reduce){.slide.active{animation:none}#progress{transition:none}}
+@media(max-width:600px){#stage{padding:16px 10px 88px}.slide{padding:30px 22px 32px}.slide::before{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="stage">
+
+<!-- 1 -->
+<section class="slide active title-slide" data-part="Orientation">
+  <div class="kicker">MATS · Mechanistic Interpretability · Study Deck</div>
+  <h1>Chapter 4<br><span class="accent">Foundational</span> techniques</h1>
+  <p class="tagline">The hands-on toolkit. Six techniques you'll actually run: the logit lens, direct logit attribution, linear probes, activation patching, steering vectors, and chain-of-thought faithfulness. Each is grounded in the geometry and architecture you already own — and each comes with the baselines and skepticism that separate a real result from a mirage.</p>
+  <div class="meta-row"><span class="pill">~36 slides</span><span class="pill">undergrad-accessible</span><span class="pill">the working toolkit</span><span class="pill">Chapter 4 of 7</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-part="Orientation">
+  <div class="eyebrow"><span>Orientation</span><span class="dot"></span><span class="snum">Slide 02</span></div>
+  <h2 class="slide-title small">The "start simple" ethos</h2>
+  <p>Before any technique: the order you reach for tools matters as much as the tools themselves. Neel's most repeated advice is <b>try the dumbest thing first.</b></p>
+  <div class="box neel"><span class="tag">The escalation ladder</span><p><b>1.</b> Just prompt the model / read its chain-of-thought. → <b>2.</b> A simple linear probe or the logit lens. → <b>3.</b> Activation patching / steering. → <b>4.</b> Heavy machinery (SAEs, custom circuits). Climb only as high as the question forces you. Most good projects live on rungs 1–3.</p></div>
+  <p>This chapter presents techniques roughly in that order of complexity. Notice how much you can learn from the cheap ones before the expensive ones earn their keep.</p>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-part="Orientation">
+  <div class="eyebrow"><span>Orientation</span><span class="dot"></span><span class="snum">Slide 03</span></div>
+  <h2 class="slide-title">Chapter 4 goals</h2>
+  <ul>
+    <li>Run the <b>logit lens</b> in your head: project the residual stream to vocabulary at any layer.</li>
+    <li>Use <b>direct logit attribution</b> to say which component pushed which token.</li>
+    <li>Train and — crucially — <b>correctly interpret</b> a linear probe, including its traps.</li>
+    <li>Design an <b>activation patching</b> experiment: clean run, corrupted run, swap, measure.</li>
+    <li>Build a <b>steering vector</b> and test a direction causally.</li>
+    <li>Explain <b>CoT faithfulness</b> and how to test whether reasoning is real.</li>
+  </ul>
+  <div class="box note"><span class="tag">Recurring refrain</span><p>Every technique gets a "baselines &amp; pitfalls" treatment. A technique you can run but can't sanity-check is a liability, not a skill.</p></div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-part="Part 1 · Lenses">
+  <div class="eyebrow"><span>Part 1 · Reading the stream — lenses</span><span class="dot"></span><span class="snum">Slide 04</span></div>
+  <h2 class="slide-title">The logit lens</h2>
+  <p>The simplest window into a model. Recall (Chapter 2) that the unembedding <span class="mono">W_U</span> turns the <em>final</em> residual vector into logits. The logit lens just applies <span class="mono">W_U</span> to the residual stream at an <b>earlier</b> layer.</p>
+  <div class="box math"><span class="tag">The whole method</span>\[ \text{logit lens at layer }\ell = W_U \cdot \text{residual}_\ell \]
+  <p>Because the residual stream lives in one consistent space (Chapter 2, slide 33), this is legal at any depth. You get "what token would the model predict if it had to answer <em>right now</em>, from layer ℓ."</p></div>
+  <p>No training, a few lines of code, and you can watch the model's guess evolve layer by layer.</p>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-part="Part 1 · Lenses">
+  <div class="eyebrow"><span>Part 1 · Reading the stream — lenses</span><span class="dot"></span><span class="snum">Slide 05</span></div>
+  <h2 class="slide-title">What the logit lens shows — and its limits</h2>
+  <div class="cols wide-left">
+    <div>
+      <p>Typical finding: the correct answer's probability is near zero in early layers, then climbs and locks in over the middle-to-late layers. You can literally see <em>where</em> in depth a fact gets retrieved or a decision made.</p>
+      <div class="box warn" style="margin-top:6px"><span class="tag">Limits — don't overtrust it</span><p>It assumes early-layer representations are already in the "final answer" coordinate system, which isn't quite true — early layers may encode things the unembedding can't read yet. So the logit lens can be <b>blurry or misleading</b> in early layers, and sometimes shows nothing where information genuinely exists in a different form.</p></div>
+    </div>
+    <div class="figwrap">
+      <svg viewBox="0 0 210 175" role="img" aria-label="Probability of correct token rising across layers">
+        <line x1="30" y1="20" x2="30" y2="145" stroke="#B7C2Bb"/><line x1="30" y1="145" x2="195" y2="145" stroke="#B7C2Bb"/>
+        <polyline points="30,140 60,138 90,130 110,95 130,55 160,35 190,30" fill="none" stroke="#0C6E6A" stroke-width="2.5"/>
+        <g font-family="IBM Plex Mono" font-size="9" fill="#8996A0"><text x="2" y="30">P(correct)</text><text x="120" y="160">layer →</text></g>
+        <text x="120" y="50" font-family="IBM Plex Mono" font-size="9" fill="#08514E">answer locks in</text>
+      </svg>
+      <div class="caption">watch the prediction form</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-part="Part 1 · Lenses">
+  <div class="eyebrow"><span>Part 1 · Reading the stream — lenses</span><span class="dot"></span><span class="snum">Slide 06</span></div>
+  <h2 class="slide-title">The tuned lens: a learned upgrade</h2>
+  <p>The <strong>tuned lens</strong> fixes the logit lens's early-layer blurriness by learning a small per-layer correction (an <em>affine</em> map) that translates each layer's representation into the final coordinate system before unembedding.</p>
+  <div class="box note"><span class="tag">Trade-off</span><p>More faithful readouts across depth, at the cost of a little training and the risk that the learned map "invents" structure that wasn't really there (a probing-style caveat — slide 13). Rule of thumb: logit lens for a quick look; tuned lens when you need trustworthy early-layer readings. Both are cheap relative to what they reveal.</p></div>
+  <p>These "lenses" are the ancestors of the cutting-edge readout methods (J-Lens, NLAs) in Chapter 6 — all variations on "decode the residual stream into something human-readable."</p>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-part="Part 2 · Attribution">
+  <div class="eyebrow"><span>Part 2 · Attribution</span><span class="dot"></span><span class="snum">Slide 07</span></div>
+  <h2 class="slide-title">Direct logit attribution (DLA)</h2>
+  <p>Question: <em>which component pushed the model toward this particular token?</em> DLA answers it by exploiting the residual stream's additivity (Chapter 2, slide 32).</p>
+  <div class="box math"><span class="tag">The idea</span><p>The final logit for a token is a dot product of the final residual state with that token's unembedding direction. Since the residual state is a <b>sum</b> of every component's contribution, the logit is also a sum: each component contributes its own <span class="mono">(its output) · (token direction)</span>. Read off the per-component terms → you know who voted for the token, and how much.</p></div>
+  <p>So you can produce a ranked list: "head 9.6 contributed +2.1 to the logit for 'Paris,' MLP 10 contributed +0.8, head 3.2 contributed −0.4." Attribution without any intervention.</p>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-part="Part 2 · Attribution">
+  <div class="eyebrow"><span>Part 2 · Attribution</span><span class="dot"></span><span class="snum">Slide 08</span></div>
+  <h2 class="slide-title">DLA in practice — and its blind spot</h2>
+  <div class="cols">
+    <div>
+      <p>DLA is a fast way to localise which late-layer components most directly move a logit. Great first pass for "who's responsible for this output?"</p>
+      <div class="box warn" style="margin-top:6px"><span class="tag">The blind spot</span><p>DLA only sees <b>direct</b> effects — a component that writes straight to the logit. A component that matters <em>indirectly</em> (it sets up a feature that a later component uses) contributes ~0 in DLA yet may be essential. DLA under-credits early and indirect contributors.</p></div>
+    </div>
+    <div>
+      <div class="box note" style="margin-top:0"><span class="tag">The fix</span><p>For indirect effects you need <b>causal</b> methods that trace through the network — activation patching and path patching (Part 4). DLA tells you the direct voters; patching tells you the whole causal chain. Use DLA to generate hypotheses, patching to confirm them.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-part="Part 3 · Probing">
+  <div class="eyebrow"><span>Part 3 · Probing</span><span class="dot"></span><span class="snum">Slide 09</span></div>
+  <h2 class="slide-title">Linear probes</h2>
+  <p>A <strong>linear probe</strong> tests whether a concept is linearly represented at some layer. You take activations from many inputs, label them (concept present / absent), and train a simple linear classifier — literally, learn a direction <span class="mono">w</span> such that <span class="mono">w · activation</span> is high when the concept is present.</p>
+  <div class="box math"><span class="tag">A probe is one dot product</span>\[ \text{score} = \mathbf{w}\cdot\mathbf{h} + b \quad\rightarrow\quad \text{concept present if score}>0 \]
+  <p>This is exactly the "read off a concept with a dot product" idea from Chapter 1, slide 12 — now with <span class="mono">w</span> found by fitting labelled data instead of being handed to you.</p></div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-part="Part 3 · Probing">
+  <div class="eyebrow"><span>Part 3 · Probing</span><span class="dot"></span><span class="snum">Slide 10</span></div>
+  <h2 class="slide-title">Training a probe (the recipe)</h2>
+  <ol>
+    <li>Pick a layer and a concept ("text is French," "user is angry," "answer will be refused").</li>
+    <li>Gather inputs with known labels; run the model; save the activation at that layer for each.</li>
+    <li>Fit a linear classifier (logistic regression) from activation → label.</li>
+    <li>Evaluate on <b>held-out</b> data — accuracy tells you how linearly decodable the concept is there.</li>
+  </ol>
+  <div class="box note"><span class="tag">What a good result means</span><p>High held-out accuracy ⇒ the concept is (linearly) <em>present</em> in the representation at that layer. That's genuinely useful — it's evidence for the linear representation hypothesis in this specific case, and gives you a direction to steer or monitor with.</p></div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-part="Part 3 · Probing">
+  <div class="eyebrow"><span>Part 3 · Probing</span><span class="dot"></span><span class="snum">Slide 11</span></div>
+  <h2 class="slide-title">The probing trap you must internalise</h2>
+  <div class="box warn" style="font-size:18px"><span class="tag">Present ≠ used</span><p style="font-size:19px">A probe finding a concept proves the information is <b>there</b>. It does <b>not</b> prove the model <b>uses</b> it for anything. Powerful probes can extract information the model itself ignores.</p></div>
+  <p>Worse, a sufficiently expressive probe can pick up on spurious correlations in your dataset rather than a real feature. "My probe decodes deception with 95% accuracy" might mean "my deceptive examples happened to be longer."</p>
+  <div class="box neel"><span class="tag">Why Neel cares</span><p>Confusing "decodable" with "causally used" is one of the most common overclaims in interp. Demonstrating <em>use</em> requires an <b>intervention</b> (Part 4). Probing generates the hypothesis; causal methods earn the claim.</p></div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-part="Part 3 · Probing">
+  <div class="eyebrow"><span>Part 3 · Probing</span><span class="dot"></span><span class="snum">Slide 12</span></div>
+  <h2 class="slide-title">Baselines for probes</h2>
+  <p>Because probes over-claim so easily, they demand baselines. Standard ones:</p>
+  <ul>
+    <li><b>Random direction:</b> does a random <span class="mono">w</span> get near your accuracy? If so, your "feature" may be an artefact of the data's structure.</li>
+    <li><b>Control task:</b> can the probe also fit random labels? If a probe can memorise noise, high accuracy on your real task means less.</li>
+    <li><b>Simple features:</b> can bag-of-words or input length predict the label without the model at all? If so, you haven't shown the <em>model</em> represents it.</li>
+    <li><b>Layer sweep:</b> where does accuracy peak? A sensible depth-profile is reassuring; flat-everywhere is suspicious.</li>
+  </ul>
+  <div class="box note"><span class="tag">Keep it in scope</span><p>Probes are still fantastic — cheap, fast, first rung of the ladder. Just report them with baselines and phrase conclusions as "linearly decodable," not "the model thinks."</p></div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-part="Part 3 · Probing">
+  <div class="eyebrow"><span>Part 3 · Probing</span><span class="dot"></span><span class="snum">Slide 13</span></div>
+  <h2 class="slide-title">Probes as a monitoring tool</h2>
+  <p>Beyond analysis, probes are a leading candidate for <b>practical safety monitoring</b>: train a probe for "harmful intent," "the model is about to hallucinate," or "eval awareness," then watch it fire at runtime — a cheap internal alarm.</p>
+  <div class="box neel"><span class="tag">This is squarely in Neel's "applied interp"</span><p>A probe-based monitor that beats a prompted-classifier baseline on a real detection task is exactly the kind of <em>pragmatic, useful, baselined</em> result he's excited by. If you're hunting for a project shape, "can a simple probe reliably detect X, better than just asking the model?" is a strong template.</p></div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-part="Part 4 · Causal interventions">
+  <div class="eyebrow"><span>Part 4 · Causal interventions</span><span class="dot"></span><span class="snum">Slide 14</span></div>
+  <h2 class="slide-title">The core upgrade: intervene, don't just watch</h2>
+  <p>Everything so far has been mostly observational. Now the gold standard (Chapter 3, slide 25): <b>change something inside the model and measure the effect on the output.</b> This is what lets you claim causation, not correlation.</p>
+  <div class="box note"><span class="tag">The unfair advantage of interp</span><p>Unlike a neuroscientist, you can freely read, write, freeze, and swap any activation, and re-run as many times as you like with perfect control. Causal experiments that are impossible on a brain are a few lines of code on a model. This is the field's core methodological superpower — use it.</p></div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-part="Part 4 · Causal interventions">
+  <div class="eyebrow"><span>Part 4 · Causal interventions</span><span class="dot"></span><span class="snum">Slide 15</span></div>
+  <h2 class="slide-title">Activation patching: the setup</h2>
+  <p>The workhorse causal method. You need two inputs that differ in the thing you care about:</p>
+  <div class="cols">
+    <div>
+      <div class="box note" style="margin-top:0"><span class="tag">Clean run</span><p><span class="mono">"The Eiffel Tower is in ___"</span> → model says "Paris." Save all internal activations.</p></div>
+    </div>
+    <div>
+      <div class="box warn" style="margin-top:0"><span class="tag">Corrupted run</span><p><span class="mono">"The Colosseum is in ___"</span> → model says "Rome." A minimal edit that flips the answer.</p></div>
+    </div>
+  </div>
+  <p>Now the experiment: take a single activation (one component, one position) from the <b>clean</b> run and paste it into the <b>corrupted</b> run, leaving everything else corrupted. Then see how much the output moves back toward "Paris."</p>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-part="Part 4 · Causal interventions">
+  <div class="eyebrow"><span>Part 4 · Causal interventions</span><span class="dot"></span><span class="snum">Slide 16</span></div>
+  <h2 class="slide-title">Activation patching: the mechanics</h2>
+  <div class="cols wide-left">
+    <div>
+      <p>For each component/position you suspect, run the corrupted input but <b>overwrite</b> that one activation with the value it had in the clean run. Measure the recovery of the clean answer.</p>
+      <ul>
+        <li><b>Big recovery</b> → that activation <em>carries</em> the information that determines the answer. You've localised a causally-important spot.</li>
+        <li><b>No effect</b> → that activation isn't where the relevant info lives.</li>
+      </ul>
+      <p>Sweep across all layers and positions and you get a heatmap of "where does the answer-deciding information live?"</p>
+    </div>
+    <div class="figwrap">
+      <svg viewBox="0 0 210 175" role="img" aria-label="Patching one activation from clean into corrupted run">
+        <text x="10" y="16" font-family="IBM Plex Mono" font-size="9" fill="#08514E">clean</text>
+        <line x1="30" y1="25" x2="30" y2="150" stroke="#0C6E6A" stroke-width="3"/>
+        <circle cx="30" cy="80" r="7" fill="#0C6E6A"/>
+        <text x="120" y="16" font-family="IBM Plex Mono" font-size="9" fill="#A83744">corrupted</text>
+        <line x1="150" y1="25" x2="150" y2="150" stroke="#A83744" stroke-width="3"/>
+        <circle cx="150" cy="80" r="7" fill="#fff" stroke="#A83744" stroke-dasharray="2 2"/>
+        <path d="M37 80 C90 80 100 80 143 80" fill="none" stroke="#9A6410" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#p)"/>
+        <defs><marker id="p" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#9A6410"/></marker></defs>
+        <text x="55" y="72" font-family="IBM Plex Mono" font-size="8" fill="#9A6410">paste one activation</text>
+        <text x="120" y="168" font-family="IBM Plex Mono" font-size="8" fill="#8996A0">answer flips back? → causal</text>
+      </svg>
+      <div class="caption">swap &amp; measure recovery</div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-part="Part 4 · Causal interventions">
+  <div class="eyebrow"><span>Part 4 · Causal interventions</span><span class="dot"></span><span class="snum">Slide 17</span></div>
+  <h2 class="slide-title">Denoising vs noising</h2>
+  <div class="cols">
+    <div>
+      <h3>Denoising (clean → corrupted)</h3>
+      <p>Patch a clean activation into a corrupted run. Asks: <em>"is this activation <b>sufficient</b> to restore the behaviour?"</em> Finds components that carry the key info.</p>
+    </div>
+    <div>
+      <h3>Noising (corrupted → clean)</h3>
+      <p>Patch a corrupted activation into a clean run. Asks: <em>"is this activation <b>necessary</b> — does breaking it destroy the behaviour?"</em></p>
+    </div>
+  </div>
+  <div class="box note"><span class="tag">Why run both</span><p>Sufficiency and necessity are different claims. A rigorous localisation shows a component is both. Reporting only one direction is a subtle way to overclaim — exactly the kind of gap a careful reader (or Neel) will probe.</p></div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-part="Part 4 · Causal interventions">
+  <div class="eyebrow"><span>Part 4 · Causal interventions</span><span class="dot"></span><span class="snum">Slide 18</span></div>
+  <h2 class="slide-title">Path patching &amp; ablation</h2>
+  <div class="cols">
+    <div>
+      <h3>Path patching</h3>
+      <p>A refinement that patches the effect of one component <em>only along its path to a specific downstream component</em>, rather than everywhere at once. Lets you test edges of a circuit: "does head 3.2 matter <em>because</em> head 9.6 reads it?"</p>
+    </div>
+    <div>
+      <h3>Ablation</h3>
+      <p>Delete a component's contribution — set it to zero (<b>zero-ablation</b>) or to its average value (<b>mean-ablation</b>) — and see what breaks. A blunt necessity test.</p>
+    </div>
+  </div>
+  <div class="box warn"><span class="tag">Ablation gotcha</span><p>Zero-ablation can push activations "off-distribution" into states the model never normally sees, producing weird effects that don't reflect normal computation. Mean-ablation is often safer. Another reminder that a technique "having an effect" isn't the same as your interpretation being right (Ch3, slide 31).</p></div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-part="Part 4 · Causal interventions">
+  <div class="eyebrow"><span>Part 4 · Causal interventions</span><span class="dot"></span><span class="snum">Slide 19</span></div>
+  <h2 class="slide-title">Choosing good clean/corrupted pairs</h2>
+  <p>The quality of a patching experiment lives or dies on the input pair. The edit between clean and corrupted should isolate <em>exactly</em> the variable you care about and nothing else.</p>
+  <ul>
+    <li><b>Minimal:</b> change as little as possible (ideally one token) so the localisation is clean.</li>
+    <li><b>Matched length/structure:</b> so position indices line up and you're not confounded by shape differences.</li>
+    <li><b>Reliable behaviour:</b> the model should robustly give different answers on the two inputs, or there's nothing to recover.</li>
+  </ul>
+  <div class="box neel"><span class="tag">This is where taste shows</span><p>Designing the right counterfactual is a craft skill — and a place where a thoughtful human clearly adds value over "ask the model." Sloppy pairs give confident-looking but meaningless heatmaps.</p></div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-part="Part 5 · Steering">
+  <div class="eyebrow"><span>Part 5 · Steering</span><span class="dot"></span><span class="snum">Slide 20</span></div>
+  <h2 class="slide-title">Steering vectors</h2>
+  <p>If a concept is a direction (Chapter 1, slide 9; Chapter 3), you should be able to <b>add that direction into the residual stream</b> and push the model's behaviour toward the concept. That's a <strong>steering vector</strong> — and it's simultaneously a causal test and a control knob.</p>
+  <div class="box math"><span class="tag">The intervention</span>\[ \text{residual}_\ell \;\leftarrow\; \text{residual}_\ell + \alpha\,\mathbf{d} \]
+  <p>Add <span class="mono">α</span> times the concept direction <span class="mono">d</span> at layer <span class="mono">ℓ</span> during the forward pass. Positive <span class="mono">α</span> → more of the concept; negative → less. Pure "add &amp; scale" from Chapter 1, slide 9.</p></div>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-part="Part 5 · Steering">
+  <div class="eyebrow"><span>Part 5 · Steering</span><span class="dot"></span><span class="snum">Slide 21</span></div>
+  <h2 class="slide-title">Where the direction comes from</h2>
+  <p>The most common and robust recipe is <b>difference of means</b> (a.k.a. contrastive / "diff-in-means"):</p>
+  <ol>
+    <li>Collect activations for many inputs <em>with</em> the concept (e.g. angry text) and <em>without</em> it (calm text).</li>
+    <li>Average each group; subtract: <span class="mono">d = mean(with) − mean(without)</span>.</li>
+    <li>That difference vector <em>is</em> your steering direction.</li>
+  </ol>
+  <div class="box note"><span class="tag">Why this beats fancier methods often</span><p>Diff-in-means is dead simple, needs no training, and empirically steers well — a perfect example of "try the dumb thing first." It's frequently a strong <b>baseline</b> that fancier techniques (even SAE-derived directions) struggle to beat. Neel would nod approvingly.</p></div>
+</section>
+
+<!-- 22 -->
+<section class="slide" data-part="Part 5 · Steering">
+  <div class="eyebrow"><span>Part 5 · Steering</span><span class="dot"></span><span class="snum">Slide 22</span></div>
+  <h2 class="slide-title">What steering proves (and doesn't)</h2>
+  <div class="cols">
+    <div>
+      <p>If adding <span class="mono">d</span> reliably produces the concept and subtracting it removes the concept, you have <b>causal, bidirectional</b> evidence that <span class="mono">d</span> is a direction the model actually uses for that concept. Much stronger than a probe alone.</p>
+    </div>
+    <div>
+      <div class="box warn" style="margin-top:0"><span class="tag">The catch: side effects</span><p>Steering often degrades fluency or drags in correlated concepts (steer "happy" and you might also get "exclamation marks!!"). A steering vector is rarely a clean scalpel. Always check the model still produces coherent, on-task output.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 23 -->
+<section class="slide" data-part="Part 5 · Steering">
+  <div class="eyebrow"><span>Part 5 · Steering</span><span class="dot"></span><span class="snum">Slide 23</span></div>
+  <h2 class="slide-title">Baselines for steering</h2>
+  <ul>
+    <li><b>Random direction</b> of the same norm: does adding noise cause a similar-sized effect? If yes, your effect is just "perturbation," not "this concept."</li>
+    <li><b>Prompting baseline:</b> can you get the same behaviour change by just asking the model in the prompt? If prompting works as well, steering hasn't earned its complexity.</li>
+    <li><b>Coherence check:</b> measure whether the steered output is still fluent/on-topic, not just concept-laden gibberish.</li>
+    <li><b>Dose-response:</b> does the effect scale sensibly with <span class="mono">α</span>? A clean monotonic curve is reassuring.</li>
+  </ul>
+  <div class="box neel"><span class="tag">The prompting baseline especially</span><p>"Could I have gotten this by prompting?" is Neel's recurring gut-check — it's the "value-add over prompting Claude myself" test. If a steering result can't beat a good prompt, say so honestly. That honesty is itself scored well.</p></div>
+</section>
+
+<!-- 24 -->
+<section class="slide" data-part="Part 5 · Steering">
+  <div class="eyebrow"><span>Part 5 · Steering</span><span class="dot"></span><span class="snum">Slide 24</span></div>
+  <h2 class="slide-title">Steering as safety lever</h2>
+  <p>Beyond analysis, steering is a candidate <b>intervention</b>: dial down a "deception" or "sycophancy" direction at inference, or dial up "refuse harmful requests." Related ideas power activation-level guardrails and "concept editing."</p>
+  <div class="box note"><span class="tag">Reality check</span><p>It's promising but brittle — side effects, dose sensitivity, and features that don't isolate cleanly all limit reliability today. Presented so you know the safety <em>ambition</em>; treat robust steering-based control as an open problem, not a solved product. Honest framing of maturity is, again, exactly the register that scores well.</p></div>
+</section>
+
+<!-- 25 -->
+<section class="slide" data-part="Part 6 · Chain-of-thought">
+  <div class="eyebrow"><span>Part 6 · Chain-of-thought</span><span class="dot"></span><span class="snum">Slide 25</span></div>
+  <h2 class="slide-title">Chain-of-thought, and why it's a safety goldmine</h2>
+  <p><strong>Chain-of-thought (CoT)</strong> is when a model writes out intermediate reasoning before its answer ("Let's think step by step…"). It improves performance on hard tasks — and, temptingly, seems to <em>show us the model's reasoning in plain English</em>.</p>
+  <div class="box note"><span class="tag">Why safety folk are excited</span><p>If the CoT faithfully reflects the model's actual computation, then <b>reading it is free interpretability</b> — a natural-language window into the model's process, no probes needed. Monitoring the CoT for signs of misbehaviour could be a cheap, scalable safety layer. That "if" is the whole ballgame.</p></div>
+  <div class="box neel"><span class="tag">Prime Neel territory</span><p>CoT faithfulness and CoT monitoring are among his most-excited applied-interp areas. It's black-box-friendly, safety-relevant, and full of tractable projects — a great place to look for an application idea.</p></div>
+</section>
+
+<!-- 26 -->
+<section class="slide" data-part="Part 6 · Chain-of-thought">
+  <div class="eyebrow"><span>Part 6 · Chain-of-thought</span><span class="dot"></span><span class="snum">Slide 26</span></div>
+  <h2 class="slide-title">CoT faithfulness: the core question</h2>
+  <div class="box warn" style="font-size:18px"><span class="tag">The problem</span><p style="font-size:19px">The stated reasoning may not be the <b>real</b> reason for the answer. A model can produce a fluent, plausible chain-of-thought that is a post-hoc <b>rationalisation</b> — the decision was made by some internal process the words don't reflect.</p></div>
+  <p>This mirrors humans: we confidently explain choices we actually made for other reasons. If CoT is unfaithful, then trusting it for safety monitoring is dangerous — you'd be watching a cover story.</p>
+</section>
+
+<!-- 27 -->
+<section class="slide" data-part="Part 6 · Chain-of-thought">
+  <div class="eyebrow"><span>Part 6 · Chain-of-thought</span><span class="dot"></span><span class="snum">Slide 27</span></div>
+  <h2 class="slide-title">Evidence that CoT can be unfaithful</h2>
+  <ul>
+    <li><b>Hidden cues:</b> plant a subtle hint that fixes the answer (e.g. "a professor thinks it's (B)"). Models often follow the hint but write a CoT that never mentions it — justifying (B) on other grounds.</li>
+    <li><b>Filler / unused steps:</b> models sometimes reach the right answer even when their stated steps are wrong or irrelevant.</li>
+    <li><b>Perturbation insensitivity:</b> editing the reasoning sometimes doesn't change the answer the way it should if the reasoning were load-bearing.</li>
+  </ul>
+  <div class="box note"><span class="tag">Nuance, not doom</span><p>CoT isn't <em>always</em> unfaithful — often it genuinely helps and reflects real computation, especially on hard multi-step problems. The research question is <b>when and how much</b>, and how to <em>measure</em> faithfulness — not a blanket verdict. That measurement problem is where the good projects are.</p></div>
+</section>
+
+<!-- 28 -->
+<section class="slide" data-part="Part 6 · Chain-of-thought">
+  <div class="eyebrow"><span>Part 6 · Chain-of-thought</span><span class="dot"></span><span class="snum">Slide 28</span></div>
+  <h2 class="slide-title">How to test faithfulness</h2>
+  <ul>
+    <li><b>Causal edits to the CoT:</b> change a step and see if the answer changes as it logically should. If the answer is unmoved, that step wasn't load-bearing.</li>
+    <li><b>Hint injection:</b> insert an answer-fixing cue and check whether the CoT admits it (faithful) or hides it (unfaithful).</li>
+    <li><b>Resampling</b> (Chapter 5): generate many CoTs for the same prompt and study which steps actually change the outcome — a distributional view of what matters.</li>
+    <li><b>Cross-check with internals:</b> does a probe/patch agree with what the CoT claims is happening?</li>
+  </ul>
+  <div class="box note"><span class="tag">The unifying move</span><p>Every test is a <b>counterfactual</b>: change the reasoning (or a cue), predict what a faithful model would do, and check. Same interventional spirit as patching, applied to text. Techniques rhyme.</p></div>
+</section>
+
+<!-- 29 -->
+<section class="slide" data-part="Part 6 · Chain-of-thought">
+  <div class="eyebrow"><span>Part 6 · Chain-of-thought</span><span class="dot"></span><span class="snum">Slide 29</span></div>
+  <h2 class="slide-title">CoT monitoring and its fragility</h2>
+  <p>A leading safety proposal: <b>monitor the chain-of-thought</b> for signs of scheming, misuse, or dangerous plans. Cheap and scalable if reasoning models externalise their thinking.</p>
+  <div class="box warn"><span class="tag">Two failure modes to respect</span><p><b>(1) Unfaithfulness</b> — the bad reasoning simply isn't verbalised (this slide's Part). <b>(2) Obfuscation</b> — if you <em>train against</em> the monitor, the model may learn to hide its reasoning or encode it steganographically, defeating the monitor while looking clean. Monitoring pressure can destroy the very signal it reads.</p></div>
+  <p>This tension — CoT monitoring is promising <em>and</em> fragile — is one of the liveliest debates in applied safety, and a rich seam for a thoughtful project.</p>
+</section>
+
+<!-- 30 -->
+<section class="slide" data-part="Part 7 · Putting it together">
+  <div class="eyebrow"><span>Part 7 · Putting it together</span><span class="dot"></span><span class="snum">Slide 30</span></div>
+  <h2 class="slide-title">A mini-investigation with the whole toolkit</h2>
+  <p>Suppose a model sometimes gives a sycophantic answer (agrees with the user even when wrong). A well-shaped investigation:</p>
+  <ol>
+    <li><b>Prompt/CoT (rung 1):</b> read its reasoning on sycophantic vs honest cases. Form a hypothesis.</li>
+    <li><b>Logit lens / DLA (rung 2):</b> where does the sycophantic token get its push? Which layers?</li>
+    <li><b>Probe (rung 2):</b> train "user stated a belief" and "about to agree" probes. Where do they fire?</li>
+    <li><b>Patch (rung 3):</b> clean = neutral question, corrupted = leading question; localise what flips the answer.</li>
+    <li><b>Steer (rung 3):</b> build a sycophancy direction (diff-in-means); test add/subtract, with random + prompting baselines.</li>
+    <li><b>Skeptic + distill:</b> dumbest alternative? necessity <em>and</em> sufficiency? write it up, lead with the finding.</li>
+  </ol>
+</section>
+
+<!-- 31 -->
+<section class="slide" data-part="Part 7 · Putting it together">
+  <div class="eyebrow"><span>Part 7 · Putting it together</span><span class="dot"></span><span class="snum">Slide 31</span></div>
+  <h2 class="slide-title">Technique selection guide</h2>
+  <div class="gloss" style="font-size:15.5px">
+    <dt>"what's it predicting, and where?"</dt><dd>→ logit lens / tuned lens</dd>
+    <dt>"which component moved this output?"</dt><dd>→ direct logit attribution (direct effects only)</dd>
+    <dt>"is concept X represented here?"</dt><dd>→ linear probe (decodable ≠ used!)</dd>
+    <dt>"which activation <em>causes</em> the behaviour?"</dt><dd>→ activation patching (denoise + noise)</dd>
+    <dt>"is this a circuit edge?"</dt><dd>→ path patching</dd>
+    <dt>"is X necessary?"</dt><dd>→ ablation (prefer mean over zero)</dd>
+    <dt>"does the model <em>use</em> direction d? can I control it?"</dt><dd>→ steering vector (diff-in-means)</dd>
+    <dt>"is the stated reasoning the real reason?"</dt><dd>→ CoT faithfulness tests</dd>
+  </div>
+  <div class="box note"><span class="tag">Meta-rule</span><p>Observational tools (lens, DLA, probe) generate hypotheses cheaply; interventional tools (patch, ablate, steer) earn the causal claim. Pair them.</p></div>
+</section>
+
+<!-- 32 -->
+<section class="slide" data-part="Part 7 · Putting it together">
+  <div class="eyebrow"><span>Part 7 · Putting it together</span><span class="dot"></span><span class="snum">Slide 32</span></div>
+  <h2 class="slide-title">The baselines &amp; skepticism cheat-sheet</h2>
+  <p>Fold these questions into every result before you believe it:</p>
+  <ul>
+    <li>Does a <b>random direction / random component</b> do as well? (the noise baseline)</li>
+    <li>Could I get this by <b>just prompting</b>? (the value-add baseline)</li>
+    <li>Did I test <b>both necessity and sufficiency</b>?</li>
+    <li>Is my dataset creating a <b>spurious correlation</b> the method latched onto?</li>
+    <li>What is the <b>dumbest alternative explanation</b>, and did I rule it out?</li>
+    <li>Am I making an <b>existence-proof</b> claim or a <b>general</b> one? (Ch3, slide 30)</li>
+  </ul>
+  <div class="box neel"><span class="tag">This list is the job</span><p>Running techniques is the easy part; a capable model can write the code. The scarce skill — and what Neel is selecting for — is the judgment on this slide.</p></div>
+</section>
+
+<!-- 33 -->
+<section class="slide" data-part="Part 7 · Putting it together">
+  <div class="eyebrow"><span>Part 7 · Putting it together</span><span class="dot"></span><span class="snum">Slide 33</span></div>
+  <h2 class="slide-title">A note on tooling</h2>
+  <p>In practice these techniques are run with open-source libraries that hook into a model's forward pass to read and edit activations — <span class="mono">nnsight</span>, <span class="mono">TransformerLens</span>, and similar. You register "hooks" at chosen layers to capture or overwrite the residual stream.</p>
+  <div class="box neel"><span class="tag">Practical steer for the application</span><p>Use <b>capable, modern open models</b> (e.g. Qwen, Gemma, DeepSeek families) — not tiny/old ones like GPT-2, which Neel explicitly discourages because they're too weak to show interesting behaviour. Get a persistent Jupyter/kernel workflow going so you can iterate fast (more on this in Chapter 7). Don't sink your limited hours into infrastructure yak-shaving.</p></div>
+</section>
+
+<!-- 34 -->
+<section class="slide" data-part="Part 7 · Putting it together">
+  <div class="eyebrow"><span>Part 7 · Putting it together</span><span class="dot"></span><span class="snum">Slide 34</span></div>
+  <h2 class="slide-title">Chapter 4 glossary</h2>
+  <div class="gloss" style="font-size:16px">
+    <dt>logit lens</dt><dd>apply the unembedding to an intermediate residual state to see the running prediction.</dd>
+    <dt>tuned lens</dt><dd>logit lens + a learned per-layer correction for faithful early-layer readouts.</dd>
+    <dt>direct logit attribution</dt><dd>decompose a logit into each component's direct contribution.</dd>
+    <dt>linear probe</dt><dd>a trained direction that reads whether a concept is present (decodable ≠ used).</dd>
+    <dt>activation patching</dt><dd>swap an activation between clean/corrupted runs to find causal spots.</dd>
+    <dt>denoise / noise</dt><dd>clean→corrupted (sufficiency) / corrupted→clean (necessity).</dd>
+    <dt>path patching</dt><dd>patch a component's effect along one downstream path only (circuit edges).</dd>
+    <dt>ablation</dt><dd>zero- or mean-remove a component to test necessity.</dd>
+    <dt>steering vector</dt><dd>a concept direction added to the stream to control behaviour (diff-in-means).</dd>
+    <dt>CoT faithfulness</dt><dd>whether stated reasoning reflects the real computation.</dd>
+    <dt>CoT monitoring</dt><dd>watching the reasoning for misbehaviour; cheap but fragile.</dd>
+  </div>
+</section>
+
+<!-- 35 -->
+<section class="slide" data-part="Part 7 · Putting it together">
+  <div class="eyebrow"><span>Part 7 · Putting it together</span><span class="dot"></span><span class="snum">Slide 35</span></div>
+  <h2 class="slide-title">What's next</h2>
+  <div class="cols">
+    <div>
+      <h3>You can now…</h3>
+      <ul>
+        <li>run and read a logit lens and DLA;</li>
+        <li>train a probe and resist the "decodable = used" trap;</li>
+        <li>design a patching experiment with necessity and sufficiency;</li>
+        <li>build and baseline a steering vector;</li>
+        <li>reason about CoT faithfulness and monitoring.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box note" style="margin-top:0"><span class="tag">Chapter 5 — A Step Up</span><p>Scaling the toolkit: sparse autoencoders (and why Neel cooled on them), model diffing/crosscoders, resampling and token forcing for reasoning models, model organisms, reward hacking, emergent misalignment, eval awareness — plus the model-forensics investigation loop. The techniques get sharper and the phenomena get weirder.</p></div>
+    </div>
+  </div>
+</section>
+
+</div>
+<div id="navbar"><button class="navbtn" id="tocBtn">☰ Contents</button><button class="navbtn" id="prevBtn">‹ Prev</button><span id="counter"><b>1</b> / 35</span><button class="navbtn" id="nextBtn">Next ›</button></div>
+<div id="toc" role="dialog" aria-label="Contents"><div class="toc-panel"><h3>Contents</h3><div class="hint">click any slide to jump · press M or Esc to close</div><div id="tocList"></div></div></div>
+<script>
+(function(){const slides=Array.from(document.querySelectorAll('.slide'));const total=slides.length;let cur=0;
+const counter=document.getElementById('counter'),prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn'),progress=document.getElementById('progress'),toc=document.getElementById('toc'),tocBtn=document.getElementById('tocBtn'),tocList=document.getElementById('tocList');
+function show(i){i=Math.max(0,Math.min(total-1,i));slides[cur].classList.remove('active');cur=i;slides[cur].classList.add('active');slides[cur].scrollTop=0;counter.innerHTML='<b>'+(cur+1)+'</b> / '+total;progress.style.width=((cur+1)/total*100)+'%';prevBtn.disabled=(cur===0);nextBtn.disabled=(cur===total-1);updateTocCurrent();}
+function next(){if(cur<total-1)show(cur+1);}function prev(){if(cur>0)show(cur-1);}
+prevBtn.addEventListener('click',prev);nextBtn.addEventListener('click',next);
+document.addEventListener('keydown',function(e){if(toc.classList.contains('open')){if(e.key==='Escape'||e.key==='m'||e.key==='M'){toggleToc();}return;}if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next();}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}else if(e.key==='Home'){show(0);}else if(e.key==='End'){show(total-1);}else if(e.key==='m'||e.key==='M'){toggleToc();}});
+let html='',lastPart=null;slides.forEach(function(s,idx){const part=s.getAttribute('data-part')||'';const t=s.querySelector('.slide-title, h1');let title=t?t.textContent.trim():('Slide '+(idx+1));if(idx===0)title='Title';if(part!==lastPart){if(lastPart!==null)html+='</div>';html+='<div class="toc-group"><h5>'+part+'</h5>';lastPart=part;}html+='<div class="toc-item" data-idx="'+idx+'"><span class="ti-n">'+String(idx+1).padStart(2,'0')+'</span><span>'+title+'</span></div>';});
+html+='</div>';tocList.innerHTML=html;
+tocList.querySelectorAll('.toc-item').forEach(function(el){el.addEventListener('click',function(){show(parseInt(el.getAttribute('data-idx'),10));toggleToc();});});
+function updateTocCurrent(){tocList.querySelectorAll('.toc-item').forEach(function(el){el.classList.toggle('current',parseInt(el.getAttribute('data-idx'),10)===cur);});}
+function toggleToc(){toc.classList.toggle('open');}tocBtn.addEventListener('click',toggleToc);toc.addEventListener('click',function(e){if(e.target===toc)toggleToc();});
+let sx=null;document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});document.addEventListener('touchend',e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>60){dx<0?next():prev();}sx=null;},{passive:true});
+function renderMath(){if(window.renderMathInElement){renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});}else{setTimeout(renderMath,120);}}
+window.addEventListener('load',renderMath);show(0);})();
+</script>
+</body>
+</html>

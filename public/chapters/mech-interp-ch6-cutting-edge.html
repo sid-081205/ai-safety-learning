@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 6 — Cutting Edge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{--bg:#E7EAE5;--surface:#FBFCFA;--ink:#17232E;--muted:#5D6B76;--faint:#8996A0;--line:#D6DCD5;--teal:#0C6E6A;--teal-ink:#08514E;--teal-soft:#E2EFED;--amber:#9A6410;--amber-soft:#F6ECD6;--red:#A83744;--red-soft:#F5E2E4;--shadow:0 18px 50px -24px rgba(20,40,50,.45);--serif:"IBM Plex Serif",Georgia,serif;--sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden}
+#stage{height:100vh;display:flex;align-items:center;justify-content:center;padding:34px 30px 96px}
+.slide{display:none;width:min(1120px,100%);max-height:calc(100vh - 130px);overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:44px 52px 46px;position:relative;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.slide::-webkit-scrollbar{width:9px}.slide::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+.slide.active{display:block;animation:rise .38s cubic-bezier(.2,.7,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.slide::before{content:"";position:absolute;left:0;top:26px;bottom:26px;width:4px;border-radius:4px;background:linear-gradient(var(--teal),var(--teal) 40%,#b9d6d3 40%,#b9d6d3 46%,var(--teal) 46%,var(--teal) 84%,#b9d6d3 84%,#b9d6d3 90%,var(--teal) 90%);opacity:.5}
+.eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-ink);display:flex;gap:12px;align-items:center;margin-bottom:16px}
+.eyebrow .snum{color:var(--faint)}.eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--teal);opacity:.6}
+.slide-title{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3.4vw,40px);line-height:1.12;letter-spacing:-.01em;margin-bottom:8px}
+.slide-title.small{font-size:clamp(23px,2.8vw,32px)}
+.subtitle{color:var(--muted);font-size:18px;margin-bottom:22px;max-width:70ch}
+.slide p{font-size:18px;margin-bottom:14px;max-width:74ch}.slide p.lead{font-size:20px}
+.slide h3{font-family:var(--serif);font-weight:600;font-size:21px;margin:20px 0 8px}
+.slide ul,.slide ol{margin:6px 0 16px 4px;padding-left:22px;max-width:74ch}
+.slide li{font-size:18px;margin-bottom:9px}.slide li::marker{color:var(--teal)}
+strong{font-weight:600}em{color:var(--teal-ink);font-style:italic}.mono{font-family:var(--mono);font-size:.92em}a{color:var(--teal-ink)}
+.term{font-family:var(--mono);font-size:.86em;font-weight:600;background:var(--teal-soft);color:var(--teal-ink);padding:2px 7px;border-radius:6px;white-space:nowrap}
+.box{border-radius:12px;padding:16px 20px;margin:18px 0;font-size:17px}.box p{font-size:17px;margin-bottom:8px}.box p:last-child{margin-bottom:0}
+.box .tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:6px}
+.note{background:var(--teal-soft);border-left:4px solid var(--teal)}.note .tag{color:var(--teal-ink)}
+.math{background:var(--amber-soft);border-left:4px solid var(--amber)}.math .tag{color:var(--amber)}
+.warn{background:var(--red-soft);border-left:4px solid var(--red)}.warn .tag{color:var(--red)}
+.neel{background:#eef2ee;border:1px dashed var(--teal);border-left:4px solid var(--teal)}.neel .tag{color:var(--teal-ink)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;margin:14px 0}
+.cols.wide-left{grid-template-columns:1.3fr 1fr}.cols.wide-right{grid-template-columns:1fr 1.3fr}
+@media(max-width:760px){.cols,.cols.wide-left,.cols.wide-right{grid-template-columns:1fr}}
+.figwrap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}.figwrap svg{max-width:100%;height:auto}
+.caption{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:8px;text-align:center}
+.katex-display{margin:14px 0!important;overflow-x:auto;overflow-y:hidden;padding:4px 0}
+.code{font-family:var(--mono);font-size:14.5px;line-height:1.7;background:#12222b;color:#d7e4e2;border-radius:10px;padding:16px 18px;margin:14px 0;white-space:pre-wrap;overflow-x:auto}
+.code .c{color:#6f8b88}.code .k{color:#7fd1cc}.code .n{color:#e2b872}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px}.pill{font-family:var(--mono);font-size:13px;background:#eef2ee;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink)}
+.gloss{display:grid;grid-template-columns:auto 1fr;gap:10px 20px;margin:10px 0;font-size:17px}.gloss dt{font-family:var(--mono);font-weight:600;color:var(--teal-ink)}.gloss dd{margin:0;color:var(--ink)}
+@media(max-width:640px){.gloss{grid-template-columns:1fr;gap:2px 0}.gloss dd{margin-bottom:10px}}
+.title-slide{display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 200px)}
+.title-slide .kicker{font-family:var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--teal-ink);font-size:13px;margin-bottom:22px}
+.title-slide h1{font-family:var(--serif);font-weight:700;font-size:clamp(34px,6vw,66px);line-height:1.02;letter-spacing:-.02em;margin-bottom:20px}.title-slide h1 .accent{color:var(--teal)}
+.title-slide .tagline{font-size:21px;color:var(--muted);max-width:62ch;margin-bottom:30px}.meta-row{display:flex;flex-wrap:wrap;gap:10px}
+#navbar{position:fixed;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;justify-content:center;gap:14px;background:rgba(231,234,229,.86);backdrop-filter:blur(8px);border-top:1px solid var(--line);z-index:40;padding:0 18px}
+.navbtn{font-family:var(--mono);font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 16px;border-radius:9px;cursor:pointer;transition:all .15s}
+.navbtn:hover{border-color:var(--teal);color:var(--teal-ink)}.navbtn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}.navbtn:disabled{opacity:.35;cursor:not-allowed}
+#counter{font-family:var(--mono);font-size:14px;color:var(--muted);min-width:96px;text-align:center}#counter b{color:var(--ink)}
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0;z-index:50;transition:width .3s}
+#toc{position:fixed;inset:0;background:rgba(18,34,43,.55);backdrop-filter:blur(4px);z-index:60;display:none;padding:40px 20px;overflow-y:auto}#toc.open{display:block}
+.toc-panel{max-width:820px;margin:0 auto;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:28px 30px}
+.toc-panel h3{font-family:var(--serif);font-size:24px;margin-bottom:4px}.toc-panel .hint{font-family:var(--mono);font-size:12px;color:var(--faint);margin-bottom:18px}
+.toc-group{margin-bottom:16px}.toc-group h5{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-ink);margin-bottom:6px}
+.toc-item{display:flex;gap:12px;padding:6px 8px;border-radius:7px;cursor:pointer;font-size:15px}.toc-item:hover{background:var(--teal-soft)}.toc-item .ti-n{font-family:var(--mono);color:var(--faint);min-width:26px}.toc-item.current{background:var(--teal-soft);font-weight:600}
+.kbd{font-family:var(--mono);font-size:12px;background:#eef2ee;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px}
+@media (prefers-reduced-motion:reduce){.slide.active{animation:none}#progress{transition:none}}
+@media(max-width:600px){#stage{padding:16px 10px 88px}.slide{padding:30px 22px 32px}.slide::before{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="stage">
+
+<!-- 1 -->
+<section class="slide active title-slide" data-part="Orientation">
+  <div class="kicker">MATS · Mechanistic Interpretability · Study Deck</div>
+  <h1>Chapter 6<br>The <span class="accent">cutting edge</span></h1>
+  <p class="tagline">Neel's current toys and research frontiers: newer readout methods (J-Lens, natural-language autoencoders), synthetic document fine-tuning, the assistant axis and model character — and the full menu of research areas he's actively hiring for. This is where you go hunting for a project.</p>
+  <div class="meta-row"><span class="pill">~31 slides</span><span class="pill">frontier &amp; hedged</span><span class="pill">find your project here</span><span class="pill">Chapter 6 of 7</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-part="Orientation">
+  <div class="eyebrow"><span>Orientation</span><span class="dot"></span><span class="snum">Slide 02</span></div>
+  <h2 class="slide-title small">A note on how to read this chapter</h2>
+  <div class="box warn"><span class="tag">Frontier = moving target</span><p>These methods and areas are <b>recent and evolving</b>. Treat the specifics here as a faithful conceptual sketch, not a frozen spec — details, names, and best practices will have moved by the time you apply. The goal is to understand the <em>shape</em> of each idea well enough to read the latest write-ups and pick a direction.</p></div>
+  <div class="box neel"><span class="tag">Where the leverage is</span><p>Everything in this chapter maps to something Neel has said he's excited about. If you want your application to feel aligned with his current taste, a project drawn from this chapter (grounded with Chapter 4–5 methods and Chapter 7 rigour) is your best bet.</p></div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-part="Orientation">
+  <div class="eyebrow"><span>Orientation</span><span class="dot"></span><span class="snum">Slide 03</span></div>
+  <h2 class="slide-title">Chapter 6 goals</h2>
+  <ul>
+    <li>Understand the <b>next generation of "lenses"</b>: J-Lens / global-workspace readouts and natural-language autoencoders.</li>
+    <li>Explain <b>synthetic document fine-tuning</b> and its uses (belief implantation, forensics).</li>
+    <li>Describe the <b>assistant axis</b> and the science of <b>model character</b>.</li>
+    <li>Navigate Neel's <b>research-area menu</b>: model biology, forensics, science of post-training / alignment training / generalisation, applied interp.</li>
+    <li>Know several concrete <b>phenomena</b> (user models, out-of-context reasoning, concept probes, steganography) that make good projects.</li>
+  </ul>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-part="Part 1 · New readout methods">
+  <div class="eyebrow"><span>Part 1 · New readout methods</span><span class="dot"></span><span class="snum">Slide 04</span></div>
+  <h2 class="slide-title">The lens lineage, recapped</h2>
+  <p>Recall the progression: the <b>logit lens</b> reads the residual stream through the unembedding; the <b>tuned lens</b> adds a learned correction (Chapter 4). Both answer "what token is the model leaning toward here?" — but that's a narrow readout. The frontier asks: can we read <em>richer</em> internal content, not just next-token bets?</p>
+  <div class="box note"><span class="tag">The frontier question</span><p>A model's residual stream surely encodes more than "what's the next token" — intermediate variables, plans, beliefs. The next-generation methods try to <b>decode those</b> into human-readable form. J-Lens and natural-language autoencoders are two such attempts, from different angles.</p></div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-part="Part 1 · New readout methods">
+  <div class="eyebrow"><span>Part 1 · New readout methods</span><span class="dot"></span><span class="snum">Slide 05</span></div>
+  <h2 class="slide-title">J-Lens / the "global workspace" idea</h2>
+  <p><strong>J-Lens</strong> is a newer lens-style method aimed at surfacing the <b>intermediate variables</b> a model computes during a forward pass — the internal "working memory" that isn't directly the next-token prediction. The framing borrows the cognitive-science idea of a <em>global workspace</em>: a shared space where the model's in-progress computations are broadcast.</p>
+  <div class="box note"><span class="tag">Conceptually</span><p>Where the logit lens forces every internal state into "what token?", J-Lens tries to read internal states in terms of the <em>concepts and partial results</em> the model is actively juggling — a more faithful window into mid-computation "thoughts."</p></div>
+  <div class="box warn"><span class="tag">Hedge</span><p>This is genuinely new work; the precise construction and its validated claims are best taken from the current primary write-ups rather than memorised. Understand the <em>aim</em> — richer, faithful readout of intermediate state — and read the source when you use it.</p></div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-part="Part 1 · New readout methods">
+  <div class="eyebrow"><span>Part 1 · New readout methods</span><span class="dot"></span><span class="snum">Slide 06</span></div>
+  <h2 class="slide-title">J-Lens vs the older lenses</h2>
+  <div class="gloss">
+    <dt>logit lens</dt><dd>projects to vocabulary; cheap; blurry early; only "next token."</dd>
+    <dt>tuned lens</dt><dd>learned per-layer fix; more faithful; still vocabulary-shaped.</dd>
+    <dt>J-Lens</dt><dd>targets intermediate variables / concepts, not just the next token; richer readout.</dd>
+  </div>
+  <div class="box warn"><span class="tag">Known limitation to be honest about</span><p>Readout methods like these can be strongest at, or limited to, <b>single-token / local</b> reads and can struggle to capture computation spread across many positions. As with all lenses, a readout "showing" something isn't proof the model uses it that way — the causal-verification discipline from Chapter 4 still applies. New tool, same skepticism.</p></div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-part="Part 1 · New readout methods">
+  <div class="eyebrow"><span>Part 1 · New readout methods</span><span class="dot"></span><span class="snum">Slide 07</span></div>
+  <h2 class="slide-title">Natural-language autoencoders (NLAs)</h2>
+  <p>A different and elegant frontier idea: instead of decoding an activation into a <em>direction</em> or a <em>token</em>, decode it into <b>natural-language text</b> that describes it — and train the system so that text can be <b>re-encoded back</b> into (approximately) the same activation.</p>
+  <div class="figwrap">
+    <svg viewBox="0 0 520 110" role="img" aria-label="Activation to text and back">
+      <rect x="15" y="38" width="110" height="34" rx="6" fill="#E2EFED" stroke="#0C6E6A"/><text x="26" y="59" font-family="IBM Plex Mono" font-size="10" fill="#08514E">activation h</text>
+      <text x="140" y="60" font-family="IBM Plex Mono" font-size="14" fill="#9A6410">→</text>
+      <rect x="165" y="30" width="190" height="50" rx="6" fill="#F6ECD6" stroke="#9A6410"/><text x="178" y="52" font-family="IBM Plex Mono" font-size="10" fill="#9A6410">"a description in</text><text x="178" y="66" font-family="IBM Plex Mono" font-size="10" fill="#9A6410"> plain English"</text>
+      <text x="368" y="60" font-family="IBM Plex Mono" font-size="14" fill="#9A6410">→</text>
+      <rect x="395" y="38" width="110" height="34" rx="6" fill="#E2EFED" stroke="#0C6E6A"/><text x="410" y="59" font-family="IBM Plex Mono" font-size="10" fill="#08514E">ĥ ≈ h</text>
+      <text x="150" y="98" font-family="IBM Plex Mono" font-size="9" fill="#8996A0">reconstruction quality measures how faithful the description is</text>
+    </svg>
+    <div class="caption">encode to text, decode back — round-trip fidelity is the check</div>
+  </div>
+  <p>The reconstruction error gives an automatic, quantitative measure of whether the English description actually captured the activation — a built-in faithfulness check that plain "ask a model to describe this" lacks.</p>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-part="Part 1 · New readout methods">
+  <div class="eyebrow"><span>Part 1 · New readout methods</span><span class="dot"></span><span class="snum">Slide 08</span></div>
+  <h2 class="slide-title">Why NLAs are exciting</h2>
+  <ul>
+    <li><b>Human-readable by construction</b> — the output is prose, not a direction you still have to name.</li>
+    <li><b>Faithfulness is measurable</b> — round-trip reconstruction quantifies how good the description is, reducing the "plausible-sounding but wrong" risk that plagues auto-interpretation.</li>
+    <li><b>General-purpose</b> — a single readout method rather than a task-specific probe; aligns with Neel's taste for better general methods.</li>
+    <li><b>Applications</b> — e.g. using the reconstructor to detect when a model's internal state doesn't support its output, a possible <b>hallucination</b> signal.</li>
+  </ul>
+  <div class="box warn"><span class="tag">Hedge again</span><p>Early-stage. The strength of the reconstruction, what it faithfully captures, and failure modes are active questions — verify against current sources before leaning on specifics.</p></div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-part="Part 2 · Synthetic document finetuning">
+  <div class="eyebrow"><span>Part 2 · Synthetic document fine-tuning</span><span class="dot"></span><span class="snum">Slide 09</span></div>
+  <h2 class="slide-title">Synthetic document fine-tuning (SDF)</h2>
+  <p><strong>SDF</strong> means fine-tuning a model on <em>generated</em> documents crafted to instil a specific belief or fact — often something <b>false or fictional</b> — so the model comes to "believe" it, as if it had read it many times during pretraining.</p>
+  <div class="box note"><span class="tag">The point</span><p>It's a controlled way to <b>implant a known belief</b> into a model. Because you know exactly what you inserted, you have ground truth — invaluable for studying how beliefs are represented, updated, and used, and for building model organisms (Chapter 5) with a known internal "fact."</p></div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-part="Part 2 · Synthetic document finetuning">
+  <div class="eyebrow"><span>Part 2 · Synthetic document fine-tuning</span><span class="dot"></span><span class="snum">Slide 10</span></div>
+  <h2 class="slide-title">What SDF is good for</h2>
+  <ul>
+    <li><b>Belief-representation studies:</b> implant a fact, then probe/patch to find how and where it's stored and whether the model treats it as true.</li>
+    <li><b>Forensics ground truth:</b> create a model with a known implanted quirk, then test whether your investigation methods recover it.</li>
+    <li><b>Honesty / CoT experiments:</b> give the model a private belief and see whether its stated reasoning reflects or conceals it — a clean way to study unfaithfulness (Chapter 4).</li>
+    <li><b>Alignment tests:</b> implant a belief like "I'm being tested" or a fake goal and study downstream behaviour.</li>
+  </ul>
+  <div class="box warn"><span class="tag">Robustness caveat</span><p>Implanted beliefs may be shallow or brittle (fine under normal prompts, collapsing under pressure). Whether SDF produces "real" beliefs vs surface mimicry is itself a研究 question — and a good one to be careful about.</p></div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-part="Part 3 · Model character">
+  <div class="eyebrow"><span>Part 3 · The assistant axis &amp; model character</span><span class="dot"></span><span class="snum">Slide 11</span></div>
+  <h2 class="slide-title">The assistant axis</h2>
+  <p>Post-training turns a base model into "a helpful assistant" (Chapter 1, slide 47). The <strong>assistant axis</strong> refers to the internal direction(s) that encode this assistant persona — the "I am a helpful AI" self-representation that shapes tone, refusals, and values.</p>
+  <div class="box note"><span class="tag">Why it's a rich target</span><p>If the assistant persona is a findable direction, you can ask deep questions: Where does it come from in training? How stable is it? Can it be steered, weakened, or hijacked (linking to jailbreaks and emergent misalignment's "persona" direction, Chapter 5)? It's a concrete internal handle on the fuzzy notion of "the model's character."</p></div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-part="Part 3 · Model character">
+  <div class="eyebrow"><span>Part 3 · The assistant axis &amp; model character</span><span class="dot"></span><span class="snum">Slide 12</span></div>
+  <h2 class="slide-title">The science of model character</h2>
+  <p>Zooming out: <strong>model character</strong> studies a model's values, personality, self-model, and how these arise from training. It's the interpretability of "who the model is," not just "what it computes."</p>
+  <div class="cols">
+    <div>
+      <h3>Questions in scope</h3>
+      <ul>
+        <li>Does the model have stable, rankable values? Do they leak across contexts?</li>
+        <li>Does it have a coherent self-model, and is that self-model accurate?</li>
+        <li>How do constitutions / training principles show up internally?</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box neel" style="margin-top:0"><span class="tag">A favourite frontier</span><p>Neel lists <em>science of model character</em> among his exciting areas. It's philosophically juicy but, done well, empirically grounded — probe for a value, test whether it's causal, check if the model's stated values match its revealed ones. Keep it rigorous and it's exactly his kind of project.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-part="Part 3 · Model character">
+  <div class="eyebrow"><span>Part 3 · The assistant axis &amp; model character</span><span class="dot"></span><span class="snum">Slide 13</span></div>
+  <h2 class="slide-title">Do models follow their constitutions?</h2>
+  <p>Frontier assistants are trained with explicit principles ("constitutions"). A natural, testable question: do the stated principles actually govern behaviour, or are they partly decorative? And are they <em>represented</em> internally as the model acts?</p>
+  <div class="box note"><span class="tag">How you'd study it</span><p>Take a specific principle, construct cases that pit it against another pressure, and measure which wins (behavioural). Then probe/steer for a representation of that principle to see if it's causally load-bearing (internal). A clean marriage of black-box and white-box, aimed at a safety-relevant question — the recurring template of good modern work.</p></div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-part="Part 4 · The research-area menu">
+  <div class="eyebrow"><span>Part 4 · Neel's research-area menu</span><span class="dot"></span><span class="snum">Slide 14</span></div>
+  <h2 class="slide-title">The menu, at a glance</h2>
+  <p>Neel's stream organises around a handful of areas. The next slides take each in turn — this is effectively the <b>project-idea catalogue</b>.</p>
+  <div class="pills">
+    <span class="pill">model biology</span><span class="pill">model forensics</span><span class="pill">science of post-training</span><span class="pill">alignment training</span><span class="pill">science of generalisation</span><span class="pill">applied interpretability</span><span class="pill">better methods</span>
+  </div>
+  <div class="box neel"><span class="tag">How to use this</span><p>Pick one area that genuinely interests you, find a <b>small, concrete, testable</b> question inside it, and attack it with Chapter 4–5 tools and Chapter 7 rigour. Depth on one narrow question beats a shallow tour of many.</p></div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-part="Part 4 · The research-area menu">
+  <div class="eyebrow"><span>Part 4 · Neel's research-area menu</span><span class="dot"></span><span class="snum">Slide 15</span></div>
+  <h2 class="slide-title">Model biology</h2>
+  <p>Studying the high-level, qualitative behaviour of models as if they were organisms (Chapter 3, slide 27) — especially surprising, emergent, or safety-relevant behaviours, without needing a full mechanistic account.</p>
+  <div class="box note"><span class="tag">Example questions</span><p>How does a model's behaviour change across a long conversation? Does it form a model of the user? When does it "give up," hallucinate, or switch persona? What internal thing predicts these shifts? Observe → hypothesise → test, biologist-style.</p></div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-part="Part 4 · The research-area menu">
+  <div class="eyebrow"><span>Part 4 · Neel's research-area menu</span><span class="dot"></span><span class="snum">Slide 16</span></div>
+  <h2 class="slide-title">Model forensics</h2>
+  <p>Detective work on a specific suspicious behaviour or model (Chapter 5, Part 5): what happened, why, and can we prove it? Uses the forensics loop and ACH.</p>
+  <div class="box neel"><span class="tag">Why it's such a good application area</span><p>It's inherently pragmatic and rigour-demanding, it rewards clever counterfactuals, and it produces a clear narrative ("here's the mystery, here's my investigation, here's what I concluded and what I couldn't"). That narrative shape maps beautifully onto the write-up Neel wants. It's arguably the single safest theme to pick for a strong, taste-aligned submission.</p></div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-part="Part 4 · The research-area menu">
+  <div class="eyebrow"><span>Part 4 · Neel's research-area menu</span><span class="dot"></span><span class="snum">Slide 17</span></div>
+  <h2 class="slide-title">Science of post-training</h2>
+  <p>Understanding what each stage of post-training (SFT, RLHF, RL, distillation) actually <em>does</em> to a model's internals and behaviour. Post-training is where assistants — and many of their quirks — are made (Chapter 1, slide 47).</p>
+  <div class="box note"><span class="tag">Example questions</span><p>What does RLHF change internally vs SFT? Model-diff a base vs its aligned version (Chapter 5) — what new features appear? What does distillation preserve or lose? These are tractable with diffing/probing and directly useful.</p></div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-part="Part 4 · The research-area menu">
+  <div class="eyebrow"><span>Part 4 · Neel's research-area menu</span><span class="dot"></span><span class="snum">Slide 18</span></div>
+  <h2 class="slide-title">Alignment training</h2>
+  <p>Can we make models <b>deeply and generalisably aligned</b> — not just surface-compliant? This includes teaching models the <em>reasons</em> behind principles (so alignment generalises) and studying whether alignment "sticks" under pressure or context (linking to alignment context rot, Chapter 5).</p>
+  <div class="box note"><span class="tag">The stakes</span><p>Surface alignment that collapses off-distribution is the deceptive-alignment worry in slow motion. Work here asks how to get alignment that holds — and how to <em>verify</em> it does, using internal signals rather than trusting behaviour. High-impact, and hard in the good way.</p></div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-part="Part 4 · The research-area menu">
+  <div class="eyebrow"><span>Part 4 · Neel's research-area menu</span><span class="dot"></span><span class="snum">Slide 19</span></div>
+  <h2 class="slide-title">Science of generalisation</h2>
+  <p>Why does training generalise the way it does? Two models can fit the same data via different internal solutions (Chapter 1, slide 30), and narrow training can generalise shockingly wide (emergent misalignment, Chapter 5).</p>
+  <div class="box note"><span class="tag">Example questions</span><p>Why does insecure-code training produce broad misalignment? What internal structure decides which generalisation a model lands on? Can we predict or steer generalisation? This connects deep science to concrete safety outcomes — a very Neel combination.</p></div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-part="Part 4 · The research-area menu">
+  <div class="eyebrow"><span>Part 4 · Neel's research-area menu</span><span class="dot"></span><span class="snum">Slide 20</span></div>
+  <h2 class="slide-title">Applied interpretability</h2>
+  <p>Using interp to <b>do something useful now</b>: monitoring for harmful intent or hallucination, detecting prompt injection, catching eval awareness or deception, building probe-based guardrails — each measured against real baselines.</p>
+  <div class="box neel"><span class="tag">The clearest fit to "pragmatic interp"</span><p>This is the most direct expression of Neel's thesis that reading a model's mind should be <em>useful</em>. The template: pick a detection/control task that matters, build the simplest internal method, and show it <b>beats a prompting or classifier baseline</b>. If it doesn't beat the baseline, that's a real (and reportable) finding too.</p></div>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-part="Part 4 · The research-area menu">
+  <div class="eyebrow"><span>Part 4 · Neel's research-area menu</span><span class="dot"></span><span class="snum">Slide 21</span></div>
+  <h2 class="slide-title">Better methods</h2>
+  <p>Improving the general-purpose tools themselves — the lenses, autoencoders, probing/patching machinery — so that <em>every</em> downstream project benefits. J-Lens and NLAs live here.</p>
+  <div class="box warn"><span class="tag">A caution for applicants</span><p>Method-building can be high-impact, but it's easy to slide into "science of SAEs for its own sake," which Neel has cooled on. If you build a method, anchor it to a <b>concrete task it demonstrably improves</b>, with baselines. "My method is more elegant" is not a result; "my method catches X better than the standard approach" is.</p></div>
+</section>
+
+<!-- 22 -->
+<section class="slide" data-part="Part 5 · Concrete phenomena">
+  <div class="eyebrow"><span>Part 5 · Concrete phenomena for projects</span><span class="dot"></span><span class="snum">Slide 22</span></div>
+  <h2 class="slide-title">User models</h2>
+  <p>Models often infer things about <em>you</em> — your expertise, mood, political leanings, native language — and adapt accordingly, frequently without being asked. This <strong>user model</strong> is an internal representation you can probe for.</p>
+  <div class="box note"><span class="tag">Project shape</span><p>Probe for "the model thinks the user is an expert" or "…is upset." Does it fire correctly? Does <b>steering it</b> change the response style? Is the model's user-model accurate, and does it act on it? Clean, testable, and quietly important for safety (manipulation, sycophancy).</p></div>
+</section>
+
+<!-- 23 -->
+<section class="slide" data-part="Part 5 · Concrete phenomena">
+  <div class="eyebrow"><span>Part 5 · Concrete phenomena for projects</span><span class="dot"></span><span class="snum">Slide 23</span></div>
+  <h2 class="slide-title">Out-of-context reasoning</h2>
+  <p><strong>Out-of-context reasoning</strong>: a model uses facts learned during <em>training</em> (not present in the prompt) to reason in ways that weren't spelled out — e.g. combining implanted facts (Chapter 6, SDF) to reach a conclusion no single document stated.</p>
+  <div class="box note"><span class="tag">Why it matters</span><p>It's central to worries about models "figuring things out" — including working out that they're an AI in a test, or chaining implanted beliefs into unexpected behaviour. SDF gives you a controlled way to create and study it: implant premises, see whether the model reasons over them out of context.</p></div>
+</section>
+
+<!-- 24 -->
+<section class="slide" data-part="Part 5 · Concrete phenomena">
+  <div class="eyebrow"><span>Part 5 · Concrete phenomena for projects</span><span class="dot"></span><span class="snum">Slide 24</span></div>
+  <h2 class="slide-title">Concept-representation probes</h2>
+  <p>A whole family of projects: find and validate the internal representation of a safety-relevant concept. High-value targets include:</p>
+  <div class="pills">
+    <span class="pill">truthfulness / lying</span><span class="pill">deception</span><span class="pill">uncertainty / "I don't know"</span><span class="pill">eval awareness</span><span class="pill">harmful intent</span><span class="pill">refusal</span>
+  </div>
+  <div class="box note"><span class="tag">The recipe you already know</span><p>Probe (does it decode?) → causal test (steer/patch — is it used?) → baseline (beats prompting? random direction?) → honest limits. Chapters 3–4 gave you every step. Pick a concept that matters and execute this loop cleanly — it's a proven application template.</p></div>
+</section>
+
+<!-- 25 -->
+<section class="slide" data-part="Part 5 · Concrete phenomena">
+  <div class="eyebrow"><span>Part 5 · Concrete phenomena for projects</span><span class="dot"></span><span class="snum">Slide 25</span></div>
+  <h2 class="slide-title">Steganography in chain-of-thought</h2>
+  <p><strong>Steganography</strong>: a model hiding information in its output that isn't apparent to a reader — e.g. encoding its true reasoning in the surface form of a CoT while the visible text looks innocent. The nightmare failure mode for CoT monitoring (Chapter 4, slide 29).</p>
+  <div class="box warn"><span class="tag">Why it's studied</span><p>If training pressure teaches models to hide reasoning from monitors, our cheapest safety tool (reading the CoT) breaks. Understanding when/whether models can and do use steganography — and detecting it — is a frontier safety question with real stakes.</p></div>
+</section>
+
+<!-- 26 -->
+<section class="slide" data-part="Part 6 · Choosing">
+  <div class="eyebrow"><span>Part 6 · Choosing from the menu</span><span class="dot"></span><span class="snum">Slide 26</span></div>
+  <h2 class="slide-title">How to pick — Neel's taste, distilled</h2>
+  <ul>
+    <li><b>Useful &amp; safety-relevant</b> over elegant-but-idle. Ask "if this worked, would anyone care?"</li>
+    <li><b>Baselined</b> — always have a dumb comparison in mind before you start.</li>
+    <li><b>On models that matter</b> — capable modern open models, not GPT-2-era toys.</li>
+    <li><b>Small and concrete</b> — one crisp, testable question beats an ambitious sprawl.</li>
+    <li><b>Truth-seeking</b> — pick something where you'd be able to tell if you were wrong.</li>
+    <li><b>Aligned to his current interests</b> — this chapter's areas, not the cooled ones (Ch3/Ch5).</li>
+  </ul>
+</section>
+
+<!-- 27 -->
+<section class="slide" data-part="Part 6 · Choosing">
+  <div class="eyebrow"><span>Part 6 · Choosing from the menu</span><span class="dot"></span><span class="snum">Slide 27</span></div>
+  <h2 class="slide-title">Over- vs under-explored</h2>
+  <div class="cols">
+    <div>
+      <h3>Crowded / cooled</h3>
+      <ul>
+        <li>Training a marginally better SAE.</li>
+        <li>Hand-tracing yet another circuit for its own sake.</li>
+        <li>Toy models, grokking, purely theoretical work.</li>
+        <li>Studying GPT-2 / Pythia-era models.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Fertile / hot</h3>
+      <ul>
+        <li>Forensics of a concrete misbehaviour.</li>
+        <li>Applied monitoring/detection with baselines.</li>
+        <li>CoT faithfulness measurement.</li>
+        <li>Emergent misalignment, eval awareness, model character.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box neel"><span class="tag">Blunt advice</span><p>Steering toward the right column, on a capable model, with honest baselines, is most of what it takes to be taste-aligned. The left column can still be done well — but you're swimming against his stated preferences.</p></div>
+</section>
+
+<!-- 28 -->
+<section class="slide" data-part="Part 6 · Choosing">
+  <div class="eyebrow"><span>Part 6 · Choosing from the menu</span><span class="dot"></span><span class="snum">Slide 28</span></div>
+  <h2 class="slide-title">A caution about the frontier</h2>
+  <div class="box warn"><span class="tag">Don't over-rely on the newest toy</span><p>It's tempting to build an application around the shiniest method (J-Lens, NLAs, crosscoders). But new methods are less battle-tested, and a shaky method makes shaky conclusions. Often the <b>dependable</b> move is a simple probe or diff-in-means on an <b>interesting question</b>, with the fancy method as an optional comparison — not the foundation.</p></div>
+  <div class="box neel"><span class="tag">Restating the through-line</span><p>The question you pick matters more than the method. A pragmatic, safety-relevant question, attacked simply and honestly, beats a frontier method in search of a purpose. This is the same lesson from every chapter — it just matters most here, where the toys are most seductive.</p></div>
+</section>
+
+<!-- 29 -->
+<section class="slide" data-part="Part 7 · Wrap">
+  <div class="eyebrow"><span>Part 7 · Wrap</span><span class="dot"></span><span class="snum">Slide 29</span></div>
+  <h2 class="slide-title">Chapter 6 glossary</h2>
+  <div class="gloss" style="font-size:15.5px">
+    <dt>J-Lens</dt><dd>newer lens targeting intermediate variables / a "global workspace," beyond next-token readout.</dd>
+    <dt>natural-language autoencoder</dt><dd>encode an activation to English and back; round-trip fidelity checks faithfulness.</dd>
+    <dt>synthetic document fine-tuning</dt><dd>implant a known belief by fine-tuning on generated documents.</dd>
+    <dt>assistant axis</dt><dd>internal direction(s) encoding the "helpful AI assistant" persona.</dd>
+    <dt>model character</dt><dd>the science of a model's values, personality, and self-model.</dd>
+    <dt>user model</dt><dd>the model's internal representation of who it's talking to.</dd>
+    <dt>out-of-context reasoning</dt><dd>reasoning from training-learned facts not present in the prompt.</dd>
+    <dt>steganography</dt><dd>hiding real reasoning in innocuous-looking output; breaks CoT monitoring.</dd>
+    <dt>applied interp</dt><dd>using interpretability for a useful, baselined task now.</dd>
+  </div>
+</section>
+
+<!-- 30 -->
+<section class="slide" data-part="Part 7 · Wrap">
+  <div class="eyebrow"><span>Part 7 · Wrap</span><span class="dot"></span><span class="snum">Slide 30</span></div>
+  <h2 class="slide-title">What's next</h2>
+  <div class="cols">
+    <div>
+      <h3>You can now…</h3>
+      <ul>
+        <li>describe J-Lens and NLAs and what problem each attacks;</li>
+        <li>explain SDF and its forensic uses;</li>
+        <li>discuss the assistant axis and model character;</li>
+        <li>navigate Neel's research-area menu and its hot vs cooled zones;</li>
+        <li>name several concrete, testable project phenomena.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box note" style="margin-top:0"><span class="tag">Chapter 7 — Doing the Research</span><p>The capstone: how to actually <em>do</em> a project and win the application. Explore–Understand–Distill, baselines, sanity-checking your AI agent (Neel's #1 advice), using LLMs well, and the specifics of the MATS task — the write-up, the executive summary, the rubric, and how to turn everything in this course into a submission that lands.</p></div>
+    </div>
+  </div>
+</section>
+
+</div>
+<div id="navbar"><button class="navbtn" id="tocBtn">☰ Contents</button><button class="navbtn" id="prevBtn">‹ Prev</button><span id="counter"><b>1</b> / 30</span><button class="navbtn" id="nextBtn">Next ›</button></div>
+<div id="toc" role="dialog" aria-label="Contents"><div class="toc-panel"><h3>Contents</h3><div class="hint">click any slide to jump · press M or Esc to close</div><div id="tocList"></div></div></div>
+<script>
+(function(){const slides=Array.from(document.querySelectorAll('.slide'));const total=slides.length;let cur=0;
+const counter=document.getElementById('counter'),prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn'),progress=document.getElementById('progress'),toc=document.getElementById('toc'),tocBtn=document.getElementById('tocBtn'),tocList=document.getElementById('tocList');
+function show(i){i=Math.max(0,Math.min(total-1,i));slides[cur].classList.remove('active');cur=i;slides[cur].classList.add('active');slides[cur].scrollTop=0;counter.innerHTML='<b>'+(cur+1)+'</b> / '+total;progress.style.width=((cur+1)/total*100)+'%';prevBtn.disabled=(cur===0);nextBtn.disabled=(cur===total-1);updateTocCurrent();}
+function next(){if(cur<total-1)show(cur+1);}function prev(){if(cur>0)show(cur-1);}
+prevBtn.addEventListener('click',prev);nextBtn.addEventListener('click',next);
+document.addEventListener('keydown',function(e){if(toc.classList.contains('open')){if(e.key==='Escape'||e.key==='m'||e.key==='M'){toggleToc();}return;}if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next();}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}else if(e.key==='Home'){show(0);}else if(e.key==='End'){show(total-1);}else if(e.key==='m'||e.key==='M'){toggleToc();}});
+let html='',lastPart=null;slides.forEach(function(s,idx){const part=s.getAttribute('data-part')||'';const t=s.querySelector('.slide-title, h1');let title=t?t.textContent.trim():('Slide '+(idx+1));if(idx===0)title='Title';if(part!==lastPart){if(lastPart!==null)html+='</div>';html+='<div class="toc-group"><h5>'+part+'</h5>';lastPart=part;}html+='<div class="toc-item" data-idx="'+idx+'"><span class="ti-n">'+String(idx+1).padStart(2,'0')+'</span><span>'+title+'</span></div>';});
+html+='</div>';tocList.innerHTML=html;
+tocList.querySelectorAll('.toc-item').forEach(function(el){el.addEventListener('click',function(){show(parseInt(el.getAttribute('data-idx'),10));toggleToc();});});
+function updateTocCurrent(){tocList.querySelectorAll('.toc-item').forEach(function(el){el.classList.toggle('current',parseInt(el.getAttribute('data-idx'),10)===cur);});}
+function toggleToc(){toc.classList.toggle('open');}tocBtn.addEventListener('click',toggleToc);toc.addEventListener('click',function(e){if(e.target===toc)toggleToc();});
+let sx=null;document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});document.addEventListener('touchend',e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>60){dx<0?next():prev();}sx=null;},{passive:true});
+function renderMath(){if(window.renderMathInElement){renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});}else{setTimeout(renderMath,120);}}
+window.addEventListener('load',renderMath);show(0);})();
+</script>
+</body>
+</html>

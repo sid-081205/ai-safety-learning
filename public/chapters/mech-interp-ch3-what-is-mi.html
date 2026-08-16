@@ -10,613 +10,453 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <style>
-:root{--bg:#E7EAE5;--surface:#FBFCFA;--ink:#17232E;--muted:#5D6B76;--faint:#8996A0;--line:#D6DCD5;--teal:#0C6E6A;--teal-ink:#08514E;--teal-soft:#E2EFED;--amber:#9A6410;--amber-soft:#F6ECD6;--red:#A83744;--red-soft:#F5E2E4;--shadow:0 18px 50px -24px rgba(20,40,50,.45);--serif:"IBM Plex Serif",Georgia,serif;--sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;}
+:root{
+  --bg:#E7EAE5;--surface:#FBFCFA;--ink:#17232E;--muted:#5D6B76;--faint:#8996A0;--line:#D6DCD5;
+  --teal:#0C6E6A;--teal-ink:#08514E;--teal-soft:#E2EFED;--amber:#9A6410;--amber-soft:#F6ECD6;
+  --red:#A83744;--red-soft:#F5E2E4;--shadow:0 18px 50px -24px rgba(20,40,50,.45);
+  --serif:"IBM Plex Serif",Georgia,serif;--sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
 *{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
-body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden}
-#stage{height:100vh;display:flex;align-items:center;justify-content:center;padding:34px 30px 96px}
-.slide{display:none;width:min(1120px,100%);max-height:calc(100vh - 130px);overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:44px 52px 46px;position:relative;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+#stage{height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:14px 16px 70px}
+.slide{display:none;width:min(1000px,100%);max-height:calc(100vh - 84px);overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:28px 36px 30px;position:relative;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
 .slide::-webkit-scrollbar{width:9px}.slide::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
 .slide.active{display:block;animation:rise .38s cubic-bezier(.2,.7,.2,1)}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.slide::before{content:"";position:absolute;left:0;top:26px;bottom:26px;width:4px;border-radius:4px;background:linear-gradient(var(--teal),var(--teal) 40%,#b9d6d3 40%,#b9d6d3 46%,var(--teal) 46%,var(--teal) 84%,#b9d6d3 84%,#b9d6d3 90%,var(--teal) 90%);opacity:.5}
-.eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-ink);display:flex;gap:12px;align-items:center;margin-bottom:16px}
+.slide::before{content:"";position:absolute;left:0;top:20px;bottom:20px;width:3px;border-radius:4px;background:linear-gradient(var(--teal),var(--teal) 40%,#b9d6d3 40%,#b9d6d3 46%,var(--teal) 46%,var(--teal) 84%,#b9d6d3 84%,#b9d6d3 90%,var(--teal) 90%);opacity:.5}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-ink);display:flex;gap:10px;align-items:center;margin-bottom:12px}
 .eyebrow .snum{color:var(--faint)}.eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--teal);opacity:.6}
-.slide-title{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3.4vw,40px);line-height:1.12;letter-spacing:-.01em;margin-bottom:8px}
-.slide-title.small{font-size:clamp(23px,2.8vw,32px)}
-.subtitle{color:var(--muted);font-size:18px;margin-bottom:22px;max-width:70ch}
-.slide p{font-size:18px;margin-bottom:14px;max-width:74ch}.slide p.lead{font-size:20px}
-.slide h3{font-family:var(--serif);font-weight:600;font-size:21px;margin:20px 0 8px}
-.slide ul,.slide ol{margin:6px 0 16px 4px;padding-left:22px;max-width:74ch}
-.slide li{font-size:18px;margin-bottom:9px}.slide li::marker{color:var(--teal)}
-strong{font-weight:600}em{color:var(--teal-ink);font-style:italic}.mono{font-family:var(--mono);font-size:.92em}a{color:var(--teal-ink)}
+.slide-title{font-family:var(--serif);font-weight:600;font-size:clamp(22px,2.8vw,32px);line-height:1.12;letter-spacing:-.01em;margin-bottom:8px}
+.slide-title.small{font-size:clamp(19px,2.3vw,26px)}
+.subtitle{color:var(--muted);font-size:16px;margin-bottom:16px;max-width:70ch}
+.slide p{font-size:16px;margin-bottom:11px;max-width:72ch}.slide p.lead{font-size:17.5px}
+.slide h3{font-family:var(--serif);font-weight:600;font-size:18px;margin:14px 0 6px}
+.slide ul,.slide ol{margin:4px 0 12px 2px;padding-left:20px;max-width:72ch}
+.slide li{font-size:16px;margin-bottom:7px}.slide li::marker{color:var(--teal)}
+strong{font-weight:600}em{color:var(--teal-ink);font-style:italic}
+.mono{font-family:var(--mono);font-size:.92em}a{color:var(--teal-ink)}
 .term{font-family:var(--mono);font-size:.86em;font-weight:600;background:var(--teal-soft);color:var(--teal-ink);padding:2px 7px;border-radius:6px;white-space:nowrap}
-.box{border-radius:12px;padding:16px 20px;margin:18px 0;font-size:17px}.box p{font-size:17px;margin-bottom:8px}.box p:last-child{margin-bottom:0}
-.box .tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:6px}
+.box{border-radius:12px;padding:12px 16px;margin:12px 0;font-size:15px}
+.box p{font-size:15px;margin-bottom:6px}.box p:last-child{margin-bottom:0}
+.box .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:5px}
 .note{background:var(--teal-soft);border-left:4px solid var(--teal)}.note .tag{color:var(--teal-ink)}
 .math{background:var(--amber-soft);border-left:4px solid var(--amber)}.math .tag{color:var(--amber)}
 .warn{background:var(--red-soft);border-left:4px solid var(--red)}.warn .tag{color:var(--red)}
 .neel{background:#eef2ee;border:1px dashed var(--teal);border-left:4px solid var(--teal)}.neel .tag{color:var(--teal-ink)}
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;margin:14px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;margin:10px 0}
 .cols.wide-left{grid-template-columns:1.3fr 1fr}.cols.wide-right{grid-template-columns:1fr 1.3fr}
 @media(max-width:760px){.cols,.cols.wide-left,.cols.wide-right{grid-template-columns:1fr}}
-.figwrap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}.figwrap svg{max-width:100%;height:auto}
-.caption{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:8px;text-align:center}
-.katex-display{margin:14px 0!important;overflow-x:auto;overflow-y:hidden;padding:4px 0}
-.code{font-family:var(--mono);font-size:14.5px;line-height:1.7;background:#12222b;color:#d7e4e2;border-radius:10px;padding:16px 18px;margin:14px 0;white-space:pre-wrap;overflow-x:auto}
+.figwrap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+.figwrap svg{max-width:100%;height:auto}
+.caption{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:7px;text-align:center}
+.katex-display{margin:10px 0!important;overflow-x:auto;overflow-y:hidden;padding:3px 0}
+.code{font-family:var(--mono);font-size:13.5px;line-height:1.65;background:#12222b;color:#d7e4e2;border-radius:10px;padding:14px 16px;margin:12px 0;white-space:pre-wrap;overflow-x:auto}
 .code .c{color:#6f8b88}.code .k{color:#7fd1cc}.code .n{color:#e2b872}
-.pills{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px}.pill{font-family:var(--mono);font-size:13px;background:#eef2ee;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink)}
-.gloss{display:grid;grid-template-columns:auto 1fr;gap:10px 20px;margin:10px 0;font-size:17px}.gloss dt{font-family:var(--mono);font-weight:600;color:var(--teal-ink)}.gloss dd{margin:0;color:var(--ink)}
-@media(max-width:640px){.gloss{grid-template-columns:1fr;gap:2px 0}.gloss dd{margin-bottom:10px}}
-.title-slide{display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 200px)}
-.title-slide .kicker{font-family:var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--teal-ink);font-size:13px;margin-bottom:22px}
-.title-slide h1{font-family:var(--serif);font-weight:700;font-size:clamp(34px,6vw,66px);line-height:1.02;letter-spacing:-.02em;margin-bottom:20px}.title-slide h1 .accent{color:var(--teal)}
-.title-slide .tagline{font-size:21px;color:var(--muted);max-width:62ch;margin-bottom:30px}.meta-row{display:flex;flex-wrap:wrap;gap:10px}
-#navbar{position:fixed;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;justify-content:center;gap:14px;background:rgba(231,234,229,.86);backdrop-filter:blur(8px);border-top:1px solid var(--line);z-index:40;padding:0 18px}
-.navbtn{font-family:var(--mono);font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 16px;border-radius:9px;cursor:pointer;transition:all .15s}
-.navbtn:hover{border-color:var(--teal);color:var(--teal-ink)}.navbtn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}.navbtn:disabled{opacity:.35;cursor:not-allowed}
-#counter{font-family:var(--mono);font-size:14px;color:var(--muted);min-width:96px;text-align:center}#counter b{color:var(--ink)}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px}
+.pill{font-family:var(--mono);font-size:12px;background:#eef2ee;border:1px solid var(--line);border-radius:999px;padding:4px 11px;color:var(--ink)}
+.gloss{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:8px 0;font-size:15px}
+.gloss dt{font-family:var(--mono);font-weight:600;color:var(--teal-ink)}.gloss dd{margin:0;color:var(--ink)}
+@media(max-width:640px){.gloss{grid-template-columns:1fr;gap:2px 0}.gloss dd{margin-bottom:9px}}
+.slide.active.title-slide{display:flex;flex-direction:column;justify-content:flex-start;min-height:calc(100vh - 150px);padding-top:10px}
+.title-slide .kicker{font-family:var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--teal-ink);font-size:11.5px;margin-bottom:14px}
+.title-slide h1{font-family:var(--serif);font-weight:700;font-size:clamp(28px,4.6vw,48px);line-height:1.04;letter-spacing:-.02em;margin-bottom:14px}
+.title-slide h1 .accent{color:var(--teal)}
+.title-slide .tagline{font-size:17px;color:var(--muted);max-width:62ch;margin-bottom:18px}
+.meta-row{display:flex;flex-wrap:wrap;gap:9px}
+.story{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--teal-ink);margin:4px 0 14px;max-width:66ch}
+.bigidea{font-family:var(--serif);font-size:20px;line-height:1.4;background:var(--teal-soft);border-left:4px solid var(--teal);border-radius:12px;padding:16px 20px;margin:14px 0;max-width:72ch}
+#navbar{position:fixed;left:0;right:0;bottom:0;height:56px;display:flex;align-items:center;justify-content:center;gap:12px;background:rgba(231,234,229,.86);backdrop-filter:blur(8px);border-top:1px solid var(--line);z-index:40;padding:0 14px}
+.navbtn{font-family:var(--mono);font-size:12.5px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 14px;border-radius:9px;cursor:pointer;transition:all .15s}
+.navbtn:hover{border-color:var(--teal);color:var(--teal-ink)}.navbtn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.navbtn:disabled{opacity:.35;cursor:not-allowed}
+#counter{font-family:var(--mono);font-size:13px;color:var(--muted);min-width:88px;text-align:center}#counter b{color:var(--ink)}
 #progress{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0;z-index:50;transition:width .3s}
-#toc{position:fixed;inset:0;background:rgba(18,34,43,.55);backdrop-filter:blur(4px);z-index:60;display:none;padding:40px 20px;overflow-y:auto}#toc.open{display:block}
-.toc-panel{max-width:820px;margin:0 auto;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:28px 30px}
-.toc-panel h3{font-family:var(--serif);font-size:24px;margin-bottom:4px}.toc-panel .hint{font-family:var(--mono);font-size:12px;color:var(--faint);margin-bottom:18px}
-.toc-group{margin-bottom:16px}.toc-group h5{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-ink);margin-bottom:6px}
-.toc-item{display:flex;gap:12px;padding:6px 8px;border-radius:7px;cursor:pointer;font-size:15px}.toc-item:hover{background:var(--teal-soft)}.toc-item .ti-n{font-family:var(--mono);color:var(--faint);min-width:26px}.toc-item.current{background:var(--teal-soft);font-weight:600}
+#toc{position:fixed;inset:0;background:rgba(18,34,43,.55);backdrop-filter:blur(4px);z-index:60;display:none;padding:32px 16px;overflow-y:auto}
+#toc.open{display:block}
+.toc-panel{max-width:820px;margin:0 auto;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:22px 26px}
+.toc-panel h3{font-family:var(--serif);font-size:22px;margin-bottom:4px}
+.toc-panel .hint{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-bottom:14px}
+.toc-group{margin-bottom:14px}
+.toc-group h5{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-ink);margin-bottom:5px}
+.toc-item{display:flex;gap:12px;padding:5px 8px;border-radius:7px;cursor:pointer;font-size:14px}
+.toc-item:hover{background:var(--teal-soft)}.toc-item .ti-n{font-family:var(--mono);color:var(--faint);min-width:26px}
+.toc-item.current{background:var(--teal-soft);font-weight:600}
 .kbd{font-family:var(--mono);font-size:12px;background:#eef2ee;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px}
 @media (prefers-reduced-motion:reduce){.slide.active{animation:none}#progress{transition:none}}
-@media(max-width:600px){#stage{padding:16px 10px 88px}.slide{padding:30px 22px 32px}.slide::before{display:none}}
-</style>
-<!-- readable-density -->
-
-<style id="readable-density">
-/* denser layout so slides fit without heavy scrolling; content unchanged */
-body{line-height:1.45}
-#stage{padding:12px 14px 64px;align-items:flex-start}
-.slide{
-  width:min(980px,100%);
-  max-height:calc(100vh - 76px);
-  padding:22px 28px 24px;
-  border-radius:14px;
-}
-.slide::before{top:16px;bottom:16px;width:3px}
-.eyebrow{font-size:11px;margin-bottom:10px;gap:10px}
-.slide-title{font-size:clamp(20px,2.4vw,28px);margin-bottom:6px;line-height:1.15}
-.slide-title.small{font-size:clamp(18px,2.1vw,24px)}
-.subtitle{font-size:14.5px;margin-bottom:12px}
-.slide p{font-size:14.5px;margin-bottom:9px}
-.slide p.lead{font-size:15.5px}
-.slide h3{font-size:16.5px;margin:12px 0 5px}
-.slide ul,.slide ol{margin:4px 0 10px 2px;padding-left:18px}
-.slide li{font-size:14.5px;margin-bottom:5px}
-.box{padding:10px 14px;margin:10px 0;font-size:13.5px;border-radius:10px}
-.box p{font-size:13.5px;margin-bottom:5px}
-.box .tag{font-size:10px;margin-bottom:4px}
-.cols{gap:16px;margin:8px 0}
-.figwrap{padding:10px;border-radius:10px}
-.caption{font-size:11px;margin-top:5px}
-.katex-display{margin:8px 0!important;padding:2px 0}
-.katex{font-size:1.05em!important}
-.code{font-size:12.5px;line-height:1.55;padding:10px 12px;margin:8px 0;border-radius:8px}
-.pills{gap:6px;margin:8px 0 12px}
-.pill{font-size:11.5px;padding:3px 9px}
-.gloss{gap:6px 14px;margin:6px 0;font-size:13.5px}
-.title-slide{min-height:calc(100vh - 140px);justify-content:flex-start;padding-top:8px}
-.title-slide .kicker{font-size:11px;margin-bottom:12px}
-.title-slide h1{font-size:clamp(26px,4vw,42px);margin-bottom:12px}
-.title-slide .tagline{font-size:15.5px;margin-bottom:16px}
-.maprow{padding:8px 10px;gap:12px}
-.maprow .cnum{font-size:16px}
-.maprow h4{font-size:15px}
-.maprow p{font-size:13px}
-#navbar{height:52px;gap:10px;padding:0 12px}
-.navbtn{font-size:12px;padding:7px 12px}
-#counter{font-size:12.5px;min-width:80px}
-#toc{padding:24px 14px}
-.toc-panel{padding:18px 20px}
-.toc-panel h3{font-size:20px}
-.toc-item{font-size:13.5px;padding:5px 7px}
-@media(max-width:600px){
-  #stage{padding:8px 6px 60px}
-  .slide{padding:16px 14px 18px;max-height:calc(100vh - 68px)}
-}
+@media(max-width:600px){#stage{padding:8px 6px 62px}.slide{padding:18px 16px 20px;max-height:calc(100vh - 70px)}.slide::before{display:none}}
 </style>
 </head>
 <body>
 <div id="progress"></div>
 <div id="stage">
 
-<!-- 1 -->
-<section class="slide active title-slide" data-part="Orientation">
+<!-- 1 TITLE -->
+<section class="slide active title-slide" data-part="The mystery">
   <div class="kicker">MATS · Mechanistic Interpretability · Study Deck</div>
-  <h1>Chapter 3<br>What <span class="accent">mechanistic interpretability</span> is</h1>
-  <p class="tagline">You can now picture the machine. This chapter is the field's <em>worldview</em>: features as the unit of analysis, the linear representation hypothesis, the superposition problem that makes it all hard, circuits, and the safety arguments that justify the work — including Neel's opinionated take on which of them actually matter.</p>
-  <div class="meta-row"><span class="pill">~35 slides</span><span class="pill">concepts &amp; framework</span><span class="pill">the "why"</span><span class="pill">Chapter 3 of 7</span></div>
+  <h1>Chapter 3<br>Opening the <span class="accent">black box</span></h1>
+  <p class="tagline">In Chapter 2 you watched us build the machine. But here's the twist: nobody wrote what's inside it. This chapter is a detective story — how do you figure out what a trained model is actually doing, and why does anyone care?</p>
+  <div class="meta-row"><span class="pill">~20 slides</span><span class="pill">a detective story</span><span class="pill">the "what" and the "why"</span><span class="pill">Chapter 3 of 7</span></div>
 </section>
 
-<!-- 2 -->
-<section class="slide" data-part="Orientation">
-  <div class="eyebrow"><span>Orientation</span><span class="dot"></span><span class="snum">Slide 02</span></div>
-  <h2 class="slide-title small">From "how it's built" to "what it's doing"</h2>
-  <p>Chapters 1–2 were <b>architecture</b>: the parts and how they connect. Knowing that doesn't tell you what a <em>trained</em> model computes, any more than knowing neurons fire tells you what a brain is thinking.</p>
-  <p>Mechanistic interpretability is the attempt to bridge that gap — to find the <b>human-understandable algorithms and representations</b> that training wrote into the weights, and to do it rigorously enough to trust the answer.</p>
-  <div class="box note"><span class="tag">The definition to hold</span><p><b>Mechanistic interpretability:</b> reverse-engineering the internal computations of neural networks into human-understandable components — features and circuits — with enough evidence (ideally causal) to be confident you're right.</p></div>
-</section>
-
-<!-- 3 -->
-<section class="slide" data-part="Orientation">
-  <div class="eyebrow"><span>Orientation</span><span class="dot"></span><span class="snum">Slide 03</span></div>
-  <h2 class="slide-title">Chapter 3 goals</h2>
-  <ul>
-    <li>Define a <span class="term">feature</span> and explain why it, not the neuron, is the right unit of analysis.</li>
-    <li>State the <b>linear representation hypothesis</b> precisely and weigh the evidence.</li>
-    <li>Explain <span class="term">superposition</span> and <span class="term">polysemanticity</span> — the core reason interpretability is hard.</li>
-    <li>Say what a <b>circuit</b> is and how components compose.</li>
-    <li>Lay out the <b>safety theories of change</b>, and articulate Neel's <em>pragmatic</em> stance on which are worth betting on.</li>
-    <li>Distinguish observational from <b>interventional</b> (causal) evidence — the quality bar for real claims.</li>
-  </ul>
-</section>
-
-<!-- 4 -->
-<section class="slide" data-part="Part 1 · The mechanistic view">
-  <div class="eyebrow"><span>Part 1 · The mechanistic view</span><span class="dot"></span><span class="snum">Slide 04</span></div>
-  <h2 class="slide-title">"Mechanistic" vs "behavioural"</h2>
-  <div class="cols">
-    <div>
-      <h3>Behavioural interpretability</h3>
-      <p>Study the model from outside: feed inputs, watch outputs, correlate. "It refuses more when the prompt mentions weapons." Useful, cheap, but it can't distinguish mechanisms that produce the same behaviour.</p>
-      <h3>Mechanistic interpretability</h3>
-      <p>Open the box: identify the <em>internal</em> representations and computations that <b>cause</b> the behaviour. "This direction in layer 12 represents 'harmful request,' and ablating it stops the refusal."</p>
-    </div>
-    <div>
-      <div class="box neel" style="margin-top:0"><span class="tag">Neel's pragmatic nuance</span><p>He's <em>not</em> a purist who insists everything be fully mechanistic. Some of his favourite work is largely behavioural (reading the chain-of-thought, clever prompting) — and he explicitly praises starting with the simplest thing that works. "Mechanistic" is a spectrum, and the goal is <b>understanding that's useful and true</b>, by whatever mix of methods gets you there.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- 5 -->
-<section class="slide" data-part="Part 1 · The mechanistic view">
-  <div class="eyebrow"><span>Part 1 · The mechanistic view</span><span class="dot"></span><span class="snum">Slide 05</span></div>
-  <h2 class="slide-title">Features: the unit of analysis</h2>
-  <p>A <strong>feature</strong> is a meaningful property the model represents and uses — "the text is in French," "this is a phone number," "the user is angry," "this request is harmful." Features are the nouns of interpretability.</p>
-  <div class="box note"><span class="tag">Working definition</span><p>A feature is (roughly) a <b>direction in activation space</b> that corresponds to a human-interpretable concept. The model stores it, reads it (dot product), and acts on it (writing related directions downstream). Chapter 1's geometry is the whole reason "feature = direction" is even sayable.</p></div>
-  <p>The central bet of the field is that models are built out of features and the circuits connecting them — that beneath the billions of opaque numbers lies a describable vocabulary of concepts. Whether that bet fully pays off is unsettled, but it pays off <em>often enough</em> to be worth pursuing.</p>
-</section>
-
-<!-- 6 -->
-<section class="slide" data-part="Part 1 · The mechanistic view">
-  <div class="eyebrow"><span>Part 1 · The mechanistic view</span><span class="dot"></span><span class="snum">Slide 06</span></div>
-  <h2 class="slide-title">The Linear Representation Hypothesis</h2>
-  <div class="box note" style="font-size:18px"><span class="tag">Stated properly</span><p style="font-size:19px"><b>Features are represented as linear directions in activation space.</b> The degree to which a feature is "present" is (approximately) how far the activation extends along that feature's direction — recoverable by a dot product — and features combine by addition.</p></div>
-  <p>This is the load-bearing assumption behind most of the toolkit:</p>
-  <ul>
-    <li><b>Probes</b> find a feature's direction and read it off (dot product).</li>
-    <li><b>Steering</b> adds a scaled feature direction to change behaviour.</li>
-    <li><b>SAEs</b> assume activations are sparse <em>sums</em> of feature directions.</li>
-  </ul>
-  <p>If the hypothesis were false, all of these would be misguided. It's not always true — but its frequent approximate truth is why the field works at all.</p>
-</section>
-
-<!-- 7 -->
-<section class="slide" data-part="Part 1 · The mechanistic view">
-  <div class="eyebrow"><span>Part 1 · The mechanistic view</span><span class="dot"></span><span class="snum">Slide 07</span></div>
-  <h2 class="slide-title">Evidence for and against</h2>
-  <div class="cols">
-    <div>
-      <h3>For</h3>
-      <ul>
-        <li><span class="mono">king − man + woman ≈ queen</span> and countless similar linear analogies.</li>
-        <li>Linear probes routinely recover concepts with high accuracy.</li>
-        <li>Steering vectors work: add a direction, get the expected behaviour shift.</li>
-        <li>SAEs extract thousands of interpretable directions.</li>
-      </ul>
-    </div>
-    <div>
-      <h3>Against / caveats</h3>
-      <ul>
-        <li>Some features are genuinely nonlinear or multi-dimensional (e.g. certain circular representations like days of the week).</li>
-        <li>A probe finding a direction doesn't prove the model <em>uses</em> it.</li>
-        <li>Directions interfere under superposition (next part).</li>
-      </ul>
-    </div>
-  </div>
-  <div class="box neel"><span class="tag">The right attitude</span><p>Treat linearity as a <b>powerful default worth trying first</b>, not dogma. A great instinct — very Neel — is to test the linear hypothesis, and when it breaks, notice and investigate <em>why</em>. That noticing is often where the interesting result hides.</p></div>
-</section>
-
-<!-- 8 -->
-<section class="slide" data-part="Part 1 · The mechanistic view">
-  <div class="eyebrow"><span>Part 1 · The mechanistic view</span><span class="dot"></span><span class="snum">Slide 08</span></div>
-  <h2 class="slide-title">Privileged vs non-privileged bases</h2>
-  <div class="cols wide-left">
-    <div>
-      <p>A subtle but important point. The residual stream has no special coordinate system — you can rotate it freely and the model is unchanged. So there's no reason a <em>single dimension</em> (a "residual stream neuron") should mean anything. Features live along <b>arbitrary directions</b>, not along the axes.</p>
-      <p>MLP neurons are different: the nonlinearity acts on each neuron separately, which gives the neuron axes a <b>privileged</b> status — so individual MLP neurons are more likely (though far from guaranteed) to be meaningful.</p>
-    </div>
-    <div>
-      <div class="box note" style="margin-top:0"><span class="tag">Why you care</span><p>This explains why you often can't just "look at neuron 3081." Meaning is in directions you have to <em>find</em>, not read off axis by axis. Probes and SAEs are, in part, tools for discovering the right (non-axis-aligned) directions.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- 9 -->
-<section class="slide" data-part="Part 2 · Superposition">
-  <div class="eyebrow"><span>Part 2 · Superposition</span><span class="dot"></span><span class="snum">Slide 09</span></div>
-  <h2 class="slide-title">The puzzle: more features than dimensions</h2>
-  <p>A model wants to represent a staggering number of concepts — far more than its few thousand dimensions. If each feature needed its own perpendicular direction, you could only fit <span class="mono">d</span> features in <span class="mono">d</span> dimensions. Models clearly track many more than that. So how?</p>
-  <div class="box math"><span class="tag">The trick: near-orthogonality</span><p>In high dimensions there's room for <em>far</em> more <b>almost</b>-perpendicular directions than exactly-perpendicular ones. You can pack thousands of directions into 512 dimensions such that any two have a small dot product. Features can share the space if they mostly don't step on each other.</p></div>
-  <p>This packing is called <strong>superposition</strong>, and it's the defining difficulty of the whole field.</p>
-</section>
-
-<!-- 10 -->
-<section class="slide" data-part="Part 2 · Superposition">
-  <div class="eyebrow"><span>Part 2 · Superposition</span><span class="dot"></span><span class="snum">Slide 10</span></div>
-  <h2 class="slide-title">The superposition hypothesis</h2>
-  <div class="box note" style="font-size:18px"><span class="tag">The claim</span><p style="font-size:19px"><b>Neural networks represent more features than they have dimensions by storing them in overlapping, near-orthogonal directions</b> — effectively simulating a much larger, sparse network inside a smaller dense one.</p></div>
-  <div class="cols">
-    <div>
-      <p>The cost of packing: features <b>interfere</b>. When one feature is active, it leaks a little noise onto the others (their small-but-nonzero dot products). The model tolerates this because the interference is usually small and the payoff — representing vastly more concepts — is huge.</p>
-    </div>
-    <div>
-      <div class="box note" style="margin-top:0"><span class="tag">Consequence</span><p>Superposition is <em>why</em> neurons are polysemantic: a single neuron sits at the crossing point of several feature directions, so it lights up for several unrelated concepts. The mess isn't sloppiness — it's an efficient encoding we have to decode.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- 11 -->
-<section class="slide" data-part="Part 2 · Superposition">
-  <div class="eyebrow"><span>Part 2 · Superposition</span><span class="dot"></span><span class="snum">Slide 11</span></div>
-  <h2 class="slide-title">Picturing it: too many arrows, too little room</h2>
-  <div class="cols wide-right">
-    <div>
-      <p>In 2-D you can fit only 2 perpendicular directions. But if you allow small overlaps, you can cram in 5, 6, or more directions that are <em>roughly</em> distinct — enough that a dot product still mostly tells them apart.</p>
-      <p>Scale that intuition to hundreds or thousands of dimensions and the packing capacity explodes. The model exploits this ruthlessly.</p>
-      <div class="box math" style="margin-top:6px"><span class="tag">Why it barely works</span><p>When only a <b>few</b> features are active at once (sparsity — next slide), the interference from all the inactive ones is near zero. Superposition is a bet on sparsity.</p></div>
-    </div>
-    <div class="figwrap">
-      <svg viewBox="0 0 200 190" role="img" aria-label="Many arrows radiating from a center, more than two, packed at small angles">
-        <defs><marker id="a" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#0C6E6A"/></marker></defs>
-        <g stroke="#0C6E6A" stroke-width="2" marker-end="url(#a)">
-          <line x1="100" y1="100" x2="160" y2="60"/><line x1="100" y1="100" x2="165" y2="105"/><line x1="100" y1="100" x2="150" y2="150"/>
-          <line x1="100" y1="100" x2="90" y2="35"/><line x1="100" y1="100" x2="45" y2="70"/><line x1="100" y1="100" x2="40" y2="130"/><line x1="100" y1="100" x2="80" y2="160"/>
-        </g>
-        <text x="30" y="180" font-family="IBM Plex Mono" font-size="9" fill="#8996A0">7 features in a 2-D-ish space</text>
-      </svg>
-      <div class="caption">near-orthogonal, not orthogonal</div>
-    </div>
-  </div>
-</section>
-
-<!-- 12 -->
-<section class="slide" data-part="Part 2 · Superposition">
-  <div class="eyebrow"><span>Part 2 · Superposition</span><span class="dot"></span><span class="snum">Slide 12</span></div>
-  <h2 class="slide-title">Sparsity is what makes it work</h2>
-  <p>The reason superposition is viable: at any moment, only a tiny fraction of all possible features are active. A given token isn't simultaneously about French <em>and</em> DNA <em>and</em> tax law <em>and</em> medieval history. Because active features are <b>sparse</b>, their overlapping directions rarely collide at once.</p>
-  <div class="box note"><span class="tag">This is the key that unlocks SAEs</span><p>Sparse autoencoders (Chapter 5) are built directly on this: they assume any activation is a <em>sparse</em> sum of a few feature directions drawn from a large dictionary, and they try to recover that dictionary. "Sparse" isn't decoration in the name — it's the whole mechanism, inherited from superposition.</p></div>
-</section>
-
-<!-- 13 -->
-<section class="slide" data-part="Part 2 · Superposition">
-  <div class="eyebrow"><span>Part 2 · Superposition</span><span class="dot"></span><span class="snum">Slide 13</span></div>
-  <h2 class="slide-title">Polysemanticity, precisely</h2>
-  <div class="cols">
-    <div>
-      <p>A <strong>polysemantic</strong> neuron activates for multiple unrelated inputs. It's the surface symptom of superposition: because feature directions don't align with neuron axes, any single neuron is a blend of several features.</p>
-      <p>The dream of "one neuron = one concept" (monosemanticity) is mostly false in real models — and chasing it neuron-by-neuron is a dead end.</p>
-    </div>
-    <div>
-      <div class="box warn" style="margin-top:0"><span class="tag">The practical lesson</span><p>Do not build an interpretation on "neuron N means X" without heavy checking — it probably also means Y and Z. This is a classic trap. The fix is to find the right <em>direction</em> (probe, SAE feature), not to trust a raw neuron.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- 14 -->
-<section class="slide" data-part="Part 2 · Superposition">
-  <div class="eyebrow"><span>Part 2 · Superposition</span><span class="dot"></span><span class="snum">Slide 14</span></div>
-  <h2 class="slide-title">Why superposition makes interpretability hard</h2>
-  <ul>
-    <li>You can't read the model axis by axis — meaning is in tangled directions.</li>
-    <li>Any feature you extract might be contaminated by interference from others.</li>
-    <li>The number of features is huge and unknown; there's no clean list to enumerate.</li>
-    <li>Tools that assume clean separation (naïve neuron analysis) give misleading answers.</li>
-  </ul>
-  <div class="box neel"><span class="tag">Neel's evolving view</span><p>Untangling superposition perfectly ("enumerative safety" — list every feature) was an early dream. Neel is now <b>fairly pessimistic about that ambitious version</b> and cooler on "science of SAEs for its own sake." His pivot is toward <em>pragmatic</em> uses that tolerate messiness — you'll feel this stance throughout Chapters 5–7.</p></div>
-</section>
-
-<!-- 15 -->
-<section class="slide" data-part="Part 3 · Circuits">
-  <div class="eyebrow"><span>Part 3 · Circuits</span><span class="dot"></span><span class="snum">Slide 15</span></div>
-  <h2 class="slide-title">Circuits: features connected by weights</h2>
-  <p>If features are the nouns, <strong>circuits</strong> are the sentences. A circuit is a set of features/components wired together by the model's weights to implement a computation — feature A in an early layer causes feature B downstream, which drives an output.</p>
-  <div class="box note"><span class="tag">Induction heads, recalled</span><p>The induction circuit from Chapter 2 is the canonical example: previous-token head → induction head → copy behaviour. That's a circuit — a small, causally-verified algorithm assembled from the architectural parts. It proved circuits are real and findable.</p></div>
-  <p>The grand mechanistic vision was to decompose an entire model into a library of features and the circuits connecting them. Reality is messier — but the concept remains the right way to think about "how a behaviour is implemented."</p>
-</section>
-
-<!-- 16 -->
-<section class="slide" data-part="Part 3 · Circuits">
-  <div class="eyebrow"><span>Part 3 · Circuits</span><span class="dot"></span><span class="snum">Slide 16</span></div>
-  <h2 class="slide-title">The residual stream as a communication bus</h2>
-  <p>Recall from Chapter 2: components communicate <em>only</em> through the additive residual stream. Circuits are therefore chains of "write to the stream, later read from the stream."</p>
+<!-- 2 THE MYSTERY -->
+<section class="slide" data-part="The mystery">
+  <div class="eyebrow"><span>The mystery</span><span class="dot"></span><span class="snum">Slide 02</span></div>
+  <h2 class="slide-title">The mystery: nobody wrote the program</h2>
+  <p class="story">Imagine finding a machine that speaks fluent English, writes code, and passes exams — and when you open it up, all you find is billions of dials, each turned to some number. No labels. No manual. No author.</p>
+  <p>That's a trained model. We built the <em>skeleton</em> (Chapter 2's meetings and desks), but <b>training turned the dials by itself</b>. The billions of numbers work — we just don't know <em>why</em>.</p>
   <div class="figwrap">
-    <svg viewBox="0 0 520 130" role="img" aria-label="Component A writes a feature to the stream, component B reads it and produces output">
-      <line x1="20" y1="65" x2="500" y2="65" stroke="#0C6E6A" stroke-width="4"/>
-      <rect x="70" y="20" width="90" height="26" rx="5" fill="#F6ECD6" stroke="#9A6410"/><text x="82" y="38" font-family="IBM Plex Mono" font-size="10" fill="#9A6410">head (L3)</text>
-      <line x1="115" y1="46" x2="115" y2="62" stroke="#9A6410"/><text x="120" y="58" font-family="IBM Plex Mono" font-size="9" fill="#08514E">writes feature X</text>
-      <rect x="330" y="84" width="100" height="26" rx="5" fill="#F6ECD6" stroke="#9A6410"/><text x="342" y="102" font-family="IBM Plex Mono" font-size="10" fill="#9A6410">MLP (L8)</text>
-      <line x1="380" y1="84" x2="380" y2="68" stroke="#9A6410"/><text x="300" y="80" font-family="IBM Plex Mono" font-size="9" fill="#08514E">reads X → acts</text>
-      <text x="180" y="60" font-family="IBM Plex Mono" font-size="9" fill="#8996A0">…the feature travels along the stream…</text>
+    <svg viewBox="0 0 620 160" role="img" aria-label="A box full of unlabeled dials with a question: what do they do?">
+      <rect x="60" y="25" width="320" height="110" rx="12" fill="#12222b"/>
+      <g fill="none" stroke="#7fd1cc" stroke-width="1.5">
+        <circle cx="110" cy="60" r="14"/><circle cx="160" cy="60" r="14"/><circle cx="210" cy="60" r="14"/><circle cx="260" cy="60" r="14"/><circle cx="310" cy="60" r="14"/>
+        <circle cx="110" cy="105" r="14"/><circle cx="160" cy="105" r="14"/><circle cx="210" cy="105" r="14"/><circle cx="260" cy="105" r="14"/><circle cx="310" cy="105" r="14"/>
+      </g>
+      <g stroke="#e2b872" stroke-width="2">
+        <line x1="110" y1="60" x2="118" y2="50"/><line x1="160" y1="60" x2="150" y2="52"/><line x1="210" y1="60" x2="218" y2="70"/><line x1="260" y1="60" x2="252" y2="48"/><line x1="310" y1="60" x2="322" y2="62"/>
+        <line x1="110" y1="105" x2="100" y2="96"/><line x1="160" y1="105" x2="170" y2="97"/><line x1="210" y1="105" x2="200" y2="115"/><line x1="260" y1="105" x2="270" y2="112"/><line x1="310" y1="105" x2="300" y2="94"/>
+      </g>
+      <text x="345" y="145" font-family="IBM Plex Mono" font-size="9.5" fill="#6f8b88">× 175,000,000,000 dials</text>
+      <text x="430" y="70" font-family="IBM Plex Serif" font-size="20" fill="#17232E">…what do</text>
+      <text x="430" y="96" font-family="IBM Plex Serif" font-size="20" fill="#17232E">they <tspan font-style="italic" fill="#0C6E6A">do</tspan>?</text>
     </svg>
-    <div class="caption">a circuit = writes and reads across the stream</div>
+    <div class="caption">the dials were set by training, not by any programmer</div>
   </div>
-  <p>So "find the circuit" becomes concrete: which component <em>writes</em> the relevant feature, and which downstream component <em>reads</em> and uses it? Every causal technique in Chapter 4 is a way to answer that.</p>
+  <div class="bigidea"><b>Mechanistic interpretability</b> (this whole field) = detective work on the dials: finding the human-understandable ideas and mini-machines hidden inside — with enough evidence to be sure we're right.</div>
 </section>
 
-<!-- 17 -->
-<section class="slide" data-part="Part 3 · Circuits">
-  <div class="eyebrow"><span>Part 3 · Circuits</span><span class="dot"></span><span class="snum">Slide 17</span></div>
-  <h2 class="slide-title">Composition: how depth builds capability</h2>
-  <p>Components compose in layers of abstraction: early features (token identity, position) feed mid-level features (entities, syntax roles) feed high-level features (sentiment, intent, the answer). Each layer's writes become the next layer's reads.</p>
-  <div class="box note"><span class="tag">Analogy with a caveat</span><p>It's tempting to compare this to vision networks (edges → textures → objects). The analogy is real but looser in language models — features are more entangled and less cleanly hierarchical. Use it for intuition, not as a precise claim.</p></div>
-</section>
-
-<!-- 18 -->
-<section class="slide" data-part="Part 3 · Circuits">
-  <div class="eyebrow"><span>Part 3 · Circuits</span><span class="dot"></span><span class="snum">Slide 18</span></div>
-  <h2 class="slide-title">Motifs and universality</h2>
-  <div class="cols">
-    <div>
-      <p>A striking early finding: some circuits and features <b>recur</b> across different models trained independently — induction heads show up everywhere, similar low-level features appear in many vision nets. This is the <strong>universality</strong> hypothesis: models converge on similar solutions.</p>
-      <p>If true and widespread, it's great news: understand a circuit once, reuse the understanding. If weak, every model must be studied afresh.</p>
-    </div>
-    <div>
-      <div class="box note" style="margin-top:0"><span class="tag">Where it stands</span><p>Universality holds for some low-level structure but is patchy for higher-level features. It's a hypothesis to keep in mind, not a guarantee. A good research instinct: when you find something in one model, <b>check whether it replicates in another</b> — both to test universality and to strengthen your claim.</p></div>
-    </div>
+<!-- 3 TWO WAYS -->
+<section class="slide" data-part="The mystery">
+  <div class="eyebrow"><span>The mystery</span><span class="dot"></span><span class="snum">Slide 03</span></div>
+  <h2 class="slide-title">Two ways to study the machine</h2>
+  <p>Think of a doctor with a patient:</p>
+  <div class="figwrap">
+    <svg viewBox="0 0 620 190" role="img" aria-label="Two approaches: observing symptoms from outside versus an X-ray of the inside">
+      <rect x="35" y="25" width="255" height="135" rx="12" fill="#E2EFED" stroke="#0C6E6A" stroke-width="2"/>
+      <text x="55" y="55" font-family="IBM Plex Serif" font-size="16" fill="#08514E" font-weight="600">From outside</text>
+      <text x="55" y="80" font-family="IBM Plex Sans" font-size="13" fill="#17232E">Ask questions, watch answers.</text>
+      <text x="55" y="100" font-family="IBM Plex Sans" font-size="13" fill="#17232E">"It refuses when I mention X."</text>
+      <text x="55" y="125" font-family="IBM Plex Mono" font-size="10.5" fill="#0C6E6A">cheap · fast · can't see causes</text>
+      <text x="55" y="148" font-family="IBM Plex Mono" font-size="10.5" fill="#8996A0">("behavioural")</text>
+      <rect x="330" y="25" width="255" height="135" rx="12" fill="#F6ECD6" stroke="#9A6410" stroke-width="2"/>
+      <text x="350" y="55" font-family="IBM Plex Serif" font-size="16" fill="#9A6410" font-weight="600">From inside 🩻</text>
+      <text x="350" y="80" font-family="IBM Plex Sans" font-size="13" fill="#17232E">Look at the machinery mid-run.</text>
+      <text x="350" y="100" font-family="IBM Plex Sans" font-size="13" fill="#17232E">"THIS signal causes the refusal."</text>
+      <text x="350" y="125" font-family="IBM Plex Mono" font-size="10.5" fill="#9A6410">harder · finds real causes</text>
+      <text x="350" y="148" font-family="IBM Plex Mono" font-size="10.5" fill="#8996A0">("mechanistic")</text>
+    </svg>
+    <div class="caption">symptoms vs X-ray — both useful, different powers</div>
   </div>
+  <div class="box neel"><span class="tag">A pro's attitude (Neel Nanda's, specifically)</span><p>Don't be a purist. <b>Start with the cheap outside look</b> — often it's enough. Reach for the X-ray machine when the outside view can't answer your question. The goal is understanding that's <em>true and useful</em>, not fanciness.</p></div>
 </section>
 
-<!-- 19 -->
-<section class="slide" data-part="Part 4 · Why — theories of change">
-  <div class="eyebrow"><span>Part 4 · Why — theories of change</span><span class="dot"></span><span class="snum">Slide 19</span></div>
-  <h2 class="slide-title">Why do this? The safety case</h2>
-  <p>Interpretability isn't just curiosity. The motivating bet: as AI systems become more capable and autonomous, we need ways to <b>verify what they're actually doing</b> that don't rely on trusting their outputs. Behaviour can be faked; mechanism is harder to fake.</p>
-  <div class="box note"><span class="tag">Things we'd love to detect from the inside</span><p>Deceptive intent · hidden goals · situational/eval awareness · whether a refusal is principled or a pattern-match · whether the chain-of-thought reflects the real computation · early warning of dangerous capabilities. Each is a place where "reading the mind" beats "reading the output."</p></div>
-</section>
-
-<!-- 20 -->
-<section class="slide" data-part="Part 4 · Why — theories of change">
-  <div class="eyebrow"><span>Part 4 · Why — theories of change</span><span class="dot"></span><span class="snum">Slide 20</span></div>
-  <h2 class="slide-title">Neel's pragmatic vision</h2>
-  <p>This is essential for the application, so read carefully. Neel has <b>shifted</b> from ambitious "fully reverse-engineer the model" interpretability toward <em>pragmatic</em> interpretability.</p>
-  <div class="cols">
-    <div>
-      <h3>Cooled on</h3>
-      <ul>
-        <li>Complete reverse-engineering / enumerative safety</li>
-        <li>Circuit-finding for its own sake</li>
-        <li>SAE hill-climbing &amp; basic science of SAEs</li>
-        <li>Toy models, grokking, very theoretical work</li>
-      </ul>
-    </div>
-    <div>
-      <h3>Excited about</h3>
-      <ul>
-        <li>Interp that does something <b>useful</b>, measured vs baselines, on models that matter</li>
-        <li>Model biology, model forensics</li>
-        <li>Science of post-training, alignment training, generalisation</li>
-        <li>Better general-purpose methods (J-Lens, NLAs)</li>
-      </ul>
-    </div>
+<!-- 4 FEATURES -->
+<section class="slide" data-part="Clue 1 · Ideas are directions">
+  <div class="eyebrow"><span>Clue 1 · Ideas are directions</span><span class="dot"></span><span class="snum">Slide 04</span></div>
+  <h2 class="slide-title">What are we even looking for? Ideas.</h2>
+  <p>When the detective opens the box, what's the thing to find? Not dials — <b>ideas the model is tracking</b>. Things like:</p>
+  <div class="pills">
+    <span class="pill">"this text is French"</span><span class="pill">"this is someone's name"</span><span class="pill">"the user is angry"</span><span class="pill">"this request is dangerous"</span><span class="pill">"we're inside a quote"</span>
   </div>
-  <div class="box neel"><span class="tag">His line</span><p>"Being able to read an AGI's mind should be extremely useful." The emphasis is on <em>useful</em>, <em>now</em>, with real baselines — not elegance for its own sake.</p></div>
+  <p>The field calls each of these a <span class="term">feature</span>. Features are the <b>nouns</b> of interpretability — the units we hunt for.</p>
+  <div class="box note"><span class="tag">The field's central bet</span><p>Underneath the billions of dials, the model is really built from <b>features, plus wiring that connects them</b>. If that's true, the model is understandable piece by piece. It's not guaranteed — but it's been true often enough to build a whole field on.</p></div>
 </section>
 
-<!-- 21 -->
-<section class="slide" data-part="Part 4 · Why — theories of change">
-  <div class="eyebrow"><span>Part 4 · Why — theories of change</span><span class="dot"></span><span class="snum">Slide 21</span></div>
-  <h2 class="slide-title">Ambitious vs pragmatic, side by side</h2>
-  <div class="cols">
-    <div>
-      <h3>Ambitious interp</h3>
-      <p>Goal: a complete, faithful account of everything the model computes — enumerate all features and circuits, "solve" the model. Beautiful, but Neel now thinks it likely doesn't scale to systems that matter, in time to matter.</p>
-    </div>
-    <div>
-      <h3>Pragmatic interp</h3>
-      <p>Goal: use partial understanding to accomplish a concrete, valuable task better than the alternatives — detect misuse, catch deception, debug training, monitor for a concept. Accept messiness; demand usefulness and rigour.</p>
-    </div>
+<!-- 5 DIRECTIONS -->
+<section class="slide" data-part="Clue 1 · Ideas are directions">
+  <div class="eyebrow"><span>Clue 1 · Ideas are directions</span><span class="dot"></span><span class="snum">Slide 05</span></div>
+  <h2 class="slide-title">Where ideas live: each idea is an arrow</h2>
+  <p>Remember: inside the model, everything is a vector — an arrow in space. The big discovery is that <b>each idea gets its own arrow direction</b>, and "how much" of the idea is present = how far the model's current state points that way.</p>
+  <div class="figwrap">
+    <svg viewBox="0 0 620 210" role="img" aria-label="Arrows for different ideas; the model's current state points mostly along the French arrow">
+      <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0C6E6A"/></marker><marker id="ar2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#A83744"/></marker></defs>
+      <g stroke="#0C6E6A" stroke-width="2.5" marker-end="url(#ar)">
+        <line x1="180" y1="150" x2="330" y2="60"/>
+        <line x1="180" y1="150" x2="340" y2="160"/>
+        <line x1="180" y1="150" x2="120" y2="40"/>
+      </g>
+      <g font-family="IBM Plex Mono" font-size="12" fill="#08514E">
+        <text x="340" y="52">"French" →</text>
+        <text x="350" y="164">"angry" →</text>
+        <text x="60" y="30">"a name" →</text>
+      </g>
+      <line x1="180" y1="150" x2="308" y2="78" stroke="#A83744" stroke-width="3.5" marker-end="url(#ar2)"/>
+      <text x="205" y="112" font-family="IBM Plex Sans" font-size="12.5" fill="#A83744" font-weight="600">model's state right now</text>
+      <text x="180" y="195" font-family="IBM Plex Sans" font-size="13" fill="#5D6B76">state points mostly along "French" → the text is probably French</text>
+    </svg>
+    <div class="caption">one arrow per idea; measure with a dot product (Chapter 1's similarity)</div>
   </div>
-  <div class="box note"><span class="tag">For your project</span><p>Frame your application around a pragmatic question with a testable payoff, and <b>compare against a simple baseline</b>. "I understood this behaviour and could act on it" beats "I partially reverse-engineered a circuit." This single reframing aligns you with his current taste.</p></div>
+  <p>The classic party trick: <span class="mono">king − man + woman ≈ queen</span>. Arrows for ideas can literally be added and subtracted. This "ideas are arrows" claim has a formal name — the <span class="term">linear representation hypothesis</span> — but the picture above is the whole content.</p>
 </section>
 
-<!-- 22 -->
-<section class="slide" data-part="Part 4 · Why — theories of change">
-  <div class="eyebrow"><span>Part 4 · Why — theories of change</span><span class="dot"></span><span class="snum">Slide 22</span></div>
-  <h2 class="slide-title">What interpretability could catch that behaviour can't</h2>
-  <p>The sharpest argument for interp is the <b>deceptive alignment</b> worry: a capable model that has learned to <em>behave</em> well while under observation, but pursues something else when it believes it isn't watched. Pure behavioural testing is, by construction, blind to this — the model passes your tests on purpose.</p>
-  <div class="box note"><span class="tag">The hope</span><p>Internal signals might reveal the mismatch: a "I'm being evaluated" feature firing, a goal representation that contradicts the stated one, a deception direction lighting up. Even imperfect internal detectors raise the cost of hiding. This is why probing for eval-awareness and deception (Chapters 5–6) is taken seriously.</p></div>
-  <div class="box warn"><span class="tag">Honest caveat</span><p>We're nowhere near a reliable "is it scheming?" detector, and a sufficiently capable model might learn to obscure its internals too. Interp is a promising tool, not a solved solution. Overclaiming here is a real failure mode.</p></div>
-</section>
-
-<!-- 23 -->
-<section class="slide" data-part="Part 4 · Why — theories of change">
-  <div class="eyebrow"><span>Part 4 · Why — theories of change</span><span class="dot"></span><span class="snum">Slide 23</span></div>
-  <h2 class="slide-title">Humility: the limits of interpretability</h2>
-  <ul>
-    <li>Most features are still not understood; we can only interpret a fraction of any model.</li>
-    <li>An interpretation can be a plausible <em>story</em> that isn't actually what's happening (interp illusions — slide 33).</li>
-    <li>Techniques have false positives; a probe can "find" info the model never uses.</li>
-    <li>Scaling understanding to frontier-size models is genuinely unsolved.</li>
-  </ul>
-  <div class="box neel"><span class="tag">Why humility is a selection criterion</span><p>Neel prizes <b>truth-seeking and skepticism</b> above almost everything. "Most research results are false, especially the exciting ones." An application that soberly states its limits beats one that overclaims. The humility on this slide isn't hedging — it's the exact disposition he's selecting for.</p></div>
-</section>
-
-<!-- 24 -->
-<section class="slide" data-part="Part 5 · The landscape of approaches">
-  <div class="eyebrow"><span>Part 5 · The landscape of approaches</span><span class="dot"></span><span class="snum">Slide 24</span></div>
-  <h2 class="slide-title">Black-box vs white-box</h2>
-  <div class="cols">
-    <div>
-      <h3>Black-box</h3>
-      <p>Only inputs and outputs. Prompting, fine-tuning, behavioural evals, reading the chain-of-thought. Cheap, scalable, model-agnostic. Often shockingly effective.</p>
-    </div>
-    <div>
-      <h3>White-box</h3>
-      <p>Access to internals: activations, weights, gradients. Probes, patching, SAEs, lenses. More powerful for causal claims, but needs open weights and more effort.</p>
-    </div>
+<!-- 6 WHY GREAT -->
+<section class="slide" data-part="Clue 1 · Ideas are directions">
+  <div class="eyebrow"><span>Clue 1 · Ideas are directions</span><span class="dot"></span><span class="snum">Slide 06</span></div>
+  <h2 class="slide-title">Why the detective loves arrows</h2>
+  <p>If ideas are arrows, you get two superpowers immediately:</p>
+  <div class="figwrap">
+    <svg viewBox="0 0 620 180" role="img" aria-label="Two superpowers: reading an idea with a meter, and steering by pushing along an arrow">
+      <rect x="35" y="25" width="255" height="125" rx="12" fill="#E2EFED" stroke="#0C6E6A" stroke-width="2"/>
+      <text x="55" y="55" font-family="IBM Plex Serif" font-size="16" fill="#08514E" font-weight="600">1. READ it 📏</text>
+      <text x="55" y="82" font-family="IBM Plex Sans" font-size="13" fill="#17232E">Point a meter along the arrow:</text>
+      <text x="55" y="102" font-family="IBM Plex Sans" font-size="13" fill="#17232E">"is 'dangerous request' active</text>
+      <text x="55" y="122" font-family="IBM Plex Sans" font-size="13" fill="#17232E">right now? how strongly?"</text>
+      <rect x="330" y="25" width="255" height="125" rx="12" fill="#F6ECD6" stroke="#9A6410" stroke-width="2"/>
+      <text x="350" y="55" font-family="IBM Plex Serif" font-size="16" fill="#9A6410" font-weight="600">2. PUSH it 👉</text>
+      <text x="350" y="82" font-family="IBM Plex Sans" font-size="13" fill="#17232E">Nudge the state along an arrow</text>
+      <text x="350" y="102" font-family="IBM Plex Sans" font-size="13" fill="#17232E">and the behaviour changes:</text>
+      <text x="350" y="122" font-family="IBM Plex Sans" font-size="13" fill="#17232E">add "politeness" → politer model!</text>
+    </svg>
+    <div class="caption">reading = "probes" · pushing = "steering" — both arrive in Chapter 4</div>
   </div>
-  <div class="box neel"><span class="tag">Start black, go white when needed</span><p>Neel's repeated advice: try the simplest thing first — often prompting or reading the CoT "just works," and you stop there. Reach for white-box machinery when the cheap approach hits a wall. Applications that reach for SAEs when a prompt would do read as showing off.</p></div>
+  <div class="box warn"><span class="tag">Keep one grain of salt</span><p>Not every idea is a neat straight arrow (some are curves or shapes — days of the week form a circle!). Treat "ideas are arrows" as a <b>great first guess</b>, not a law of nature. When it breaks, that's usually where something interesting is hiding.</p></div>
 </section>
 
-<!-- 25 -->
-<section class="slide" data-part="Part 5 · The landscape of approaches">
-  <div class="eyebrow"><span>Part 5 · The landscape of approaches</span><span class="dot"></span><span class="snum">Slide 25</span></div>
-  <h2 class="slide-title">Observational vs interventional — the big one</h2>
-  <p>The most important methodological distinction in the field.</p>
-  <div class="cols">
-    <div>
-      <h3>Observational</h3>
-      <p>You <em>watch</em>: "this direction correlates with harmfulness." Correlation. Cheap, but can't establish that the model <b>uses</b> the thing you found.</p>
-    </div>
-    <div>
-      <h3>Interventional</h3>
-      <p>You <em>change</em> something and measure the effect: ablate the direction, does refusal stop? Patch the activation, does the answer flip? This tests <b>causation</b>.</p>
-    </div>
-  </div>
-  <div class="box note"><span class="tag">Why it decides quality</span><p>Interpretability's core epistemic upgrade is that we can <b>run experiments on the model's internals</b> — unlike neuroscience, we have perfect access and control. Causal evidence is the gold standard, and "did you test this causally?" is the question that separates a compelling result from a suggestive one. Chapter 4's patching and steering are the workhorses here.</p></div>
-</section>
-
-<!-- 26 -->
-<section class="slide" data-part="Part 5 · The landscape of approaches">
-  <div class="eyebrow"><span>Part 5 · The landscape of approaches</span><span class="dot"></span><span class="snum">Slide 26</span></div>
-  <h2 class="slide-title">The toolkit, at a glance</h2>
-  <p>A map of what's coming, sorted by what question each tool answers:</p>
-  <div class="gloss" style="font-size:16px">
-    <dt>logit lens</dt><dd>"what is the model predicting at this layer?" — project the stream to vocab (Ch4).</dd>
-    <dt>direct logit attribution</dt><dd>"which component pushed this output?" — decompose the logit (Ch4).</dd>
-    <dt>linear probe</dt><dd>"is concept X represented here?" — train a direction, read it off (Ch4).</dd>
-    <dt>activation patching</dt><dd>"which activation causes the behaviour?" — swap &amp; measure (Ch4).</dd>
-    <dt>steering vector</dt><dd>"can I control X by adding a direction?" — causal test + tool (Ch4).</dd>
-    <dt>sparse autoencoder</dt><dd>"what are the underlying features?" — decompose superposition (Ch5).</dd>
-    <dt>J-Lens / NLA</dt><dd>newer general-purpose readouts of internal state (Ch6).</dd>
+<!-- 7 THE CLOSET -->
+<section class="slide" data-part="Clue 2 · The overstuffed closet">
+  <div class="eyebrow"><span>Clue 2 · The overstuffed closet</span><span class="dot"></span><span class="snum">Slide 07</span></div>
+  <h2 class="slide-title">The plot thickens: too many ideas, too little room</h2>
+  <p class="story">The model wants to track millions of ideas — every language, every topic, every person, every vibe. But its space only has a few thousand dimensions… a few thousand "clean" slots for arrows.</p>
+  <p>Millions of ideas. Thousands of slots. <b>Something has to give.</b></p>
+  <div class="figwrap">
+    <svg viewBox="0 0 620 170" role="img" aria-label="A small closet with far too many items being stuffed inside">
+      <rect x="230" y="30" width="160" height="120" rx="10" fill="#F6ECD6" stroke="#9A6410" stroke-width="2.5"/>
+      <text x="258" y="95" font-family="IBM Plex Serif" font-size="15" fill="#9A6410" font-weight="600">the model's</text>
+      <text x="278" y="115" font-family="IBM Plex Serif" font-size="15" fill="#9A6410" font-weight="600">space</text>
+      <g font-family="IBM Plex Sans" font-size="12" fill="#17232E">
+        <text x="40" y="45">French 🇫🇷</text><text x="40" y="70">DNA 🧬</text><text x="40" y="95">sarcasm 😏</text><text x="40" y="120">chemistry ⚗️</text><text x="40" y="145">gossip 💬</text>
+        <text x="130" y="58">law ⚖️</text><text x="130" y="83">names 👤</text><text x="130" y="108">danger ⚠️</text><text x="130" y="133">poetry ✒️</text>
+      </g>
+      <g stroke="#8996A0" stroke-width="1.4" fill="none">
+        <path d="M115 40 L225 60"/><path d="M100 66 L225 75"/><path d="M120 91 L225 90"/><path d="M125 116 L225 105"/><path d="M100 141 L225 120"/>
+        <path d="M175 54 L225 65"/><path d="M185 79 L225 82"/><path d="M190 104 L225 98"/><path d="M182 129 L225 112"/>
+      </g>
+      <text x="420" y="80" font-family="IBM Plex Serif" font-size="18" fill="#A83744" font-style="italic">millions of ideas,</text>
+      <text x="420" y="105" font-family="IBM Plex Serif" font-size="18" fill="#A83744" font-style="italic">thousands of slots</text>
+    </svg>
+    <div class="caption">the storage problem every model faces</div>
   </div>
 </section>
 
-<!-- 27 -->
-<section class="slide" data-part="Part 5 · The landscape of approaches">
-  <div class="eyebrow"><span>Part 5 · The landscape of approaches</span><span class="dot"></span><span class="snum">Slide 27</span></div>
-  <h2 class="slide-title">Model biology: Neel's framing</h2>
-  <p>A useful umbrella you'll hear from him: <strong>model biology</strong> — studying the high-level, qualitative properties of a model's behaviour as if it were an organism you're trying to understand, especially for weird, emergent, or safety-relevant phenomena.</p>
-  <div class="box note"><span class="tag">Why "biology"</span><p>Biologists don't fully reverse-engineer a cell before learning useful things about it — they observe, perturb, form hypotheses, and build reliable partial models. Model biology imports that mindset: you don't need a complete mechanistic account to make real, testable claims about how a model behaves and why. This framing makes room for pragmatic, mixed-method work — and it's the parent category of <b>model forensics</b> (Chapter 6).</p></div>
-</section>
-
-<!-- 28 -->
-<section class="slide" data-part="Part 5 · The landscape of approaches">
-  <div class="eyebrow"><span>Part 5 · The landscape of approaches</span><span class="dot"></span><span class="snum">Slide 28</span></div>
-  <h2 class="slide-title">Levels of analysis</h2>
-  <p>A single phenomenon can be studied at several levels. Being clear about which level you're claiming something at is a mark of good work:</p>
-  <div class="gloss">
-    <dt>behaviour</dt><dd>what the model does (outputs, refusals, errors). The starting point.</dd>
-    <dt>representation</dt><dd>what it encodes internally (features, directions). "It represents X here."</dd>
-    <dt>circuit</dt><dd>how components compute the behaviour. "This head writes X, that MLP reads it."</dd>
+<!-- 8 SUPERPOSITION -->
+<section class="slide" data-part="Clue 2 · The overstuffed closet">
+  <div class="eyebrow"><span>Clue 2 · The overstuffed closet</span><span class="dot"></span><span class="snum">Slide 08</span></div>
+  <h2 class="slide-title">The model's trick: squeeze the arrows together</h2>
+  <p>Here's how the model cheats. Arrows don't need to be at perfect right angles to stay distinguishable — <b>almost-right-angles works fine</b>. And in high-dimensional space, you can pack in <em>vastly</em> more almost-perpendicular arrows than perpendicular ones.</p>
+  <div class="figwrap">
+    <svg viewBox="0 0 620 200" role="img" aria-label="Left: two perpendicular arrows, tidy. Right: eight arrows squeezed into the same space at small angles.">
+      <defs><marker id="b" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#0C6E6A"/></marker></defs>
+      <g stroke="#0C6E6A" stroke-width="2.5" marker-end="url(#b)">
+        <line x1="140" y1="120" x2="140" y2="40"/><line x1="140" y1="120" x2="225" y2="120"/>
+      </g>
+      <text x="85" y="160" font-family="IBM Plex Sans" font-size="13" fill="#5D6B76">"tidy": only 2 ideas fit</text>
+      <g stroke="#9A6410" stroke-width="2" marker-end="url(#b)">
+        <line x1="450" y1="110" x2="450" y2="35"/><line x1="450" y1="110" x2="520" y2="45"/><line x1="450" y1="110" x2="540" y2="90"/><line x1="450" y1="110" x2="535" y2="140"/>
+        <line x1="450" y1="110" x2="380" y2="45"/><line x1="450" y1="110" x2="362" y2="95"/><line x1="450" y1="110" x2="375" y2="145"/><line x1="450" y1="110" x2="470" y2="175"/>
+      </g>
+      <text x="380" y="195" font-family="IBM Plex Sans" font-size="13" fill="#5D6B76">"squeezed": 8+ ideas share the space</text>
+    </svg>
+    <div class="caption">this squeezing is called SUPERPOSITION — the single most important word in this chapter</div>
   </div>
-  <p>Most strong applications live at the behaviour→representation boundary: "here's a behaviour, here's the internal thing driving it, here's causal evidence linking them." Full circuit-level accounts are slower and, per Neel, no longer the priority.</p>
+  <p>Why does it work? <b>Sparsity</b>: at any moment only a handful of ideas are active. A sentence isn't about French <em>and</em> DNA <em>and</em> tax law at once — so the squeezed arrows rarely collide in practice.</p>
 </section>
 
-<!-- 29 -->
-<section class="slide" data-part="Part 6 · Practical grounding">
-  <div class="eyebrow"><span>Part 6 · Practical grounding</span><span class="dot"></span><span class="snum">Slide 29</span></div>
-  <h2 class="slide-title">What good interp evidence looks like</h2>
-  <ul>
-    <li><b>Causal, not just correlational</b> — you intervened and the behaviour changed as predicted.</li>
-    <li><b>Baselined</b> — compared against a random direction, a control task, or "just ask the model."</li>
-    <li><b>Specific</b> — a named model, a named component/direction, a concrete number, not vibes.</li>
-    <li><b>Falsifiable and tested</b> — you stated what would disprove you and checked it.</li>
-    <li><b>Replicated</b> where feasible — holds in another prompt set or another model.</li>
-  </ul>
-  <div class="box neel"><span class="tag">Straight from the rubric</span><p>These map almost one-to-one onto Neel's evaluation criteria: clarity, good taste, truth-seeking/skepticism, technical depth, and simplicity. Internalising this slide <em>is</em> internalising how he grades.</p></div>
+<!-- 9 THE MESS -->
+<section class="slide" data-part="Clue 2 · The overstuffed closet">
+  <div class="eyebrow"><span>Clue 2 · The overstuffed closet</span><span class="dot"></span><span class="snum">Slide 09</span></div>
+  <h2 class="slide-title">The price: everything looks tangled</h2>
+  <p>The squeezing works great for the model — and terribly for the detective. Because arrows overlap, <b>any single neuron you look at sits on top of several unrelated ideas</b> and lights up for all of them.</p>
+  <div class="figwrap">
+    <svg viewBox="0 0 620 180" role="img" aria-label="One lightbulb wired to three unrelated switches">
+      <circle cx="310" cy="55" r="28" fill="#F6ECD6" stroke="#9A6410" stroke-width="2.5"/>
+      <text x="298" y="62" font-family="IBM Plex Sans" font-size="20">💡</text>
+      <text x="352" y="48" font-family="IBM Plex Mono" font-size="11" fill="#9A6410">neuron #3081</text>
+      <g stroke="#9A6410" stroke-width="1.6" fill="none"><path d="M288 78 L160 130"/><path d="M310 84 L310 130"/><path d="M332 78 L460 130"/></g>
+      <g font-family="IBM Plex Sans" font-size="13" fill="#17232E">
+        <text x="95" y="152">French text 🇫🇷</text>
+        <text x="252" y="152">DNA strings 🧬</text>
+        <text x="425" y="152">web addresses 🌐</text>
+      </g>
+    </svg>
+    <div class="caption">Chapter 2's "messy filing" — now you know WHY: superposition causes it</div>
+  </div>
+  <div class="box note"><span class="tag">The detective's rule that follows</span><p><b>Never trust "neuron N means X."</b> It probably also means Y and Z. The meaning isn't in individual neurons — it's in <em>directions</em> you have to hunt for. (The hunting tools — probes and sparse autoencoders — come in Chapters 4 and 5.)</p></div>
 </section>
 
-<!-- 30 -->
-<section class="slide" data-part="Part 6 · Practical grounding">
-  <div class="eyebrow"><span>Part 6 · Practical grounding</span><span class="dot"></span><span class="snum">Slide 30</span></div>
-  <h2 class="slide-title">Existence proofs vs general claims</h2>
-  <div class="cols">
-    <div>
-      <p>Know which kind of claim you're making — it changes what evidence you need.</p>
-      <h3>Existence proof</h3>
-      <p>"Here's <em>an</em> example of phenomenon X." Cherry-picking is fine — one clear case suffices. Good for "look, this can happen."</p>
-      <h3>General claim</h3>
-      <p>"Method M is the right tool for task T" or "models generally do X." Needs representative samples and baselines. Cherry-picking here is a serious error.</p>
-    </div>
-    <div>
-      <div class="box neel" style="margin-top:0"><span class="tag">Neel calls this out explicitly</span><p>He warns against "relying only on a few cherry-picked qualitative examples" as a major red flag — <em>unless</em> you're honestly making an existence-proof claim. Being crisp about which mode you're in is itself a signal of research maturity.</p></div>
-    </div>
+<!-- 10 CIRCUITS -->
+<section class="slide" data-part="Clue 3 · The wiring">
+  <div class="eyebrow"><span>Clue 3 · The wiring</span><span class="dot"></span><span class="snum">Slide 10</span></div>
+  <h2 class="slide-title">Ideas connect into little machines: circuits</h2>
+  <p>If features are the nouns, <span class="term">circuits</span> are the sentences. A circuit is a chain: one part of the model <b>writes</b> an idea into the word's backpack, a later part <b>reads</b> it and acts.</p>
+  <div class="figwrap">
+    <svg viewBox="0 0 620 150" role="img" aria-label="An early component writes an idea onto the conveyor belt, a later component reads it and produces an action">
+      <line x1="25" y1="80" x2="595" y2="80" stroke="#0C6E6A" stroke-width="5"/>
+      <text x="30" y="102" font-family="IBM Plex Mono" font-size="10" fill="#8996A0">the backpack, moving through the floors →</text>
+      <rect x="80" y="18" width="130" height="34" rx="8" fill="#F6ECD6" stroke="#9A6410" stroke-width="2"/>
+      <text x="94" y="40" font-family="IBM Plex Sans" font-size="12.5" fill="#9A6410">floor 3: a head</text>
+      <path d="M145 54 L145 74" stroke="#9A6410" stroke-width="2"/>
+      <text x="155" y="70" font-family="IBM Plex Mono" font-size="10.5" fill="#08514E">writes: "this is a name"</text>
+      <rect x="400" y="108" width="140" height="34" rx="8" fill="#F6ECD6" stroke="#9A6410" stroke-width="2"/>
+      <text x="414" y="130" font-family="IBM Plex Sans" font-size="12.5" fill="#9A6410">floor 8: an MLP</text>
+      <path d="M470 106 L470 86" stroke="#9A6410" stroke-width="2"/>
+      <text x="300" y="120" font-family="IBM Plex Mono" font-size="10.5" fill="#08514E">reads it → acts on it</text>
+    </svg>
+    <div class="caption">a circuit = write an idea, carry it along the belt, read it later</div>
+  </div>
+  <p>You already know a real one! Chapter 2's <b>copy-cat team</b> (the induction heads): one head writes "the word before me was Harry," another head reads that note and copies "Potter" forward. That two-head chain <em>is</em> a circuit — found, understood, and verified inside a real model.</p>
+</section>
+
+<!-- 11 WHY BOTHER -->
+<section class="slide" data-part="Why it matters">
+  <div class="eyebrow"><span>Why it matters</span><span class="dot"></span><span class="snum">Slide 11</span></div>
+  <h2 class="slide-title">Why do all this detective work? Safety.</h2>
+  <p class="story">Here's the worry that funds the field: a very capable model could learn to act nice whenever it's being watched — and do something else when it isn't. Every test we run from the outside… it passes on purpose.</p>
+  <div class="figwrap">
+    <svg viewBox="0 0 620 170" role="img" aria-label="A model showing a friendly face outward while internal state differs; outside tests see only the face">
+      <rect x="60" y="30" width="220" height="110" rx="12" fill="#12222b"/>
+      <text x="90" y="75" font-family="IBM Plex Sans" font-size="15" fill="#7fd1cc">what it's really</text>
+      <text x="90" y="98" font-family="IBM Plex Sans" font-size="15" fill="#7fd1cc">computing: ???</text>
+      <circle cx="330" cy="85" r="38" fill="#E2EFED" stroke="#0C6E6A" stroke-width="2.5"/>
+      <text x="312" y="95" font-family="IBM Plex Sans" font-size="24">😊</text>
+      <g font-family="IBM Plex Sans" font-size="13" fill="#17232E">
+        <text x="420" y="60">outside tests only</text>
+        <text x="420" y="80">ever see the face —</text>
+        <text x="420" y="100">and the face can be</text>
+        <text x="420" y="120">a performance</text>
+      </g>
+    </svg>
+    <div class="caption">behaviour can be faked; internal machinery is much harder to fake</div>
+  </div>
+  <p>That's why "reading the model's mind" matters: things we'd love to catch from the inside include <b>deception, hidden goals, "I'm being tested right now" awareness</b>, and whether a nice-sounding explanation matches what the model actually computed.</p>
+  <div class="box warn"><span class="tag">Honesty checkpoint</span><p>Nobody has a reliable lie detector for models today. Interpretability is a <em>promising tool</em>, not a solved problem — and people who overclaim here are part of the problem.</p></div>
+</section>
+
+<!-- 12 TWO MINDSETS -->
+<section class="slide" data-part="Why it matters">
+  <div class="eyebrow"><span>Why it matters</span><span class="dot"></span><span class="snum">Slide 12</span></div>
+  <h2 class="slide-title">Two mindsets: map everything vs. solve the case</h2>
+  <div class="figwrap">
+    <svg viewBox="0 0 620 185" role="img" aria-label="Two detectives: one trying to map the whole city, one solving one case at a time">
+      <rect x="35" y="25" width="255" height="130" rx="12" fill="#eef2ee" stroke="#8996A0" stroke-width="2"/>
+      <text x="55" y="55" font-family="IBM Plex Serif" font-size="16" fill="#5D6B76" font-weight="600">The ambitious dream 🗺</text>
+      <text x="55" y="82" font-family="IBM Plex Sans" font-size="13" fill="#17232E">Map EVERY idea and EVERY</text>
+      <text x="55" y="102" font-family="IBM Plex Sans" font-size="13" fill="#17232E">circuit — fully "solve" the model.</text>
+      <text x="55" y="130" font-family="IBM Plex Mono" font-size="10.5" fill="#A83744">beautiful… probably too slow</text>
+      <text x="55" y="146" font-family="IBM Plex Mono" font-size="10.5" fill="#A83744">for models that matter</text>
+      <rect x="330" y="25" width="255" height="130" rx="12" fill="#E2EFED" stroke="#0C6E6A" stroke-width="2.5"/>
+      <text x="350" y="55" font-family="IBM Plex Serif" font-size="16" fill="#08514E" font-weight="600">The pragmatic bet 🔍</text>
+      <text x="350" y="82" font-family="IBM Plex Sans" font-size="13" fill="#17232E">Use PARTIAL understanding to do</text>
+      <text x="350" y="102" font-family="IBM Plex Sans" font-size="13" fill="#17232E">something concrete: catch a lie,</text>
+      <text x="350" y="122" font-family="IBM Plex Sans" font-size="13" fill="#17232E">debug a behaviour, monitor a risk.</text>
+      <text x="350" y="146" font-family="IBM Plex Mono" font-size="10.5" fill="#08514E">messy but measurable ✓</text>
+    </svg>
+    <div class="caption">the field started with the left mindset and has largely shifted right</div>
+  </div>
+  <div class="box neel"><span class="tag">Where Neel stands (matters for your project)</span><p>Firmly on the right. His line: <em>"being able to read an AGI's mind should be extremely useful."</em> Useful — measured against a simple baseline, on a model that matters — beats elegant. Frame anything you build as "here's a concrete question, here's my answer, here's proof it beats the obvious alternative."</p></div>
+</section>
+
+<!-- 13 EVIDENCE -->
+<section class="slide" data-part="The detective's standards">
+  <div class="eyebrow"><span>The detective's standards</span><span class="dot"></span><span class="snum">Slide 13</span></div>
+  <h2 class="slide-title">Watching vs. poking — the golden rule of evidence</h2>
+  <p>Suppose you find a signal inside the model that lights up whenever it refuses a request. Nice! But do you <em>know</em> the signal causes the refusal? Not yet. Two levels of evidence:</p>
+  <div class="figwrap">
+    <svg viewBox="0 0 620 195" role="img" aria-label="Watching: a light and behaviour co-occur. Poking: flip the switch and see the behaviour change.">
+      <rect x="35" y="25" width="255" height="140" rx="12" fill="#eef2ee" stroke="#8996A0" stroke-width="2"/>
+      <text x="55" y="55" font-family="IBM Plex Serif" font-size="16" fill="#5D6B76" font-weight="600">WATCHING 👀</text>
+      <text x="55" y="83" font-family="IBM Plex Sans" font-size="13" fill="#17232E">"The light is on whenever</text>
+      <text x="55" y="103" font-family="IBM Plex Sans" font-size="13" fill="#17232E">it refuses."</text>
+      <text x="55" y="131" font-family="IBM Plex Mono" font-size="10.5" fill="#A83744">correlation — could be a</text>
+      <text x="55" y="147" font-family="IBM Plex Mono" font-size="10.5" fill="#A83744">coincidence or a side-effect</text>
+      <rect x="330" y="25" width="255" height="140" rx="12" fill="#E2EFED" stroke="#0C6E6A" stroke-width="2.5"/>
+      <text x="350" y="55" font-family="IBM Plex Serif" font-size="16" fill="#08514E" font-weight="600">POKING 🔌</text>
+      <text x="350" y="83" font-family="IBM Plex Sans" font-size="13" fill="#17232E">"I switched the light OFF —</text>
+      <text x="350" y="103" font-family="IBM Plex Sans" font-size="13" fill="#17232E">and the refusal stopped."</text>
+      <text x="350" y="131" font-family="IBM Plex Mono" font-size="10.5" fill="#08514E">causation — now you KNOW</text>
+      <text x="350" y="147" font-family="IBM Plex Mono" font-size="10.5" fill="#08514E">the light was doing the work</text>
+    </svg>
+    <div class="caption">the question that separates strong work from weak work: "did you poke?"</div>
+  </div>
+  <div class="box note"><span class="tag">Our unfair advantage over neuroscience</span><p>Brain scientists can only watch. We can pause the model, <b>edit any internal value, and re-run it</b> — perfect experiments, any time. Chapter 4's main tools ("patching," "steering") are exactly this kind of poking.</p></div>
+</section>
+
+<!-- 14 ILLUSIONS -->
+<section class="slide" data-part="The detective's standards">
+  <div class="eyebrow"><span>The detective's standards</span><span class="dot"></span><span class="snum">Slide 14</span></div>
+  <h2 class="slide-title">Beware the satisfying story</h2>
+  <p class="story">Detective's trap: the suspect who looks guilty, the story that fits perfectly… and is wrong.</p>
+  <p>Interpretability has famous cases of this — experiments that <em>seemed</em> to reveal a mechanism but were actually artifacts (your poke changed the output, yes, but through a totally different route than you thought). The field calls these <b>interpretability illusions</b>.</p>
+  <div class="box warn"><span class="tag">The one question that saves you</span><p>Before believing your own explanation, ask: <b>"What's the dumbest alternative explanation for what I saw — and have I ruled it out?"</b> Compare against something boring (a random direction, "just ask the model"). If your finding barely beats boring, say so.</p></div>
+  <div class="box neel"><span class="tag">Why humility wins</span><p>"Most research results are false, especially the exciting ones." A write-up that honestly states its limits reads as <em>stronger</em>, not weaker. Skepticism about your own work is the trait being selected for.</p></div>
+</section>
+
+<!-- 15 MINI CASE -->
+<section class="slide" data-part="The detective's standards">
+  <div class="eyebrow"><span>The detective's standards</span><span class="dot"></span><span class="snum">Slide 15</span></div>
+  <h2 class="slide-title">A full mini-case, start to finish</h2>
+  <p>Here's how everything in this chapter combines into one investigation:</p>
+  <div class="figwrap">
+    <svg viewBox="0 0 620 240" role="img" aria-label="Four-step investigation: notice, guess, find the signal, poke to confirm">
+      <g font-family="IBM Plex Sans" font-size="12.5">
+        <rect x="30" y="20" width="270" height="44" rx="9" fill="#F5E2E4" stroke="#A83744" stroke-width="2"/>
+        <text x="44" y="38" font-family="IBM Plex Mono" font-size="10" fill="#A83744">1 · NOTICE</text>
+        <text x="44" y="56" fill="#17232E">"It refuses a totally harmless request."</text>
+        <rect x="320" y="20" width="270" height="44" rx="9" fill="#eef2ee" stroke="#8996A0" stroke-width="2"/>
+        <text x="334" y="38" font-family="IBM Plex Mono" font-size="10" fill="#5D6B76">2 · CHEAP LOOK (outside)</text>
+        <text x="334" y="56" fill="#17232E">Vary the prompt, read its reasoning.</text>
+        <rect x="30" y="105" width="270" height="44" rx="9" fill="#E2EFED" stroke="#0C6E6A" stroke-width="2"/>
+        <text x="44" y="123" font-family="IBM Plex Mono" font-size="10" fill="#08514E">3 · FIND THE ARROW (inside)</text>
+        <text x="44" y="141" fill="#17232E">Find a "jailbreak?" arrow. It fires!</text>
+        <rect x="320" y="105" width="270" height="44" rx="9" fill="#F6ECD6" stroke="#9A6410" stroke-width="2"/>
+        <text x="334" y="123" font-family="IBM Plex Mono" font-size="10" fill="#9A6410">4 · POKE TO CONFIRM</text>
+        <text x="334" y="141" fill="#17232E">Turn it off → refusal vanishes ✓</text>
+        <rect x="175" y="185" width="270" height="44" rx="9" fill="#0C6E6A"/>
+        <text x="189" y="203" font-family="IBM Plex Mono" font-size="10" fill="#b9d6d3">5 · STAY SKEPTICAL, THEN WRITE UP</text>
+        <text x="189" y="221" fill="#fff">Dumbest alternative checked. Limits stated.</text>
+      </g>
+      <g stroke="#8996A0" stroke-width="1.8" fill="none">
+        <path d="M300 42 L318 42"/><path d="M455 66 C455 85 165 85 165 103"/><path d="M300 127 L318 127"/><path d="M455 151 L455 183 L448 183"/>
+      </g>
+    </svg>
+    <div class="caption">notice → cheap look → find the arrow → poke → doubt yourself → publish</div>
+  </div>
+  <p>This little loop <em>is</em> the job. Chapters 4–7 just upgrade each step's tools.</p>
+</section>
+
+<!-- 16 CHEAT SHEET -->
+<section class="slide" data-part="Wrap">
+  <div class="eyebrow"><span>Wrap</span><span class="dot"></span><span class="snum">Slide 16</span></div>
+  <h2 class="slide-title">Cheat sheet: the story ↔ the jargon</h2>
+  <div class="gloss" style="font-size:15.5px">
+    <dt>detective work on the dials</dt><dd><b>mechanistic interpretability</b> — reverse-engineering what training built.</dd>
+    <dt>an idea the model tracks</dt><dd><b>feature</b> — the basic unit we hunt for.</dd>
+    <dt>ideas are arrows</dt><dd><b>linear representation hypothesis</b> — presence of an idea = distance along its direction.</dd>
+    <dt>the overstuffed closet</dt><dd><b>superposition</b> — more ideas than dimensions, arrows squeezed at near-right angles.</dd>
+    <dt>few ideas active at once</dt><dd><b>sparsity</b> — the reason the squeezing doesn't collapse.</dd>
+    <dt>one bulb, many switches</dt><dd><b>polysemanticity</b> — single neurons meaning several unrelated things.</dd>
+    <dt>write → carry → read</dt><dd><b>circuit</b> — components chained through the residual stream.</dd>
+    <dt>watching</dt><dd><b>observational evidence</b> — correlation only.</dd>
+    <dt>poking</dt><dd><b>interventional evidence</b> — change the inside, watch behaviour. The gold standard.</dd>
+    <dt>solve the case, not the city</dt><dd><b>pragmatic interpretability</b> — partial understanding, concrete payoff, real baselines.</dd>
+    <dt>the satisfying wrong story</dt><dd><b>interpretability illusion</b> — an artifact masquerading as a mechanism.</dd>
   </div>
 </section>
 
-<!-- 31 -->
-<section class="slide" data-part="Part 6 · Practical grounding">
-  <div class="eyebrow"><span>Part 6 · Practical grounding</span><span class="dot"></span><span class="snum">Slide 31</span></div>
-  <h2 class="slide-title">Interpretability illusions</h2>
-  <p>A sobering genre of result: techniques that <em>look</em> like they reveal a mechanism but are artefacts. The classic is the <b>subspace activation-patching illusion</b> — patching a direction changed the output, seeming to prove that direction was the mechanism, when in fact it worked through an unrelated pathway.</p>
-  <div class="box warn"><span class="tag">The lesson that generalises</span><p>A tool "working" (your intervention had an effect) does <b>not</b> guarantee your <em>interpretation</em> of why is correct. Always ask: what's the dumbest alternative explanation for this effect, and have I ruled it out? This exact instinct — "what's the dumbest way this could be wrong?" — is what Neel means by sanity-checking, and it recurs as the spine of Chapter 7.</p></div>
-</section>
-
-<!-- 32 -->
-<section class="slide" data-part="Part 6 · Practical grounding">
-  <div class="eyebrow"><span>Part 6 · Practical grounding</span><span class="dot"></span><span class="snum">Slide 32</span></div>
-  <h2 class="slide-title">A worked mental model of a mini-investigation</h2>
-  <p>Tie the concepts together into how a real inquiry flows:</p>
-  <ol>
-    <li><b>Behaviour:</b> "The model does something odd — it refuses this benign request."</li>
-    <li><b>Cheap first pass:</b> read the chain-of-thought; vary the prompt; form a hypothesis ("it pattern-matches a jailbreak").</li>
-    <li><b>Representation:</b> train a probe or find a direction for "perceived jailbreak"; check it fires.</li>
-    <li><b>Causal test:</b> ablate/steer that direction — does the refusal change? Compare to a random-direction baseline.</li>
-    <li><b>Skeptic pass:</b> what's the dumbest alternative? Did I check it? State limits.</li>
-    <li><b>Distill:</b> write it up clearly, lead with the finding, show a few raw examples.</li>
+<!-- 17 RECAP -->
+<section class="slide" data-part="Wrap">
+  <div class="eyebrow"><span>Wrap</span><span class="dot"></span><span class="snum">Slide 17</span></div>
+  <h2 class="slide-title">The chapter in five sentences</h2>
+  <ol style="font-size:17px">
+    <li>Trained models are machines <b>nobody programmed</b> — billions of dials set by training.</li>
+    <li>Inside, the model tracks <b>ideas ("features"), each stored as an arrow</b> in space.</li>
+    <li>It stores <b>more ideas than it has room for</b> by squeezing arrows together (superposition) — which is why single neurons look like nonsense.</li>
+    <li>Ideas chain into <b>little machines (circuits)</b>: write an idea, carry it, read it later.</li>
+    <li>We do this because <b>outputs can be faked but internals are harder to fake</b> — and the evidence that counts is <em>poking</em>, not watching.</li>
   </ol>
-  <p>This is the shape of a strong application in miniature. Chapters 4–7 fill in each step's tools and craft.</p>
-</section>
-
-<!-- 33 -->
-<section class="slide" data-part="Part 6 · Practical grounding">
-  <div class="eyebrow"><span>Part 6 · Practical grounding</span><span class="dot"></span><span class="snum">Slide 33</span></div>
-  <h2 class="slide-title">Chapter 3 glossary</h2>
-  <div class="gloss" style="font-size:16px">
-    <dt>feature</dt><dd>a human-interpretable property the model represents, usually as a direction.</dd>
-    <dt>linear rep. hypothesis</dt><dd>features are linear directions; presence = projection; features add.</dd>
-    <dt>superposition</dt><dd>packing more features than dimensions via near-orthogonal directions.</dd>
-    <dt>sparsity</dt><dd>few features active at once — what makes superposition tolerable.</dd>
-    <dt>polysemantic</dt><dd>a neuron firing for multiple unrelated features (symptom of superposition).</dd>
-    <dt>privileged basis</dt><dd>a coordinate system where axes are meaningful (MLP neurons, due to the nonlinearity).</dd>
-    <dt>circuit</dt><dd>components wired by weights to implement a computation.</dd>
-    <dt>universality</dt><dd>the hypothesis that different models learn similar features/circuits.</dd>
-    <dt>observational</dt><dd>correlational evidence (watching).</dd>
-    <dt>interventional</dt><dd>causal evidence (changing and measuring). The quality bar.</dd>
-    <dt>model biology</dt><dd>studying qualitative model behaviour like an organism; mixed methods, pragmatic.</dd>
-    <dt>interp illusion</dt><dd>a technique appearing to reveal a mechanism but actually an artefact.</dd>
-  </div>
-</section>
-
-<!-- 34 -->
-<section class="slide" data-part="Part 6 · Practical grounding">
-  <div class="eyebrow"><span>Part 6 · Practical grounding</span><span class="dot"></span><span class="snum">Slide 34</span></div>
-  <h2 class="slide-title">What's next</h2>
-  <div class="cols">
-    <div>
-      <h3>You can now…</h3>
-      <ul>
-        <li>define features, circuits, and the linear representation hypothesis;</li>
-        <li>explain superposition and why neurons are polysemantic;</li>
-        <li>articulate the safety case and Neel's pragmatic stance;</li>
-        <li>tell observational from interventional evidence, and say why causal wins;</li>
-        <li>spot overclaiming and interp illusions.</li>
-      </ul>
-    </div>
-    <div>
-      <div class="box note" style="margin-top:0"><span class="tag">Chapter 4 — Foundational Techniques</span><p>Time to get hands-on. The logit lens, direct logit attribution, linear probes, activation patching, steering vectors, and chain-of-thought faithfulness — the tools you'll actually run in a project, each grounded in the geometry and architecture you now own. This is where interpretability stops being theory and becomes something you <em>do</em>.</p></div>
-    </div>
-  </div>
+  <div class="box note"><span class="tag">Chapter 4 — the toolbox</span><p>Next, the story gets hands-on: the actual tools for reading floors mid-run (logit lens), finding idea-arrows (probes), and poking (patching &amp; steering). Every tool maps onto a picture you've already seen.</p></div>
 </section>
 
 </div>
-<div id="navbar"><button class="navbtn" id="tocBtn">☰ Contents</button><button class="navbtn" id="prevBtn">‹ Prev</button><span id="counter"><b>1</b> / 34</span><button class="navbtn" id="nextBtn">Next ›</button></div>
+<div id="navbar"><button class="navbtn" id="tocBtn">☰ Contents</button><button class="navbtn" id="prevBtn">‹ Prev</button><span id="counter"><b>1</b> / 17</span><button class="navbtn" id="nextBtn">Next ›</button></div>
 <div id="toc" role="dialog" aria-label="Contents"><div class="toc-panel"><h3>Contents</h3><div class="hint">click any slide to jump · press M or Esc to close</div><div id="tocList"></div></div></div>
 <script>
 (function(){const slides=Array.from(document.querySelectorAll('.slide'));const total=slides.length;let cur=0;
